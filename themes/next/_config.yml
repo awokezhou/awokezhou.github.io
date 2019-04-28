@@ -56,9 +56,11 @@ footer:
   # Hexo link (Powered by Hexo).
   powered: true
 
+  visitor: true
+
   theme:
     # Theme & scheme info link (Theme - NexT.scheme).
-    enable: true
+    enable: false
     # Version info of NexT after scheme info (vX.X.X).
     version: true
   # -------------------------------------------------------------

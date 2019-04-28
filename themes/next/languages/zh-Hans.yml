@@ -47,6 +47,7 @@ page:
 
 footer:
   powered: "由 %s 强力驱动"
+  visitor: "访客量 %s"
   theme: 主题
 
 counter:

@@ -48,9 +48,7 @@
 {% endif %}
 
 {% if theme.footer.visitor %}
-<div class="powered-by">{#
-#}<i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">{#
-#}{{__('footer.visitor')}}:<span id="busuanzi_value_site_uv"></span>{#
-#}</span></div>{#
+  <div class="powered-by"><i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">{#
+  #}{{ __('footer.visitor', '<span id="busuanzi_value_site_uv"></span></span>') }}{#
 #}</div>
 {% endif %}
