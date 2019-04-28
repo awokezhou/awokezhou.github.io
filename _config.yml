@@ -88,3 +88,16 @@ search:
   field: post
   format: html
   limit: 1000
+
+# Security
+encrypt:
+  enable: true
+
+# index2 generator是否包含官方的hexo-generator-index，默认true（包含）
+index2_include_index: true # defult is true
+# 配置index2 generator，可以是数组或对象
+index2_generator:
+  per_page: 10
+  order_by: -date
+  exclude:
+    - tag 加密
