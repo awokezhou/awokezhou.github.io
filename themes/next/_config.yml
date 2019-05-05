@@ -56,7 +56,7 @@ footer:
   # Hexo link (Powered by Hexo).
   powered: false
 
-  visitor: true
+  visitor: false
 
   theme:
     # Theme & scheme info link (Theme - NexT.scheme).
@@ -539,7 +539,7 @@ rating:
 # Show number of visitors to each article.
 # You can visit https://leancloud.cn get AppID and AppKey.
 leancloud_visitors:
-  enable: true
+  enable: false
   app_id: fRviEm3V5t70yJuO2anF9b3q-gzGzoHsz
   app_key: hWNhMYbcRQVolyrvqSI7fVgz
 
