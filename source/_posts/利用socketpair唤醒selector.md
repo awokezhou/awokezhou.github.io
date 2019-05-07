@@ -2,8 +2,9 @@
 title: 利用socketpair唤醒selector
 date: 2019-05-05 14:08:55
 categories:
-- Python
-tags: [开源]
+- 源码分析
+- python-kafka
+tags: [Python, Kafka]
 comments: true
 ---
 

@@ -158,6 +158,9 @@ links_layout: block
 #links_layout: inline
 #links:
   #Title: http://example.com/
+links:
+    mmmwhy: https://www.iii.run/
+    技术世界: http://www.jasongj.com/
 
 # Sidebar Avatar
 # in theme directory(source/images): /images/avatar.gif
