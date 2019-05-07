@@ -145,8 +145,8 @@ wireshark(3.0.0)打开该文件，内容如下
 ![wireshark打开抓包文件](python-kafka抓包分析/image/packet-capture-05.png)
 
 ## 报文分析
-* 抓包文件 [capture.cap](python-kafka抓包分析/download/capture.cap)
-* load_example.py运行日志 [load_example.log](python-kafka抓包分析/download/load_example.log)
+* 抓包文件 [capture.cap](/download/python-kafka抓包分析/capture.cap)
+* load_example.py运行日志 [load_example_log.txt](/download/python-kafka抓包分析/load_example_log.txt)
 
 ### 建立连接
 可看到前6个报文分别是生产者和消费者与broker的tcp三次握手，生产者源端口号为38212，消费者源端口号为38214
