@@ -188,7 +188,8 @@ def updatecache(filename, module_globals=None):
     cache[filename] = size, mtime, lines, fullname
     return lines
 ```
-由最后一行可以看到，文件内容被放在cache字典结构的第3个元素中
+由最后一行可以看到，文件内容被放在cache字典结构的第3个元素中，cache结构如图
+![回调上下文](linecache处理大文件时内存溢出/image/linecache-bigfile-memoryerror-03.png)
 
 ```python
 def clearcache():
@@ -197,7 +198,8 @@ def clearcache():
     global cache
     cache = {}
 ```
-清理缓存函数会将cache清空，因为我的操作里没有清空缓存，每读一次文件，cache里都会新增一个文件的全部内容
+清理缓存函数会将cache清空，因为我的操作里没有清空缓存，每读一次文件，cache里都会新增一个文件的全部内容，当经过几个文件处理之后，cache结构如下
+![回调上下文](linecache处理大文件时内存溢出/image/linecache-bigfile-memoryerror-04.png)
 
 ### 验证
 既然是因为缓存没有清理导致的，我修改`Batch`类，在其`__del__`方法上调用`clearcache`来释放内存，这样每次操作完一个文件后，缓存清空一次，应该就不会一直占用内存了
@@ -209,3 +211,4 @@ def __del__(self):
 
 修改代码，运行程序，结果竟然没有发生异常！内存视图如下
 ![回调上下文](linecache处理大文件时内存溢出/image/linecache-bigfile-memoryerror-02.png)
+每读一次文件，在操作结束后都会将cache清空，因此内存趋势是上下起伏
