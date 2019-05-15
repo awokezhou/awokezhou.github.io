@@ -10,7 +10,7 @@ keywords:
 author: awokezhou
 language: zh-Hans
 timezone:
- 
+
 # URL
 ## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
 url: http://yoursite.com
@@ -79,9 +79,9 @@ theme: next
 ## Docs: https://hexo.io/docs/deployment.html
 deploy:
   type: git
-  repo: https://github.com/awokezhou/awokezhou.github.io.git
+  #repo: https://awokezhou.github.com/awokezhou/awokezhou.github.io.git
+  repository: git@awokezhou.github.com:awokezhou/awokezhou.github.io.git
   branch: master
-
 # Search
 search:
   path: search.xml
