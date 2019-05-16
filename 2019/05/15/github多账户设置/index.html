@@ -385,7 +385,7 @@
 <p>假设</p>
 <ul>
 <li>两个github的用户名分别为test1、test2</li>
-<li>两个github账户绑定的邮箱分别为<a href="mailto:test1@example.com" target="_blank" rel="noopener">test1@example.com</a>和<a href="mailto:test2@example.com" target="_blank" rel="noopener">test2@example.com</a></li>
+<li>两个github账户绑定的邮箱分别为test1@example.com和test2@example.com</li>
 <li>github与windows下的用户名一致</li>
 </ul>
 <h2 id="创建ssh-key"><a href="#创建ssh-key" class="headerlink" title="创建ssh key"></a>创建ssh key</h2><p>首先进入ssh目录<br><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> ~/.ssh</span><br></pre></td></tr></table></figure></p>
@@ -396,7 +396,7 @@
 <h2 id="ssh-key-添加到ssh-agent"><a href="#ssh-key-添加到ssh-agent" class="headerlink" title="ssh key 添加到ssh-agent"></a>ssh key 添加到ssh-agent</h2><p>ssh-agent在后台启动<br><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">eval "$(ssh-agent -s)"</span><br></pre></td></tr></table></figure></p>
 <p>将两个密钥文件添加到ssh-agent<br><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ssh-add ~/.ssh/test1_id_rsa</span><br><span class="line">ssh-add ~/.ssh/test2_id_rsa</span><br></pre></td></tr></table></figure></p>
 <h2 id="配置文件config"><a href="#配置文件config" class="headerlink" title="配置文件config"></a>配置文件config</h2><p>配置或者创建并配置config文件(还是在~/.ssh/路径下)<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Host test1.github.com</span><br><span class="line">  HostName github.com</span><br><span class="line">  AddKeysToAgent yes</span><br><span class="line">  IdentityFile ~/.ssh/test1_id_rsa</span><br><span class="line"></span><br><span class="line">Host test2.github.com</span><br><span class="line">  HostName github.com</span><br><span class="line">  AddKeysToAgent yes</span><br><span class="line">  IdentityFile ~/.ssh/test2_id_rsa</span><br></pre></td></tr></table></figure></p>
-<h2 id="ssh-key-添加到github"><a href="#ssh-key-添加到github" class="headerlink" title="ssh key 添加到github"></a>ssh key 添加到github</h2><p>在test1 github页面的Settings–&gt;SSH keys and GPG keys中，点击<code>New SSH key</code>，<br>将test1_id_rsa.pub文件中的所有内容复制粘贴过去</p>
+<h2 id="ssh-key-添加到github"><a href="#ssh-key-添加到github" class="headerlink" title="ssh key 添加到github"></a>ssh key 添加到github</h2><p>在test1 github页面的Settings—&gt;SSH keys and GPG keys中，点击<code>New SSH key</code>，<br>将test1_id_rsa.pub文件中的所有内容复制粘贴过去</p>
 <p>test2同上</p>
 <h2 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h2><p>测试test1、test2<br><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ssh -T git@test1.github.com</span><br><span class="line">ssh -T git@test2.github.com</span><br></pre></td></tr></table></figure></p>
 <h2 id="clone项目到本地"><a href="#clone项目到本地" class="headerlink" title="clone项目到本地"></a>clone项目到本地</h2><p>例如test1的远程仓库中有project1<br><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git clone git@test1.github.com:test1/project1.git</span><br></pre></td></tr></table></figure></p>
@@ -434,6 +434,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/05/15/算法分析/" rel="prev" title="算法分析">
+                算法分析 <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -515,7 +519,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-count">10</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -526,7 +530,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-count">9</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -537,7 +541,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">9</span>
+                  <span class="site-state-item-count">14</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -1139,6 +1143,28 @@
   
 
   
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
 
   
 
