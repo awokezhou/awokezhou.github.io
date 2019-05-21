@@ -2,8 +2,8 @@
 title: Docker基本操作
 date: 2019-05-07 11:10:23
 categories:
-- 命令
-tags: [Docker]
+- docker
+tags: [Docker, 命令]
 comments: true
 ---
 
