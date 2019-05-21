@@ -94,10 +94,11 @@
     <url>%2F2019%2F05%2F07%2Fdocker%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C%2F</url>
     <content type="text"><![CDATA[记录一些常用的docker命令 基本查看命令查看所有正在运行的容器1docker ps 查看所有容器1docker ps -a 查看所有镜像1docker images 容器基本操作从镜像文件创建一个容器12345docker run [options] image# -d 后台运行# -it ... /bin/bash 终端连接# --name 设置容器名称# --net=host/bridege... 设置网络 启动某个已存在的容器1docker start id/name 停止某个容器1docker stop id/name 删除某个容器1docker rm id/name 停止所有容器1docker stop $(docker ps -a -q) 删除所有容器1docker rm $(docker ps -a -q) 连接容器1docker exec -it id/name /bin/bash 保存容器的修改，提交到镜像1docker commit id name 保存容器为文件12docker export id &gt; name# docker export 3b86889153b0 &gt; dk-test.tar 加载容器文件12docker import name newname# docker import dk-test.tar dk-test-v2 镜像操作加载镜像1docker load file_name &lt; image_name 保存镜像到文件1docker save id &gt; name 删除镜像1docker rmi id]]></content>
       <categories>
-        <category>命令</category>
+        <category>docker</category>
       </categories>
       <tags>
         <tag>Docker</tag>
+        <tag>命令</tag>
       </tags>
   </entry>
   <entry>
@@ -129,7 +130,7 @@
   <entry>
     <title><![CDATA[加密测试]]></title>
     <url>%2F2019%2F04%2F28%2F%E5%8A%A0%E5%AF%86%E6%B5%8B%E8%AF%95%2F</url>
-    <content type="text"><![CDATA[请输入密码 Incorrect Password! No content to display! U2FsdGVkX19tjGStkKqjYkMwkrjkEP4roE3gNtQ0icUKBuIUWpKTTLKaYDiwcwX1P2MEL3DD+r4mqgnY7k075fDoq8thnq+Fwd+TSXQ1lm+5/hOVCA1OQsEecYoy8IWRTnN5Pn+RsYfFzRHEJu8QjcWeDoZBEYEgcj1b3upZ7GaS6hIRDabRL80ThZSN030Qp/7PNjWVROQsDT3i8frLg92B+hP96X/uexh/cto8ZMSuMTBAu2+qu0ozeFnegIqT0teea/wgxfN/NEXg41Hw8D1ZLrUxEiiclQg77+0uGoRFtPZOUa1i9rMAp0OeBXqQYocMc+RRoKve2ATfypcCHRlo2j00gquQd2s/x7IqcbbeVHvsrrUrJmWuwzyMLNwZavYbQcqBHNf1Jm1dQRcY/g==]]></content>
+    <content type="text"><![CDATA[请输入密码 Incorrect Password! No content to display! U2FsdGVkX19MZYwmygBKyLIBZoQUgLs7wLCALccSNnnJlB4TXeASETeZMDHn31Ju5ASZgLm9bw/CCxGaSzOhhttO4ezkFxyFuvkbvFZxNLAQxl51RF0ubfw8m0/3d0zJcvyXHf66kTydKkWaEtjjeuiox8YNo6GCu/PMwL3dNQBtQS57Tl2AjKZoT1x8RfOzhv92zuCfFDa8NU3bR0RwJtj+g9elTNwnIMzYk0Sn9rL1U6zQE9ehoEd990+VIEOAfSMxuL913Wl+0ISGMqJVBhBYqhsJdEYWfcrGUxnXnfT+3rpTgwzDXEEBW7P8AYwev99JyD/xpIdLyvWINANKwTyLdwUPSn6KLro3AAfhzH7N1Cfbp35QExnFGvrHOWJYFE2COlZ96zq1z0vipJXiTQ==]]></content>
       <tags>
         <tag>加密</tag>
       </tags>
