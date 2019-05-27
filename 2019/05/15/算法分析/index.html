@@ -92,7 +92,9 @@
 <meta property="og:image" content="http://yoursite.com/2019/05/15/算法分析/image/algorithm-analysis-03.png">
 <meta property="og:image" content="http://yoursite.com/2019/05/15/算法分析/image/algorithm-analysis-04.png">
 <meta property="og:image" content="http://yoursite.com/2019/05/15/算法分析/image/algorithm-analysis-05.png">
-<meta property="og:updated_time" content="2019-05-16T03:34:26.680Z">
+<meta property="og:image" content="http://yoursite.com/2019/05/15/算法分析/image/algorithm-analysis-06.png">
+<meta property="og:image" content="http://yoursite.com/2019/05/15/算法分析/image/algorithm-analysis-07.png">
+<meta property="og:updated_time" content="2019-05-27T03:29:43.524Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="算法分析">
 <meta name="twitter:description" content="课程内容主要分为两个部分：算法分析和算法设计。算法分析是理论研究，研究计算机程序的性能和资源利用，尤其关注性能，也考量其他方面如通信、存储(内存、磁盘)等 排序算法例子输入一组序列 a_{1},a_{2},...,a_{n}，按照从小到大的顺序排列后输出 使用插入排序算法来完成，伪代码如下1234567For j=2 to n    key = A[j]    i = j-1    while i">
@@ -465,7 +467,18 @@
 <li>把排好序的两个表并归</li>
 </ol>
 <p>关键的子程序在于并归，下图中是两个已经排好序的数组，首先判断两张表中最小元素是多少，最小元素一定在两张表之首；然后将最小的元素拿出来<br><img src="/2019/05/15/算法分析/image/algorithm-analysis-04.png" alt="回调上下文"><br>重复以上步骤，每次从两个表头取出最小的元素排在新数组的后面<br><img src="/2019/05/15/算法分析/image/algorithm-analysis-05.png" alt="回调上下文"></p>
-<h3 id="分析性能"><a href="#分析性能" class="headerlink" title="分析性能"></a>分析性能</h3><p>并归算法的$T(n)$是多少？该算法的3个步骤中，第1步只需要常数时间；第2步可以</p>
+<h3 id="分析性能"><a href="#分析性能" class="headerlink" title="分析性能"></a>分析性能</h3><p>并归算法的$T(n)$是多少？该算法的3个步骤中，第1步只需要常数时间；第2步可以描述成<br>\begin{equation}<br>T(n) = T(n/2向下取整) + T(n/2向上取整) = 2T(n/2)<br>\end{equation}</p>
+<p>第3步并归两张已排序好的表，耗时为$\Theta(n)$</p>
+<p>综上，并归排序的总耗时$T(n)$为</p>
+<script type="math/tex; mode=display">
+T(n)=\left\{
+    \begin{aligned}
+        &\Theta(1), &if \quad n=1 \\
+        &2T(n/2) + \Theta(n), &if \quad n>1\\
+    \end{aligned}
+\right.</script><p>该表达式用递归树方法分析<br><img src="/2019/05/15/算法分析/image/algorithm-analysis-06.png" alt="回调上下文"></p>
+<p>最终可以分解为一个递归树<br><img src="/2019/05/15/算法分析/image/algorithm-analysis-07.png" alt="回调上下文"><br>树高为$\log_{2}n$，叶子节点最大为$n$，将树上所有层级耗时相加，总和为<br>\begin{equation}<br>C_{n} \log_{2}n + \Theta(n) = \Theta(n\log_{2}n)<br>\end{equation}</p>
+<p>$\Theta(n\log_{2}n)$比$\Theta(n^{2})$快</p>
 
       
     </div>
