@@ -1,7 +1,7 @@
 ---
 title: github多账户设置
 date: 2019-05-15 10:28:45
-tags:
+tags: [github]
 ---
 
 如果有两个github账户，要在windows下同时操作它们，和单账户的配置有些不同
