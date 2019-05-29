@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2019-05-28T09:05:23.904Z</updated>
+  <updated>2019-05-29T09:38:10.952Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -15,6 +15,29 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>一些链接</title>
+    <link href="http://yoursite.com/2019/05/29/%E4%B8%80%E4%BA%9B%E9%93%BE%E6%8E%A5/"/>
+    <id>http://yoursite.com/2019/05/29/一些链接/</id>
+    <published>2019-05-29T09:34:33.000Z</published>
+    <updated>2019-05-29T09:38:10.952Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="嵌入式开发"><a href="#嵌入式开发" class="headerlink" title="嵌入式开发"></a>嵌入式开发</h2><p><a href="http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.dui0472m/vfb1478006546674.html#" target="_blank" rel="noopener">ARM Developer Document</a></p><h2 id="Python"><a href="#Python" class="headerlink" title="Python"></a>Python</h2><p><a href="http://pandas.pydata.org/" target="_blank" rel="noopener">Pandas官方文档</a></p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h2 id=&quot;嵌入式开发&quot;&gt;&lt;a href=&quot;#嵌入式开发&quot; class=&quot;headerlink&quot; title=&quot;嵌入式开发&quot;&gt;&lt;/a&gt;嵌入式开发&lt;/h2&gt;&lt;p&gt;&lt;a href=&quot;http://infocenter.arm.com/help/index.jsp?topic=/c
+      
+    
+    </summary>
+    
+      <category term="其他" scheme="http://yoursite.com/categories/%E5%85%B6%E4%BB%96/"/>
+    
+    
+  </entry>
   
   <entry>
     <title>杭州市地铁乘客流量预测</title>
@@ -57,11 +80,15 @@
     <link href="http://yoursite.com/2019/05/27/panda%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C/"/>
     <id>http://yoursite.com/2019/05/27/panda基本操作/</id>
     <published>2019-05-27T06:35:10.000Z</published>
-    <updated>2019-05-27T06:35:10.345Z</updated>
+    <updated>2019-05-29T09:35:56.176Z</updated>
     
     <summary type="html">
     
     </summary>
+    
+      <category term="Python" scheme="http://yoursite.com/categories/Python/"/>
+    
+      <category term="Pandas" scheme="http://yoursite.com/categories/Python/Pandas/"/>
     
     
   </entry>
@@ -196,7 +223,7 @@
     <link href="http://yoursite.com/2019/05/15/github%E5%A4%9A%E8%B4%A6%E6%88%B7%E8%AE%BE%E7%BD%AE/"/>
     <id>http://yoursite.com/2019/05/15/github多账户设置/</id>
     <published>2019-05-15T02:28:45.000Z</published>
-    <updated>2019-05-15T02:45:51.845Z</updated>
+    <updated>2019-05-29T09:35:28.014Z</updated>
     
     <content type="html"><![CDATA[<p>如果有两个github账户，要在windows下同时操作它们，和单账户的配置有些不同</p><p>假设</p><ul><li>两个github的用户名分别为test1、test2</li><li>两个github账户绑定的邮箱分别为test1@example.com和test2@example.com</li><li>github与windows下的用户名一致</li></ul><h2 id="创建ssh-key"><a href="#创建ssh-key" class="headerlink" title="创建ssh key"></a>创建ssh key</h2><p>首先进入ssh目录<br><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> ~/.ssh</span><br></pre></td></tr></table></figure></p><p>为test1创建ssk key<br><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh-keygen -t rsa -b <span class="number">4096</span> -C "test1@example.com"</span><br></pre></td></tr></table></figure></p><p>输入test1保存的密钥文件名称<br><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Enter a file <span class="keyword">in</span> which to save the key (/Users/you/.ssh/id_rsa): [Press enter]</span><br><span class="line"># 这里输入 test1_id_rsa</span><br></pre></td></tr></table></figure></p><p>输入密码<br><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Enter passphrase (empty <span class="keyword">for</span> no passphrase): [<span class="built_in">Type</span> a passphrase]</span><br><span class="line">Enter same passphrase again: [<span class="built_in">Type</span> passphrase again]</span><br></pre></td></tr></table></figure></p><p>test2的ssk key创建步骤同上，保存的密钥文件为test2_id_rsa</p><h2 id="ssh-key-添加到ssh-agent"><a href="#ssh-key-添加到ssh-agent" class="headerlink" title="ssh key 添加到ssh-agent"></a>ssh key 添加到ssh-agent</h2><p>ssh-agent在后台启动<br><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">eval "$(ssh-agent -s)"</span><br></pre></td></tr></table></figure></p><p>将两个密钥文件添加到ssh-agent<br><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ssh-add ~/.ssh/test1_id_rsa</span><br><span class="line">ssh-add ~/.ssh/test2_id_rsa</span><br></pre></td></tr></table></figure></p><h2 id="配置文件config"><a href="#配置文件config" class="headerlink" title="配置文件config"></a>配置文件config</h2><p>配置或者创建并配置config文件(还是在~/.ssh/路径下)<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Host test1.github.com</span><br><span class="line">  HostName github.com</span><br><span class="line">  AddKeysToAgent yes</span><br><span class="line">  IdentityFile ~/.ssh/test1_id_rsa</span><br><span class="line"></span><br><span class="line">Host test2.github.com</span><br><span class="line">  HostName github.com</span><br><span class="line">  AddKeysToAgent yes</span><br><span class="line">  IdentityFile ~/.ssh/test2_id_rsa</span><br></pre></td></tr></table></figure></p><h2 id="ssh-key-添加到github"><a href="#ssh-key-添加到github" class="headerlink" title="ssh key 添加到github"></a>ssh key 添加到github</h2><p>在test1 github页面的Settings—&gt;SSH keys and GPG keys中，点击<code>New SSH key</code>，<br>将test1_id_rsa.pub文件中的所有内容复制粘贴过去</p><p>test2同上</p><h2 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h2><p>测试test1、test2<br><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ssh -T git@test1.github.com</span><br><span class="line">ssh -T git@test2.github.com</span><br></pre></td></tr></table></figure></p><h2 id="clone项目到本地"><a href="#clone项目到本地" class="headerlink" title="clone项目到本地"></a>clone项目到本地</h2><p>例如test1的远程仓库中有project1<br><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git clone git@test1.github.com:test1/project1.git</span><br></pre></td></tr></table></figure></p><p>第一个test1是该账户在windows上配置的config文件中的HostName，后一个test1是github上的用户名</p>]]></content>
     
@@ -213,6 +240,8 @@
     
     </summary>
     
+    
+      <category term="github" scheme="http://yoursite.com/tags/github/"/>
     
   </entry>
   
@@ -379,7 +408,7 @@
     <published>2019-04-28T07:41:13.000Z</published>
     <updated>2019-05-15T02:13:26.560Z</updated>
     
-    <content type="html"><![CDATA[<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script><div id="hbe-security">  <div class="hbe-input-container">  <input type="password" class="hbe-form-control" id="pass" placeholder="请输入密码">    <label for="pass">请输入密码</label>    <div class="bottom-line"></div>  </div></div><div id="decryptionError" style="display: none;">Incorrect Password!</div><div id="noContentError" style="display: none;">No content to display!</div><div id="encrypt-blog" style="display:none">U2FsdGVkX1+aNKQbukeCg3/IGA0aWumlMaiBj6ubGcWYksRtCCGcUB1WYDiIBOaOTYLXvy+EJdCruymkv2jT7ie1ElCu0eOvKnFcWk8eVLMabfSVC/F8LKBr+1taGspd4XHHhq31fRgqXpXtU3jSKbugW0l3l4DSktFwTCM/GmD51Kq9os/7wu+WMFn0TYI9MHcAKF3GdzAlj0RFWT/6gD4/ZO1CO2aY4E1SI0NijQeEwu2tWDiDbLl/p5mEcUjQQraIoyxxWvlroWHWNPmlmJRRDJlVtxVJresCauLHHrUPuM5j4k8lwq8fIAyn7SN8nlmUe7/stnuhyI8KAdRuBkrAjghUAVaFIO9p39SH/nzi3l1CIC8LBOGYSQHL4NE3NFkopFgAfWg4MEDIpZpdbw==</div><script src="/lib/crypto-js.js"></script><script src="/lib/blog-encrypt.js"></script><link href="/css/blog-encrypt.css" rel="stylesheet" type="text/css">]]></content>
+    <content type="html"><![CDATA[<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script><div id="hbe-security">  <div class="hbe-input-container">  <input type="password" class="hbe-form-control" id="pass" placeholder="请输入密码" />    <label for="pass">请输入密码</label>    <div class="bottom-line"></div>  </div></div><div id="decryptionError" style="display: none;">Incorrect Password!</div><div id="noContentError" style="display: none;">No content to display!</div><div id="encrypt-blog" style="display:none">U2FsdGVkX19cy3+gkDTdmhmYXQ1K+ZscvoYdNqveDyLmUSWZYlobkJ65DYUS6n4UbI5uvCCQLryUaonVjhHMp2NV3XYZdXc1JPzcRy5AvnsceXUemh4XqzU0d02bko1tEQZQ4KufcngWzQtFfS6u4RVnuc5u1WUj6jPNE3e34d71JsmMDCelJWJLKULOqgSZkZvbzcuh5I/EB07OZFweQvHHn6PBbC6Sh/CCx76nSOYO+WorlXUXQZJKUXzKpi/QLDBAM5k9CuZ+NyHe/mUBCnQ/jRvAsQZIkoOopEWyubUXfY7Db+2YBJTWbbVbj7C4NyU+UUviIqwMrksLt14mZ+e9hsY1fLO5ajjjjEcFX8WMlAjOxbLCfc8QyomNs27mx+lWXL6cEkuwtEPP1C5U5w==</div><script src="/lib/crypto-js.js"></script><script src="/lib/blog-encrypt.js"></script><link href="/css/blog-encrypt.css" rel="stylesheet" type="text/css">]]></content>
     
     <summary type="html">
     
