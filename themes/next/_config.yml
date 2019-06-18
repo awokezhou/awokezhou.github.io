@@ -159,9 +159,14 @@ links_layout: block
 #links:
   #Title: http://example.com/
 links:
+    阮一峰: http://www.ruanyifeng.com/blog/
+    Dave Cheney: https://dave.cheney.net/about/
+    codingsans: https://codingsans.com/
+    openAI: https://www.openai.com/
+    linuxer - 蜗窝科技: http://www.wowotech.net/author/3/
     mmmwhy: https://www.iii.run/
     技术世界: http://www.jasongj.com/
-    阮一峰: http://www.ruanyifeng.com/blog/
+    Jason Brownlee: https://machinelearningmastery.com/
 
 # Sidebar Avatar
 # in theme directory(source/images): /images/avatar.gif
