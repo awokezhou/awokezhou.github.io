@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2019-05-30T07:54:35.962Z</updated>
+  <updated>2019-06-20T08:42:45.860Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -15,6 +15,30 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>每月见闻201906</title>
+    <link href="http://yoursite.com/2019/06/20/%E6%AF%8F%E6%9C%88%E8%A7%81%E9%97%BB201906/"/>
+    <id>http://yoursite.com/2019/06/20/每月见闻201906/</id>
+    <published>2019-06-20T05:45:09.000Z</published>
+    <updated>2019-06-20T08:42:45.860Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="文章"><a href="#文章" class="headerlink" title="文章"></a>文章</h1><ul><li><a href="https://benchmarksgame-team.pages.debian.net/benchmarksgame/" target="_blank" rel="noopener">Benchmarks Game</a></li></ul><h1 id="视频"><a href="#视频" class="headerlink" title="视频"></a>视频</h1><ul><li><a href="https://www.bilibili.com/video/av55498503" target="_blank" rel="noopener">vim使用、配置及插件介绍</a></li></ul><iframe width="800" height="600" src="//player.bilibili.com/player.html?aid=55498503&cid=97032762&page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe><iframe width="800" height="600" src="//player.bilibili.com/player.html?aid=55664166&cid=97315421&page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe><p>视频中对vim的常用用法做了比较详细的介绍，满满的都是干货。例如一些常用的设置、键位映射、块操作、动作录制、颜色方案、分屏操作、文件目录、Markdown支持等</p><ul><li><a href="https://www.bilibili.com/video/av55498503" target="_blank" rel="noopener">Deep Work</a></li></ul><h1 id="资源"><a href="#资源" class="headerlink" title="资源"></a>资源</h1><ul><li>(Machine Learning Mastery)[<a href="https://machinelearningmastery.com/blog/" target="_blank" rel="noopener">https://machinelearningmastery.com/blog/</a>]<br>Jason Brownlee, PhD.(杰森·布朗利博士)创建的一个社区，帮助开发者学习机器学习相关内容，里面有很多方面的内容。杰森·布朗利本人在机器学习领誉造诣很深</li></ul><h1 id="工具"><a href="#工具" class="headerlink" title="工具"></a>工具</h1>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h1 id=&quot;文章&quot;&gt;&lt;a href=&quot;#文章&quot; class=&quot;headerlink&quot; title=&quot;文章&quot;&gt;&lt;/a&gt;文章&lt;/h1&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;https://benchmarksgame-team.pages.debian.net/benchmarks
+      
+    
+    </summary>
+    
+      <category term="每月见闻" scheme="http://yoursite.com/categories/%E6%AF%8F%E6%9C%88%E8%A7%81%E9%97%BB/"/>
+    
+    
+  </entry>
   
   <entry>
     <title>一些链接</title>
@@ -408,7 +432,7 @@
     <published>2019-04-28T07:41:13.000Z</published>
     <updated>2019-05-15T02:13:26.560Z</updated>
     
-    <content type="html"><![CDATA[<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script><div id="hbe-security">  <div class="hbe-input-container">  <input type="password" class="hbe-form-control" id="pass" placeholder="请输入密码" />    <label for="pass">请输入密码</label>    <div class="bottom-line"></div>  </div></div><div id="decryptionError" style="display: none;">Incorrect Password!</div><div id="noContentError" style="display: none;">No content to display!</div><div id="encrypt-blog" style="display:none">U2FsdGVkX19wRwjTLyZkUAF+jEzdrocVyOlH+JuJ0Bb9y78B6FkQAanmYLdbPb3IyJaxugdyLTEf0cxpnwEzCCi8FIEB4aHo+KcQDvyjTH0QURt9L7ImxUCANhCFPPB/VNiaMfkdymHqjzNC3brvuF8Px/c1AwWEPIgWY/4e3gHSb6jEl1xvmXgKpAPBXr6uLq6AbPjYj3SQKzdPYFl6Gt2wMr/WpKt3Lx9vEQ/8nhnPaafqCeuOrYZmDNWxJ7pJAFCRLu05bpSbc/Wfo4BQCjY+PWi1fbYQgqUv3YaviPnlyZWY2QtUiinTcgEn8jlLBS/JzRqYzxopNFutcc15ys0N40NZ0rTxAkqfnPSxMujyha04XGKtg5D0TICkxQtLnLlzUPw5slQWEY2MIyJ1+A==</div><script src="/lib/crypto-js.js"></script><script src="/lib/blog-encrypt.js"></script><link href="/css/blog-encrypt.css" rel="stylesheet" type="text/css">]]></content>
+    <content type="html"><![CDATA[<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script><div id="hbe-security">  <div class="hbe-input-container">  <input type="password" class="hbe-form-control" id="pass" placeholder="请输入密码" />    <label for="pass">请输入密码</label>    <div class="bottom-line"></div>  </div></div><div id="decryptionError" style="display: none;">Incorrect Password!</div><div id="noContentError" style="display: none;">No content to display!</div><div id="encrypt-blog" style="display:none">U2FsdGVkX19oLpKDly+Yvc+y5dz4TTjK/T9/pw+24x8GIC0hgTF56qwAmYWx4xTMRR1fl526yTY2xuGKLzLH3HFy5aYLDuvHuFqHgrxLuEyEvtrh0/I55zJJv3+IGuqWyP5zh5U22nawIe7g6+Hp0VpguMmNEOWRKJVp0J6IwMODXrL4Yq3v72E6zon5m1Il8zQG1EBYyqlYCOZfIVQeHUoguORlan2mkfkI+kzBI5Rsdn/pHWT8iULfw4BSuO1adUJxdvtZwa5ixXSstE2RSycKAy461rdN5RgFaUXc/SHO6ZeGwenkaz2S1UerthaLFH71jhgJa7F8xfumgKfdGhmeu5TZ9I3OsmMeJG8YYyNU9OGRfMKdTO/EvOFyTc8IzQWJLysbjXvAw+113Dmgzg==</div><script src="/lib/crypto-js.js"></script><script src="/lib/blog-encrypt.js"></script><link href="/css/blog-encrypt.css" rel="stylesheet" type="text/css">]]></content>
     
     <summary type="html">
     
