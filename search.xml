@@ -1,8 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title><![CDATA[make编译]]></title>
+    <url>%2F2019%2F06%2F27%2Fmake%E7%BC%96%E8%AF%91%2F</url>
+    <content type="text"><![CDATA[make命令的一些解释 make -j 并行编译在多核CPU上利用”-j”参数并行编译，以加快编译速度1make -j4 /* 4个线程同时执行 */]]></content>
+      <categories>
+        <category>嵌入式</category>
+        <category>编译</category>
+      </categories>
+      <tags>
+        <tag>命令</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[Elasticsearch条件query]]></title>
+    <url>%2F2019%2F06%2F25%2FElasticsearch%E6%9D%A1%E4%BB%B6query%2F</url>
+    <content type="text"><![CDATA[按照时间升序降序query1234567891011121314151617181920212223242526def query_byid(self, id, size, reverse_order=False): if reverse_order == True: _order = 'desc' else: _order = 'asc' dsl = &#123; "query": &#123; "bool":&#123; "must": [ &#123;"match":&#123;"id":id&#125;&#125;, ], &#125; &#125;, "sort": [ &#123; "service.data.time" : &#123;"order" : _order&#125;&#125;, "_score" ], "_source": [ "service.data", "deviceId" ], "size":size, &#125; raw_data = self.query(dsl) raw_list = raw_data["hits"]["hits"] return raw_list]]></content>
+      <categories>
+        <category>数据库</category>
+        <category>Elasticsearch</category>
+      </categories>
+      <tags>
+        <tag>Elasticsearch</tag>
+      </tags>
+  </entry>
+  <entry>
     <title><![CDATA[好点子.md]]></title>
-    <url>%2F2019%2F06%2F25%2F%E5%A5%BD%E7%82%B9%E5%AD%90-md%2F</url>
+    <url>%2F2019%2F06%2F25%2F%E5%A5%BD%E7%82%B9%E5%AD%90%2F</url>
     <content type="text"><![CDATA[好点子记录一些自己想到的、或者与别人聊天发现的好玩的创意点，将来可以做着玩玩 移动的Wi-Fi放大器利用一些可移动的智能硬件，例如小车、扫地机器人，将Wi-Fi放大器放入其中，对其移动逻辑进行自定义编程，实现人在哪里，移动Wi-Fi放大器就在哪里该放大器作为家庭主Wi-Fi的中继 定制化的家庭网关将路由器刷机，或者用开发板定制自己的网关逻辑，可实现以下功能 广告过滤：内嵌广告过滤算法，识别出广告数据包，并从视频流中剔除 远程监控：内置一个可供外网访问的服务，与手机APP交互，实现远程视频监控 自动下载：自动爬取电影或者电视剧资源列表，下载到移动硬盘，可提前创建预约任务 3D模型扫描生成工具最近新房装修，研究了几款平面设计的软件，这些软件大都免费安装，但是在设计布局的时候，需要很多的家具模板都需要付费，或者根本没有可在手机APP上开发一款使用摄像头扫描真实物体生成3D模型的软件]]></content>
       <categories>
         <category>嵌入式</category>
@@ -187,7 +211,7 @@
   <entry>
     <title><![CDATA[加密测试]]></title>
     <url>%2F2019%2F04%2F28%2F%E5%8A%A0%E5%AF%86%E6%B5%8B%E8%AF%95%2F</url>
-    <content type="text"><![CDATA[请输入密码 Incorrect Password! No content to display! U2FsdGVkX19oQGEPzKUspIYP4YQm2ijX+w8jrPeUmfwuAjo8P6+eZ7Kerf0+pygxxWaL21AVSf4n5Jg4FKyIyPpLgSL5DL3qu1za2dfExpDJUQyMhRKmPcx7XlWdII2cGcFEJ/NWrGomS7dIEcdaWTWA7NC3AOVfgMT3UojHBPHiluCACiA7ODPq19gIVdb/e8uJVORxK8+07MB1lhVulVz8mDmphu4aUYZkfExhicphWiSJv9ssAlV8DlmFter04z4yerR/gz82816q7pCx8q1r7EEqTuWiD8bupmFcdeJhndeaN2f+YXKe0HioDTzpTLmP55Rfg05oPzxMvYAOEsi9BNEhDi30cXkQygZCLIOagLcvbGtLyrREln+r0vmsX7TIaJ0obbg2YXBuUQw6/g==]]></content>
+    <content type="text"><![CDATA[请输入密码 Incorrect Password! No content to display! U2FsdGVkX1/ERVvgqb42bHxq0MBa314Uer9OKKUQpfEAEBZVy6Z5iH832r9zrhJyzErAjEq4HUbSrsuL0uU9EoLTrDLJTsj8kEqy6Ia+NYqFQ3IL+a+ZpLZpLJCbj9oWzOITTlOvzOQCz0kTcVf5jou0y3OrDs4G2mIhb1I4KZt6bUyjQJ4f3AoHY/E5AKO34H8nBIoXFCZCj3Gb8Il+cya/+Lh5Hg4UDQwnAgKyrq8Xg9LSFzSpMv4LP157Yx8a/C/LHhG1ECE4f6F9RpnjlFZnzVOcD8tS/Uks2GYR/JH/G0Psq7Z1iTHjuwiV0ePkjcbrp7v0z8w5RDzkaIWDr8s4WOljO9zOD3KNk73RnwQ9TCaMOFVw5HLJwP45lGw/hyq64MxQeufKvAnfGJpGkg==]]></content>
       <tags>
         <tag>加密</tag>
       </tags>

@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2019-06-25T05:55:26.052Z</updated>
+  <updated>2019-06-27T03:06:29.725Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -17,9 +17,64 @@
   <generator uri="http://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>make编译</title>
+    <link href="http://yoursite.com/2019/06/27/make%E7%BC%96%E8%AF%91/"/>
+    <id>http://yoursite.com/2019/06/27/make编译/</id>
+    <published>2019-06-27T01:34:16.000Z</published>
+    <updated>2019-06-27T03:06:29.725Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="make命令的一些解释"><a href="#make命令的一些解释" class="headerlink" title="make命令的一些解释"></a>make命令的一些解释</h2><ul><li>make -j 并行编译<br>在多核CPU上利用”-j”参数并行编译，以加快编译速度<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">make -j4    /* 4个线程同时执行 */</span><br></pre></td></tr></table></figure></li></ul>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h2 id=&quot;make命令的一些解释&quot;&gt;&lt;a href=&quot;#make命令的一些解释&quot; class=&quot;headerlink&quot; title=&quot;make命令的一些解释&quot;&gt;&lt;/a&gt;make命令的一些解释&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;make -j 并行编译&lt;br&gt;在多核CPU上利用”-j
+      
+    
+    </summary>
+    
+      <category term="嵌入式" scheme="http://yoursite.com/categories/%E5%B5%8C%E5%85%A5%E5%BC%8F/"/>
+    
+      <category term="编译" scheme="http://yoursite.com/categories/%E5%B5%8C%E5%85%A5%E5%BC%8F/%E7%BC%96%E8%AF%91/"/>
+    
+    
+      <category term="命令" scheme="http://yoursite.com/tags/%E5%91%BD%E4%BB%A4/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Elasticsearch条件query</title>
+    <link href="http://yoursite.com/2019/06/25/Elasticsearch%E6%9D%A1%E4%BB%B6query/"/>
+    <id>http://yoursite.com/2019/06/25/Elasticsearch条件query/</id>
+    <published>2019-06-25T09:10:30.000Z</published>
+    <updated>2019-06-25T09:22:50.625Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="按照时间升序降序query"><a href="#按照时间升序降序query" class="headerlink" title="按照时间升序降序query"></a>按照时间升序降序query</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">query_byid</span><span class="params">(self, id, size, reverse_order=False)</span>:</span></span><br><span class="line">        <span class="keyword">if</span> reverse_order == <span class="literal">True</span>:</span><br><span class="line">            _order = <span class="string">'desc'</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            _order = <span class="string">'asc'</span></span><br><span class="line">        dsl = &#123;</span><br><span class="line">            <span class="string">"query"</span>: &#123;</span><br><span class="line">                <span class="string">"bool"</span>:&#123;</span><br><span class="line">                    <span class="string">"must"</span>: [</span><br><span class="line">                        &#123;<span class="string">"match"</span>:&#123;<span class="string">"id"</span>:id&#125;&#125;,</span><br><span class="line">                    ],</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;,</span><br><span class="line">            <span class="string">"sort"</span>: [</span><br><span class="line">                &#123; <span class="string">"service.data.time"</span> : &#123;<span class="string">"order"</span> : _order&#125;&#125;,</span><br><span class="line">                <span class="string">"_score"</span></span><br><span class="line">            ],</span><br><span class="line">            <span class="string">"_source"</span>: [</span><br><span class="line">                <span class="string">"service.data"</span>,</span><br><span class="line">                <span class="string">"deviceId"</span></span><br><span class="line">            ],</span><br><span class="line">            <span class="string">"size"</span>:size,</span><br><span class="line">        &#125;</span><br><span class="line">        raw_data = self.query(dsl)</span><br><span class="line">        raw_list = raw_data[<span class="string">"hits"</span>][<span class="string">"hits"</span>]</span><br><span class="line">        <span class="keyword">return</span> raw_list</span><br></pre></td></tr></table></figure>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h2 id=&quot;按照时间升序降序query&quot;&gt;&lt;a href=&quot;#按照时间升序降序query&quot; class=&quot;headerlink&quot; title=&quot;按照时间升序降序query&quot;&gt;&lt;/a&gt;按照时间升序降序query&lt;/h2&gt;&lt;figure class=&quot;highlight pyth
+      
+    
+    </summary>
+    
+      <category term="数据库" scheme="http://yoursite.com/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
+    
+      <category term="Elasticsearch" scheme="http://yoursite.com/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/Elasticsearch/"/>
+    
+    
+      <category term="Elasticsearch" scheme="http://yoursite.com/tags/Elasticsearch/"/>
+    
+  </entry>
+  
+  <entry>
     <title>好点子.md</title>
-    <link href="http://yoursite.com/2019/06/25/%E5%A5%BD%E7%82%B9%E5%AD%90-md/"/>
-    <id>http://yoursite.com/2019/06/25/好点子-md/</id>
+    <link href="http://yoursite.com/2019/06/25/%E5%A5%BD%E7%82%B9%E5%AD%90/"/>
+    <id>http://yoursite.com/2019/06/25/好点子/</id>
     <published>2019-06-25T05:38:48.000Z</published>
     <updated>2019-06-25T05:55:26.052Z</updated>
     
@@ -460,7 +515,7 @@
     <published>2019-04-28T07:41:13.000Z</published>
     <updated>2019-05-15T02:13:26.560Z</updated>
     
-    <content type="html"><![CDATA[<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script><div id="hbe-security">  <div class="hbe-input-container">  <input type="password" class="hbe-form-control" id="pass" placeholder="请输入密码" />    <label for="pass">请输入密码</label>    <div class="bottom-line"></div>  </div></div><div id="decryptionError" style="display: none;">Incorrect Password!</div><div id="noContentError" style="display: none;">No content to display!</div><div id="encrypt-blog" style="display:none">U2FsdGVkX19oQGEPzKUspIYP4YQm2ijX+w8jrPeUmfwuAjo8P6+eZ7Kerf0+pygxxWaL21AVSf4n5Jg4FKyIyPpLgSL5DL3qu1za2dfExpDJUQyMhRKmPcx7XlWdII2cGcFEJ/NWrGomS7dIEcdaWTWA7NC3AOVfgMT3UojHBPHiluCACiA7ODPq19gIVdb/e8uJVORxK8+07MB1lhVulVz8mDmphu4aUYZkfExhicphWiSJv9ssAlV8DlmFter04z4yerR/gz82816q7pCx8q1r7EEqTuWiD8bupmFcdeJhndeaN2f+YXKe0HioDTzpTLmP55Rfg05oPzxMvYAOEsi9BNEhDi30cXkQygZCLIOagLcvbGtLyrREln+r0vmsX7TIaJ0obbg2YXBuUQw6/g==</div><script src="/lib/crypto-js.js"></script><script src="/lib/blog-encrypt.js"></script><link href="/css/blog-encrypt.css" rel="stylesheet" type="text/css">]]></content>
+    <content type="html"><![CDATA[<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script><div id="hbe-security">  <div class="hbe-input-container">  <input type="password" class="hbe-form-control" id="pass" placeholder="请输入密码" />    <label for="pass">请输入密码</label>    <div class="bottom-line"></div>  </div></div><div id="decryptionError" style="display: none;">Incorrect Password!</div><div id="noContentError" style="display: none;">No content to display!</div><div id="encrypt-blog" style="display:none">U2FsdGVkX1/ERVvgqb42bHxq0MBa314Uer9OKKUQpfEAEBZVy6Z5iH832r9zrhJyzErAjEq4HUbSrsuL0uU9EoLTrDLJTsj8kEqy6Ia+NYqFQ3IL+a+ZpLZpLJCbj9oWzOITTlOvzOQCz0kTcVf5jou0y3OrDs4G2mIhb1I4KZt6bUyjQJ4f3AoHY/E5AKO34H8nBIoXFCZCj3Gb8Il+cya/+Lh5Hg4UDQwnAgKyrq8Xg9LSFzSpMv4LP157Yx8a/C/LHhG1ECE4f6F9RpnjlFZnzVOcD8tS/Uks2GYR/JH/G0Psq7Z1iTHjuwiV0ePkjcbrp7v0z8w5RDzkaIWDr8s4WOljO9zOD3KNk73RnwQ9TCaMOFVw5HLJwP45lGw/hyq64MxQeufKvAnfGJpGkg==</div><script src="/lib/crypto-js.js"></script><script src="/lib/blog-encrypt.js"></script><link href="/css/blog-encrypt.css" rel="stylesheet" type="text/css">]]></content>
     
     <summary type="html">
     
