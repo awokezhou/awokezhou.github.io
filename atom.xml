@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2019-06-27T03:06:29.725Z</updated>
+  <updated>2019-07-04T01:09:15.559Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -15,6 +15,30 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>每月见闻201907</title>
+    <link href="http://yoursite.com/2019/07/04/%E6%AF%8F%E6%9C%88%E8%A7%81%E9%97%BB201907/"/>
+    <id>http://yoursite.com/2019/07/04/每月见闻201907/</id>
+    <published>2019-07-04T00:58:06.000Z</published>
+    <updated>2019-07-04T01:09:15.559Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="技术"><a href="#技术" class="headerlink" title="技术"></a>技术</h1><ul><li><p>PoE<br>PoE(Power over Ethernet，有源以太网)，利用以太网传输数据的同时，为设备供电。IEEE 802.3af标准规定了该技术的各项指标</p></li><li><p>autojs<br>一个利用Android系统无障碍开发服务的框架，可以在不root的情况下实现录制屏幕、触发按键、启动APP、捕获UI、弹出对话框、监听事件、多线程、定时器等功能</p></li></ul>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h1 id=&quot;技术&quot;&gt;&lt;a href=&quot;#技术&quot; class=&quot;headerlink&quot; title=&quot;技术&quot;&gt;&lt;/a&gt;技术&lt;/h1&gt;&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;PoE&lt;br&gt;PoE(Power over Ethernet，有源以太网)，利用以太网传输数据的同时，为设备供电。IEEE
+      
+    
+    </summary>
+    
+      <category term="每月见闻" scheme="http://yoursite.com/categories/%E6%AF%8F%E6%9C%88%E8%A7%81%E9%97%BB/"/>
+    
+    
+  </entry>
   
   <entry>
     <title>make编译</title>
@@ -515,7 +539,7 @@
     <published>2019-04-28T07:41:13.000Z</published>
     <updated>2019-05-15T02:13:26.560Z</updated>
     
-    <content type="html"><![CDATA[<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script><div id="hbe-security">  <div class="hbe-input-container">  <input type="password" class="hbe-form-control" id="pass" placeholder="请输入密码" />    <label for="pass">请输入密码</label>    <div class="bottom-line"></div>  </div></div><div id="decryptionError" style="display: none;">Incorrect Password!</div><div id="noContentError" style="display: none;">No content to display!</div><div id="encrypt-blog" style="display:none">U2FsdGVkX1/ERVvgqb42bHxq0MBa314Uer9OKKUQpfEAEBZVy6Z5iH832r9zrhJyzErAjEq4HUbSrsuL0uU9EoLTrDLJTsj8kEqy6Ia+NYqFQ3IL+a+ZpLZpLJCbj9oWzOITTlOvzOQCz0kTcVf5jou0y3OrDs4G2mIhb1I4KZt6bUyjQJ4f3AoHY/E5AKO34H8nBIoXFCZCj3Gb8Il+cya/+Lh5Hg4UDQwnAgKyrq8Xg9LSFzSpMv4LP157Yx8a/C/LHhG1ECE4f6F9RpnjlFZnzVOcD8tS/Uks2GYR/JH/G0Psq7Z1iTHjuwiV0ePkjcbrp7v0z8w5RDzkaIWDr8s4WOljO9zOD3KNk73RnwQ9TCaMOFVw5HLJwP45lGw/hyq64MxQeufKvAnfGJpGkg==</div><script src="/lib/crypto-js.js"></script><script src="/lib/blog-encrypt.js"></script><link href="/css/blog-encrypt.css" rel="stylesheet" type="text/css">]]></content>
+    <content type="html"><![CDATA[<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script><div id="hbe-security">  <div class="hbe-input-container">  <input type="password" class="hbe-form-control" id="pass" placeholder="请输入密码" />    <label for="pass">请输入密码</label>    <div class="bottom-line"></div>  </div></div><div id="decryptionError" style="display: none;">Incorrect Password!</div><div id="noContentError" style="display: none;">No content to display!</div><div id="encrypt-blog" style="display:none">U2FsdGVkX1+ubRJNlACxeV5HpP/10BVVlqdx4bLbI7gjD5C98a9F55AKlijs/Ubf/FkqT6h9mfiNocjxv8wh0XYI+ltorzTGLLwjNUA7ZJJdnGsQCxN21VxWguoQXMtfw1gpshlMRDYKlpNHSJ2hGFqqzB0kLncnemb7slrrd376gvy6MZ52e09oZ9ixIZbWSrRa+DtauK3iKNv1PcRZGGbW0m7fzV6HTpT3KhlfoOqdlGsmT3FSeDDVMlBrGAR8flhRHEEhDYEaCTmu4C9nAVj58XPyvsLpw+MnB60txdA68A7hig3vKpWcTzRIT09hdP/Dz0FLZgdl0YgTbHVdZ91RZ5BZEryS8+ANLidcYwNmO5SPoY8qJdXoDuS+l97lnndoF+CMVlFGs0M5j6NfPA==</div><script src="/lib/crypto-js.js"></script><script src="/lib/blog-encrypt.js"></script><link href="/css/blog-encrypt.css" rel="stylesheet" type="text/css">]]></content>
     
     <summary type="html">
     
