@@ -2,8 +2,10 @@
 title: make编译
 date: 2019-06-27 09:34:16
 tags: [命令]
+categories:
 - 嵌入式
 - 编译
+comments: true
 ---
 
 ## make命令的一些解释
