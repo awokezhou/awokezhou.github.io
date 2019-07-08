@@ -15,3 +15,6 @@ comments: true
 ```shell
 make -j4    /* 4个线程同时执行 */
 ```
+
+* -Werror
+编译过程中出现告警视为错误，立刻停止编译
