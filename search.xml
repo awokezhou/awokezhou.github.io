@@ -15,7 +15,7 @@
   <entry>
     <title><![CDATA[每月见闻201907]]></title>
     <url>%2F2019%2F07%2F04%2F%E6%AF%8F%E6%9C%88%E8%A7%81%E9%97%BB201907%2F</url>
-    <content type="text"><![CDATA[技术 PoEPoE(Power over Ethernet，有源以太网)，利用以太网传输数据的同时，为设备供电。IEEE 802.3af标准规定了该技术的各项指标 autojs一个利用Android系统无障碍开发服务的框架，可以在不root的情况下实现录制屏幕、触发按键、启动APP、捕获UI、弹出对话框、监听事件、多线程、定时器等功能 frp一个快速的反向代理，可以让你本地的服务穿过NAT或者防火墙，暴露到外网。支持TCP、UDP，为HTTP、HTTPS提供了额外的支持]]></content>
+    <content type="text"><![CDATA[技术 PoEPoE(Power over Ethernet，有源以太网)，利用以太网传输数据的同时，为设备供电。IEEE 802.3af标准规定了该技术的各项指标 autojs一个利用Android系统无障碍开发服务的框架，可以在不root的情况下实现录制屏幕、触发按键、启动APP、捕获UI、弹出对话框、监听事件、多线程、定时器等功能 frp一个快速的反向代理，可以让你本地的服务穿过NAT或者防火墙，暴露到外网。支持TCP、UDP，为HTTP、HTTPS提供了额外的支持 tracking.js一个在浏览器环境实现计算机视觉算法的js库，可实现颜色跟踪、人脸检测等 iframe劫持分析网页iframe劫持原理，并介绍如何避免 工具 tableconvert一个在线将表格转换为Markdown、JSON、Latex等格式的页面 Nullboard一个开源的本地看板工具]]></content>
       <categories>
         <category>每月见闻</category>
       </categories>
@@ -67,7 +67,7 @@
   <entry>
     <title><![CDATA[一些链接]]></title>
     <url>%2F2019%2F05%2F29%2F%E4%B8%80%E4%BA%9B%E9%93%BE%E6%8E%A5%2F</url>
-    <content type="text"><![CDATA[嵌入式开发ARM Developer Document Python Pandas官方文档 一个将python代码转化为可视化动画的网站：pythontutor]]></content>
+    <content type="text"><![CDATA[嵌入式开发ARM Developer Document Python Pandas官方文档 一个将python代码转化为可视化动画的网站：pythontutor Machine Learning FloydHub Blog一个深度学习、AI、云GPU的博客，里面的文章很前沿 *]]></content>
       <categories>
         <category>其他</category>
       </categories>
@@ -231,7 +231,7 @@
   <entry>
     <title><![CDATA[加密测试]]></title>
     <url>%2F2019%2F04%2F28%2F%E5%8A%A0%E5%AF%86%E6%B5%8B%E8%AF%95%2F</url>
-    <content type="text"><![CDATA[请输入密码 Incorrect Password! No content to display! U2FsdGVkX18tNw7BncSJ9JDu3AK2eVeMNh1R0s/7bVum3EWhikmyp6XLqPYz4iCPqm8JnEj/2FTYUbWz+QHQIOjCWZZHWAgmZfQVTvqaYuhtzFtcOo9+R7eAoSO4csl9Vzj0GSOiWav29jMT5piLQ4hkI1eB7xzsCyEBvD83xUpRD2CqTPTaWPhgkGz6E3hjabh5eW+37YPUSu6CWzcCturycgOv6ZdBHLcg10JH+sYRxfdIeqpA7nk1RGVMXoSA5UPfKzE3dorO+vI5NchiB4Fb6exmwGrRW0Syp7oBpMb68AfMRrQkir4G+3NW0CV4uPbaKmswfloZe28bD8gK1pd3zZ+F+dFBzO+BYAbRJhDJRr3kIWPNpJumqm6ZcqaZXukyj6Qt2v7rA3vy9jtSUg==]]></content>
+    <content type="text"><![CDATA[请输入密码 Incorrect Password! No content to display! U2FsdGVkX1/F0jL7zcu2AsUsvpbw3uG/1PZLdUuFScZS1EfeYs1J4Y634rG7Xh0aCGssI3vNdAFNpbw3v3IS1/PW9MelP+Gg3SJakKtJRCRqM5Lgum2zEaIaTMOEhaods+olT9E5HdDRrn/as0XoMf91nB3m+O42vlx9oquJtvSvc8goR/kY3O9/4sCuZilTij4Es6QRQ9c0jPpTbA3aw6+z3MUcAJ/gRvXD+MURqmfDbiQ6N6k1bNZRQKyHYQlitamSBRnfJXDFJTfjSgzxNPNhlCjXCzu/seqpsJWSMTegQCE3gOAgmo55t/9P9ZJx7okaMYguiWtZPZd7/llZuGcDGXlpLOW5Oq0nlLXw2rhOtRiOokB+mrA4APtDnVzSJj2j5PFoWzFWLGTP6d49Rw==]]></content>
       <tags>
         <tag>加密</tag>
       </tags>
