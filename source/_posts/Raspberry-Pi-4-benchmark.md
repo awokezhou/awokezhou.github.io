@@ -1,10 +1,11 @@
 ---
-title: 树莓派4benchmark
+title: Raspberry-Pi-4-benchmark
 date: 2019-07-23 18:37:14
-tags: [performance, benchmark]
+tags: [performance, benchmark, Raspberry Pi]
 categories:
 - 嵌入式
 - 玩
+- 树莓派
 comments: true
 ---
 
