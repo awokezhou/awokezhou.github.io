@@ -1,14 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title><![CDATA[树莓派4benchmark]]></title>
-    <url>%2F2019%2F07%2F23%2F%E6%A0%91%E8%8E%93%E6%B4%BE4benchmark%2F</url>
+    <title><![CDATA[Raspberry-Pi-4-CPU]]></title>
+    <url>%2F2019%2F07%2F25%2FRaspberry-Pi-4-CPU%2F</url>
+    <content type="text"><![CDATA[本文汇总所有和树莓派4代CPU相关材料。树莓派4使用的CPU是博通公司的BCM2711，该芯片的datasheet无论是在博通官网、树莓派官网、google上都搜索不到，可能是还未公开 Reference树莓派官网发布的初步datasheet CPU Features processor: Broadcom BCM2711, Cortex-A72 (ARM v8), quad-core, 64-bit SoC @ 1.5GHz Memory： 1GB, 2GB or 4GB LPDDR4 Wi-Fi: 2.4G/5G, IEEE 802.11b/g/n/ac WLAN Ethernet: GE Bluetooth: 5.0 with BLE USB: 2×USB3.0, 2×USB2.0 GPIO: 40-pin, support multiplex(UART、I2C、SPI、SDIO、DPI、PCM、PWM、GPCLK) Video &amp; sound: 2×micro HDMI ports(up to 4Kp60 supported) 2-lane MIPI DSI display port 2-lane MIPI CSI camera port 4-pole stereo audio and composite video port Multimedia: H.265(4Kp60 decode), H.264(1080p60 decode, 1080p30 encode), OpenGL ES, 3.0 graphics SD Card: 1× Input power: 5V DC via USB-C connector(min 3A) 5V DC via GPIO header (min 3A) PoE]]></content>
+      <categories>
+        <category>嵌入式</category>
+        <category>玩</category>
+        <category>树莓派</category>
+      </categories>
+      <tags>
+        <tag>Raspberry Pi</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[Raspberry-Pi-4-benchmark]]></title>
+    <url>%2F2019%2F07%2F23%2FRaspberry-Pi-4-benchmark%2F</url>
     <content type="text"><![CDATA[tom’s HARDWARE 发布了一篇关于树莓派4的benchmark文章，详细介绍了对其多项测试方法和结果 CPULinpack BenchmarkLinkpack Benchmark 是对计算机浮点执行率的度量。它是通过运行一个求解密集线性方程组的计算机程序来确定的 Linkpark Q&amp;A Sysbench CPU testsysbench的cpu测试是在指定时间内，循环进行素数计算 Memory内存是做吞吐量测试，读写1M的内存块，看每秒的读写速度 文件压缩分别查看单进程和多进程下的压缩速度 GPUopenArena BenchmarkopenArena是一款需要GPU渲染的游戏，通过固定分辨率下查看平均帧率，来评估GPU性能 Storage查看吞吐量，每秒的读写能力 NetworkingEthernet吞吐量测试 Wi-Fi吞吐量测试 PowerPower Draw benchmark分别看负载和空闲状态下的功耗 Thermal Throttling Benchmark4KFFmpeg TestWeb SurfingJetstream 1.1Web HostingMachine LearningCompiling Code]]></content>
       <categories>
         <category>嵌入式</category>
         <category>玩</category>
+        <category>树莓派</category>
       </categories>
       <tags>
+        <tag>Raspberry Pi</tag>
         <tag>performance</tag>
         <tag>benchmark</tag>
       </tags>
@@ -224,8 +239,8 @@
         <category>docker</category>
       </categories>
       <tags>
-        <tag>命令</tag>
         <tag>Docker</tag>
+        <tag>命令</tag>
       </tags>
   </entry>
   <entry>
@@ -257,7 +272,7 @@
   <entry>
     <title><![CDATA[加密测试]]></title>
     <url>%2F2019%2F04%2F28%2F%E5%8A%A0%E5%AF%86%E6%B5%8B%E8%AF%95%2F</url>
-    <content type="text"><![CDATA[请输入密码 Incorrect Password! No content to display! U2FsdGVkX189RNSw0yLYy2oLwIOoZy8vv9zgOfEKDhy3AeLP61ZavOdysrQO0LeZsv5xBmbM+YAgI6XAx98+lpDeiWK1a45fV1nqEmhH48g+LIWt+g8559tGsB21pwxyWmd/nAtsOlxUejTFqYRtvAhB+c98yjxTZCrdS4Rc6wRXxkkI5adHep23YCr05WQb34VYoU4e5vzaQn0el2qG47DVLZL/i58vOmRU8rtdCbTjmBHC/5Q0ESL305g27cdF304nIND6eJW6ON4AOZ0apbvSBVGD0zUQ2z5WqINalB9GpfD+f5JFXi6WviA7dFNVC+zI6TSqIeOihe49zDeGUJHYzfmDVIXMzyhhfc9yyy1gevR2HCxnbYTQUvy5Rtwe2h8Iv7+I5Tg8Dkd53fjcgQ==]]></content>
+    <content type="text"><![CDATA[请输入密码 Incorrect Password! No content to display! U2FsdGVkX1+0yGoCnCZxOkZTDdPpZwPE1Jm4yBgUJx6mBYSsyWGYZEtl94hHyjLNlygnFFWJePKC1bEruIavl5qlWp5laeGG4V6Hd2JUoMwphK0BBJ74GNEzdcGxmXoGZpuaJ8se2vJa4oo9mlVLjRGNH5XGO5T8jXNbcPA1J4AAXSgyAUi3eJXwe1VOmgafSSGDX9+WKNqSctvADiPqtS7DnZ+CfW06kGDARSBi9rILKcBbRev52Jxepk1rg5GaEOiJpYRdtTzWkET/96F8jpTelgGCYvhZnBZw/Rz8asTJ1BMr/2q6/ms6Xt146qGo6f+ZJGQEyPeksNCJ0X7xsVzuZDN2siXiiCkxKpwktGejouOEytl+nfLEo2SPrj+RCI3+5K9XsNoNzF8ir6xb1Q==]]></content>
       <tags>
         <tag>加密</tag>
       </tags>

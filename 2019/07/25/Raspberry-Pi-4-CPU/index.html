@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="Hexo, NexT">
+  <meta name="keywords" content="Raspberry Pi,">
 
 
 
@@ -79,13 +79,18 @@
 
 
 
-<meta property="og:type" content="website">
-<meta property="og:title" content="awokezhou&#39;s blog">
-<meta property="og:url" content="http://yoursite.com/archives/page/2/index.html">
+<meta name="description" content="本文汇总所有和树莓派4代CPU相关材料。树莓派4使用的CPU是博通公司的BCM2711，该芯片的datasheet无论是在博通官网、树莓派官网、google上都搜索不到，可能是还未公开 Reference树莓派官网发布的初步datasheet CPU Features processor:  Broadcom BCM2711, Cortex-A72 (ARM v8), quad-core, 64-">
+<meta name="keywords" content="Raspberry Pi">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Raspberry-Pi-4-CPU">
+<meta property="og:url" content="http://yoursite.com/2019/07/25/Raspberry-Pi-4-CPU/index.html">
 <meta property="og:site_name" content="awokezhou&#39;s blog">
+<meta property="og:description" content="本文汇总所有和树莓派4代CPU相关材料。树莓派4使用的CPU是博通公司的BCM2711，该芯片的datasheet无论是在博通官网、树莓派官网、google上都搜索不到，可能是还未公开 Reference树莓派官网发布的初步datasheet CPU Features processor:  Broadcom BCM2711, Cortex-A72 (ARM v8), quad-core, 64-">
 <meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-07-25T03:25:51.466Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="awokezhou&#39;s blog">
+<meta name="twitter:title" content="Raspberry-Pi-4-CPU">
+<meta name="twitter:description" content="本文汇总所有和树莓派4代CPU相关材料。树莓派4使用的CPU是博通公司的BCM2711，该芯片的datasheet无论是在博通官网、树莓派官网、google上都搜索不到，可能是还未公开 Reference树莓派官网发布的初步datasheet CPU Features processor:  Broadcom BCM2711, Cortex-A72 (ARM v8), quad-core, 64-">
 
 
 
@@ -115,13 +120,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/archives/page/2/">
+  <link rel="canonical" href="http://yoursite.com/2019/07/25/Raspberry-Pi-4-CPU/">
 
 
 
 
 
-  <title>归档 | awokezhou's blog</title>
+  <title>Raspberry-Pi-4-CPU | awokezhou's blog</title>
   
 
 
@@ -140,7 +145,7 @@
     
   
 
-  <div class="container sidebar-position-left page-archive">
+  <div class="container sidebar-position-left page-post-detail">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -286,391 +291,226 @@
           <div id="content" class="content">
             
 
-  
-  
-  
-  <div class="post-block archive">
-    <div id="posts" class="posts-collapse">
-      <span class="archive-move-on"></span>
+  <div id="posts" class="posts-expand">
+    
 
-      <span class="archive-page-counter">
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/07/25/Raspberry-Pi-4-CPU/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="awokezhou">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/../image/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="awokezhou's blog">
+    </span>
+
+    
+      <header class="post-header">
+
         
         
+          <h1 class="post-title" itemprop="name headline">Raspberry-Pi-4-CPU</h1>
         
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-07-25T10:52:08+08:00">
+                2019-07-25
+              </time>
+            
+
+            
+
+            
+          </span>
+
           
-        
-        嗯..! 目前共计 24 篇日志。 继续努力。
-      </span>
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/嵌入式/" itemprop="url" rel="index">
+                    <span itemprop="name">嵌入式</span>
+                  </a>
+                </span>
 
-      
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/嵌入式/玩/" itemprop="url" rel="index">
+                    <span itemprop="name">玩</span>
+                  </a>
+                </span>
 
-        
-        
-        
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/嵌入式/玩/树莓派/" itemprop="url" rel="index">
+                    <span itemprop="name">树莓派</span>
+                  </a>
+                </span>
 
-        
+                
+                
+              
+            </span>
           
-          <div class="collection-title">
-            <h1 class="archive-year" id="archive-year-2019">2019</h1>
-          </div>
-        
-        
 
-        
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2019/07/25/Raspberry-Pi-4-CPU/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2019/07/25/Raspberry-Pi-4-CPU/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
 
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
+          
+          
 
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2019/05/28/杭州市地铁乘客流量预测/" itemprop="url">
-              
-                <span itemprop="name">杭州市地铁乘客流量预测</span>
-              
-            </a>
-        
-      </h2>
+          
 
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated" datetime="2019-05-28T09:57:12+08:00" content="2019-05-28">
-          05-28
-        </time>
-      </div>
+          
 
-    </header>
-  </article>
+          
 
+        </div>
+      </header>
+    
 
-
-      
-
-        
-        
-        
-
-        
-        
-
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2019/05/27/panda基本操作/" itemprop="url">
-              
-                <span itemprop="name">panda基本操作</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated" datetime="2019-05-27T14:35:10+08:00" content="2019-05-27">
-          05-27
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
 
       
-
-        
-        
-        
-
-        
-        
-
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2019/05/23/AES-CBC/" itemprop="url">
-              
-                <span itemprop="name">AES-CBC</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated" datetime="2019-05-23T14:28:26+08:00" content="2019-05-23">
-          05-23
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
       
 
-        
-        
-        
-
-        
-        
-
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2019/05/17/csv导入cassandra大量row丢失/" itemprop="url">
-              
-                <span itemprop="name">csv导入cassandra大量row丢失</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated" datetime="2019-05-17T13:43:58+08:00" content="2019-05-17">
-          05-17
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
+      
+        <p>本文汇总所有和树莓派4代CPU相关材料。树莓派4使用的CPU是博通公司的BCM2711，该芯片的datasheet无论是在博通官网、树莓派官网、google上都搜索不到，可能是还未公开</p>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><p>树莓派官网发布的初步<a href="/download/Raspberry-Pi-4-CPU/rpi_DATA_2711_1p0_preliminary.pdf">datasheet</a></p>
+<h2 id="CPU-Features"><a href="#CPU-Features" class="headerlink" title="CPU Features"></a>CPU Features</h2><ul>
+<li><strong>processor</strong>:  Broadcom BCM2711, Cortex-A72 (ARM v8), quad-core, 64-bit SoC @ 1.5GHz</li>
+<li><strong>Memory</strong>： 1GB, 2GB or 4GB LPDDR4</li>
+<li><strong>Wi-Fi</strong>: 2.4G/5G, IEEE 802.11b/g/n/ac WLAN</li>
+<li><strong>Ethernet</strong>: GE</li>
+<li><strong>Bluetooth</strong>: 5.0 with BLE</li>
+<li><strong>USB</strong>: 2×USB3.0, 2×USB2.0</li>
+<li><strong>GPIO</strong>: 40-pin, support multiplex(UART、I2C、SPI、SDIO、DPI、PCM、PWM、GPCLK)</li>
+<li><strong>Video &amp; sound</strong>:<ul>
+<li>2×micro HDMI ports(up to 4Kp60 supported)</li>
+<li>2-lane MIPI DSI display port</li>
+<li>2-lane MIPI CSI camera port</li>
+<li>4-pole stereo audio and composite video port</li>
+</ul>
+</li>
+<li><strong>Multimedia</strong>: H.265(4Kp60 decode), H.264(1080p60 decode, 1080p30 encode), OpenGL ES, 3.0 graphics</li>
+<li><strong>SD Card</strong>: 1×</li>
+<li><strong>Input power</strong>:<ul>
+<li>5V DC via USB-C connector(min 3A)</li>
+<li>5V DC via GPIO header (min 3A)</li>
+<li>PoE</li>
+</ul>
+</li>
+</ul>
 
       
-
-        
-        
-        
-
-        
-        
-
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2019/05/16/docker网络配置/" itemprop="url">
-              
-                <span itemprop="name">docker网络配置</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated" datetime="2019-05-16T18:43:08+08:00" content="2019-05-16">
-          05-16
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
-      
-
-        
-        
-        
-
-        
-        
-
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2019/05/15/算法分析/" itemprop="url">
-              
-                <span itemprop="name">算法分析</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated" datetime="2019-05-15T11:30:25+08:00" content="2019-05-15">
-          05-15
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
-      
-
-        
-        
-        
-
-        
-        
-
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2019/05/15/github多账户设置/" itemprop="url">
-              
-                <span itemprop="name">github多账户设置</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated" datetime="2019-05-15T10:28:45+08:00" content="2019-05-15">
-          05-15
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
-      
-
-        
-        
-        
-
-        
-        
-
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2019/05/09/linecache处理大文件时内存溢出/" itemprop="url">
-              
-                <span itemprop="name">linecache处理大文件时内存溢出</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated" datetime="2019-05-09T16:53:37+08:00" content="2019-05-09">
-          05-09
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
-      
-
-        
-        
-        
-
-        
-        
-
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2019/05/07/python-kafka抓包分析/" itemprop="url">
-              
-                <span itemprop="name">python-kafka抓包分析</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated" datetime="2019-05-07T13:56:57+08:00" content="2019-05-07">
-          05-07
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
-      
-
-        
-        
-        
-
-        
-        
-
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2019/05/07/docker基本操作/" itemprop="url">
-              
-                <span itemprop="name">Docker基本操作</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated" datetime="2019-05-07T11:10:23+08:00" content="2019-05-07">
-          05-07
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
-      
-
     </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Raspberry-Pi/" rel="tag"># Raspberry Pi</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/07/23/Raspberry-Pi-4-benchmark/" rel="next" title="Raspberry-Pi-4-benchmark">
+                <i class="fa fa-chevron-left"></i> Raspberry-Pi-4-benchmark
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
   </div>
   
   
   
-
-  
-  <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/archives/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/archives/">1</a><span class="page-number current">2</span><a class="page-number" href="/archives/page/3/">3</a><a class="extend next" rel="next" href="/archives/page/3/"><i class="fa fa-angle-right"></i></a>
-  </nav>
+  </article>
 
 
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
 
 
           </div>
@@ -678,6 +518,13 @@
 
 
           
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
 
         </div>
         
@@ -698,8 +545,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -819,6 +675,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Reference"><span class="nav-number">1.</span> <span class="nav-text">Reference</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CPU-Features"><span class="nav-number">2.</span> <span class="nav-text">CPU Features</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
@@ -948,6 +820,10 @@
   
 
   
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
 
   
 
