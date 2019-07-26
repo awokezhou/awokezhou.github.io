@@ -9,6 +9,8 @@ categories:
 comments: true
 ---
 
+(待续)
+
 tom's HARDWARE 发布了一篇关于树莓派4的[benchmark](https://www.tomshardware.com/reviews/raspberry-pi-4-b,6193.html)文章，详细介绍了对其多项测试方法和结果
 
 ## CPU
