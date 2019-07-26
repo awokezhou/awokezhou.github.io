@@ -13,6 +13,7 @@ tom's HARDWARE 发布了一篇关于树莓派4的[benchmark](https://www.tomshar
 
 ## CPU
 ### Linpack Benchmark
+CPU性能测试使用了Linpack Benchmark，
 Linkpack Benchmark 是对计算机浮点执行率的度量。它是通过运行一个求解密集线性方程组的计算机程序来确定的
 
 [Linkpark Q&A](chrome-extension://ecabifbgmdmgdllomnfinbmaellmclnh/data/reader/index.html?id=121)

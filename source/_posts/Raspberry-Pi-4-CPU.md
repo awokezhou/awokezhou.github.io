@@ -32,4 +32,4 @@ comments: true
 * **Input power**:
     * 5V DC via USB-C connector(min 3A)
     * 5V DC via GPIO header (min 3A)
-    * PoE
+    * PoE IEEE 802.3af
