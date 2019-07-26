@@ -3,7 +3,7 @@
   <entry>
     <title><![CDATA[Raspberry-Pi-4-Board]]></title>
     <url>%2F2019%2F07%2F25%2FRaspberry-Pi-4-Board%2F</url>
-    <content type="text"><![CDATA[PowerRaspberry Pi 4 使用USB-C供电，其使用的电源管理芯片是MaxLinear公司的MxL7704 MxL7704 Datasheet PDF MXL7704是一款五输出通用PMIC(Power Management IC)，针对为低功耗FPGA、DSP和微处理器供电]]></content>
+    <content type="text"><![CDATA[Reference目前很多资料还不全面，官网发布的原理图也只有一小部分 product Brief (PDF) Schematics (PDF) Power MxL7704 Datasheet (PDF) Ethernet BCM5421 Datasheet (PDF) USB Host Controller VL805 Datasheet (PDF) Memory MT53D1024M32D4DT-053 WT:D Datasheet (PDF) PowerRaspberry Pi 4 使用USB-C供电，其使用的电源管理芯片是MaxLinear公司的MxL7704 MxL7704是一款五输出通用PMIC(Power Management IC)，针对为低功耗FPGA、DSP和微处理器供电。其内部有4个同步降压调节器，可将5V输入调节成不同压降的输出，1路LDO+4路Buck。有一个I2C接口用于配置各路降压step，读取状态信息 封装图 树莓派4 USB-C供电部分 可看到PD_SENSE接到MxL7704的AN1引脚，AN2接地未使用，INT_SCL和INT_SDA两根I2C数据线应该是接到BCM2711，GLOBAL_EN信号用于控制MxL7704的使能，RUN_PG2连接到PG2引脚用来监控芯片是否工作正常 5路输出分别为 LDO —&gt; 3V3_AUD(3.3V) 这应该是给音频供电的 VOUT1 —&gt; LX1(3.3V/1.7A) 未知 VOUT2 —&gt; LX2(1.8V/2.3A) 未知 VOUT3 —&gt; LX3(1.1V/4.4A) 给DDR供电 VOUT4 —&gt; LX4(5.5A) 给BCM2711供电 EthernetGigabit Ethernet PHY 使用的是Broadcom的BCM54213PE，是一个全集成10Base-T/100Base-TX/1000Base-T的以太网千兆收发器。支持IEEE 802.3、802.3u和802.3ab标准，支持MII、GMII、TBI、RGMII和RTBI接口 树莓派4 Ethernet部分 目前原理图未公开GE PHY与BCM2711以哪种接口连接 USB Host ControllerUSB Host Controller使用的是VLA的LV805，是一个4端口的USB3.0主机控制器，xHCI接口标准 封装图 原理图中未公开该部分连接 MemoryRAM使用的是美光的MT53D1024M32D4DT-053 WT:D，FBGA Code:D9WHV，是一个32Gb的LPDDR4 DRAM，深度为1024Mb，位宽x32 原理图中未公开该部分连接]]></content>
       <categories>
         <category>嵌入式</category>
         <category>玩</category>
@@ -29,7 +29,7 @@
   <entry>
     <title><![CDATA[Raspberry-Pi-4-CPU]]></title>
     <url>%2F2019%2F07%2F25%2FRaspberry-Pi-4-CPU%2F</url>
-    <content type="text"><![CDATA[本文汇总所有和树莓派4代CPU相关材料。树莓派4使用的CPU是博通公司的BCM2711，该芯片的datasheet无论是在博通官网、树莓派官网、google上都搜索不到，可能是还未公开 Reference树莓派官网发布的初步datasheet CPU Features processor: Broadcom BCM2711, Cortex-A72 (ARM v8), quad-core, 64-bit SoC @ 1.5GHz Memory： 1GB, 2GB or 4GB LPDDR4 Wi-Fi: 2.4G/5G, IEEE 802.11b/g/n/ac WLAN Ethernet: GE Bluetooth: 5.0 with BLE USB: 2×USB3.0, 2×USB2.0 GPIO: 40-pin, support multiplex(UART、I2C、SPI、SDIO、DPI、PCM、PWM、GPCLK) Video &amp; sound: 2×micro HDMI ports(up to 4Kp60 supported) 2-lane MIPI DSI display port 2-lane MIPI CSI camera port 4-pole stereo audio and composite video port Multimedia: H.265(4Kp60 decode), H.264(1080p60 decode, 1080p30 encode), OpenGL ES, 3.0 graphics SD Card: 1× Input power: 5V DC via USB-C connector(min 3A) 5V DC via GPIO header (min 3A) PoE]]></content>
+    <content type="text"><![CDATA[本文汇总所有和树莓派4代CPU相关材料。树莓派4使用的CPU是博通公司的BCM2711，该芯片的datasheet无论是在博通官网、树莓派官网、google上都搜索不到，可能是还未公开 Reference树莓派官网发布的初步datasheet CPU Features processor: Broadcom BCM2711, Cortex-A72 (ARM v8), quad-core, 64-bit SoC @ 1.5GHz Memory： 1GB, 2GB or 4GB LPDDR4 Wi-Fi: 2.4G/5G, IEEE 802.11b/g/n/ac WLAN Ethernet: GE Bluetooth: 5.0 with BLE USB: 2×USB3.0, 2×USB2.0 GPIO: 40-pin, support multiplex(UART、I2C、SPI、SDIO、DPI、PCM、PWM、GPCLK) Video &amp; sound: 2×micro HDMI ports(up to 4Kp60 supported) 2-lane MIPI DSI display port 2-lane MIPI CSI camera port 4-pole stereo audio and composite video port Multimedia: H.265(4Kp60 decode), H.264(1080p60 decode, 1080p30 encode), OpenGL ES, 3.0 graphics SD Card: 1× Input power: 5V DC via USB-C connector(min 3A) 5V DC via GPIO header (min 3A) PoE IEEE 802.3af]]></content>
       <categories>
         <category>嵌入式</category>
         <category>玩</category>
@@ -42,7 +42,7 @@
   <entry>
     <title><![CDATA[Raspberry-Pi-4-benchmark]]></title>
     <url>%2F2019%2F07%2F23%2FRaspberry-Pi-4-benchmark%2F</url>
-    <content type="text"><![CDATA[tom’s HARDWARE 发布了一篇关于树莓派4的benchmark文章，详细介绍了对其多项测试方法和结果 CPULinpack BenchmarkLinkpack Benchmark 是对计算机浮点执行率的度量。它是通过运行一个求解密集线性方程组的计算机程序来确定的 Linkpark Q&amp;A Sysbench CPU testsysbench的cpu测试是在指定时间内，循环进行素数计算 Memory内存是做吞吐量测试，读写1M的内存块，看每秒的读写速度 文件压缩分别查看单进程和多进程下的压缩速度 GPUopenArena BenchmarkopenArena是一款需要GPU渲染的游戏，通过固定分辨率下查看平均帧率，来评估GPU性能 Storage查看吞吐量，每秒的读写能力 NetworkingEthernet吞吐量测试 Wi-Fi吞吐量测试 PowerPower Draw benchmark分别看负载和空闲状态下的功耗 Thermal Throttling Benchmark4KFFmpeg TestWeb SurfingJetstream 1.1Web HostingMachine LearningCompiling Code]]></content>
+    <content type="text"><![CDATA[tom’s HARDWARE 发布了一篇关于树莓派4的benchmark文章，详细介绍了对其多项测试方法和结果 CPULinpack BenchmarkCPU性能测试使用了Linpack Benchmark，Linkpack Benchmark 是对计算机浮点执行率的度量。它是通过运行一个求解密集线性方程组的计算机程序来确定的 Linkpark Q&amp;A Sysbench CPU testsysbench的cpu测试是在指定时间内，循环进行素数计算 Memory内存是做吞吐量测试，读写1M的内存块，看每秒的读写速度 文件压缩分别查看单进程和多进程下的压缩速度 GPUopenArena BenchmarkopenArena是一款需要GPU渲染的游戏，通过固定分辨率下查看平均帧率，来评估GPU性能 Storage查看吞吐量，每秒的读写能力 NetworkingEthernet吞吐量测试 Wi-Fi吞吐量测试 PowerPower Draw benchmark分别看负载和空闲状态下的功耗 Thermal Throttling Benchmark4KFFmpeg TestWeb SurfingJetstream 1.1Web HostingMachine LearningCompiling Code]]></content>
       <categories>
         <category>嵌入式</category>
         <category>玩</category>
@@ -298,7 +298,7 @@
   <entry>
     <title><![CDATA[加密测试]]></title>
     <url>%2F2019%2F04%2F28%2F%E5%8A%A0%E5%AF%86%E6%B5%8B%E8%AF%95%2F</url>
-    <content type="text"><![CDATA[请输入密码 Incorrect Password! No content to display! U2FsdGVkX19XhxPUs3XP9FyRjnHOJn+EYwH1IrL8uGIywooc7eb7vn90udSBZoNya+0wSNkvCIdDrj4Q/Vs1axxsgp3p84QYZwVX4qv23xbAju0b1dyAgtEWsbt/hcCDz8LCKwgh59FAxomvx+syuh2gUtni3UCcpJrt47Y7bz11jooZQaeiyaT4kNrYMnoBpI1moXNm5GjvPS53zawPrsxmBXCqwags7J8J0ekwnfr2fAW6vlZYQg9fH1cfs1fMhbViYkxSj/rqynHUinKnto8XZivffMesIuCrA49Mc7Vo0/51Ff9QzegWzqnaKXP2MaRLrpVM5zyd8qr3fCuO0wmtthtKPgByoWHYaygMcJMyp5dvP6Cxn/zDY0SuuhnRJCG0+c1Pv67l22p9aAh5Kg==]]></content>
+    <content type="text"><![CDATA[请输入密码 Incorrect Password! No content to display! U2FsdGVkX18x1ImhnVVM17Sl4HB847j+JWFXykCRezldUXrbWLlByyv9GrNX8sxNBGIgD9Tu5py03Ixy9ql0PCuYMQGFXrj9w8E0qRQlfezbawz93hUP3DXLHO4eSDK5OwhWwZQKkheFHJC2W/WM/gT44yuwJTI9pxGZHDlfNEW+4a4xk5XSYJCReJhxHausJQKq0/pfKqK2Ho48MmorR+CnltUBtj7t20eGu6eThFlGpAf5OdxlsTHvQJLBigJY5m6PRMt89wiIPOdEEWREznCAoMXulppDi6ORDVVfhNq5wako+4c2wKas9SbrYzgDHUWMwodV0Pu6pBLeIDu6sOkFHXBTySt4fUjY3wuGz+UG6kiJKV2J7plQJuGRWO7kZ+TPQswdndITaMRVRlm82w==]]></content>
       <tags>
         <tag>加密</tag>
       </tags>

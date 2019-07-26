@@ -79,18 +79,24 @@
 
 
 
-<meta name="description" content="PowerRaspberry Pi 4 使用USB-C供电，其使用的电源管理芯片是MaxLinear公司的MxL7704 MxL7704 Datasheet PDF MXL7704是一款五输出通用PMIC(Power Management IC)，针对为低功耗FPGA、DSP和微处理器供电">
+<meta name="description" content="Reference目前很多资料还不全面，官网发布的原理图也只有一小部分  product Brief (PDF) Schematics (PDF) Power MxL7704 Datasheet (PDF) Ethernet BCM5421 Datasheet (PDF) USB Host Controller VL805 Datasheet (PDF) Memory MT53D1024M32D4">
 <meta name="keywords" content="Raspberry Pi">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Raspberry-Pi-4-Board">
 <meta property="og:url" content="http://yoursite.com/2019/07/25/Raspberry-Pi-4-Board/index.html">
 <meta property="og:site_name" content="awokezhou&#39;s blog">
-<meta property="og:description" content="PowerRaspberry Pi 4 使用USB-C供电，其使用的电源管理芯片是MaxLinear公司的MxL7704 MxL7704 Datasheet PDF MXL7704是一款五输出通用PMIC(Power Management IC)，针对为低功耗FPGA、DSP和微处理器供电">
+<meta property="og:description" content="Reference目前很多资料还不全面，官网发布的原理图也只有一小部分  product Brief (PDF) Schematics (PDF) Power MxL7704 Datasheet (PDF) Ethernet BCM5421 Datasheet (PDF) USB Host Controller VL805 Datasheet (PDF) Memory MT53D1024M32D4">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-07-25T12:01:15.782Z">
+<meta property="og:image" content="http://yoursite.com/2019/07/25/Raspberry-Pi-4-Board/image/board-power-01.png">
+<meta property="og:image" content="http://yoursite.com/2019/07/25/Raspberry-Pi-4-Board/image/board-power-02.png">
+<meta property="og:image" content="http://yoursite.com/2019/07/25/Raspberry-Pi-4-Board/image/board-power-03.png">
+<meta property="og:image" content="http://yoursite.com/2019/07/25/Raspberry-Pi-4-Board/image/board-ethernet-01.png">
+<meta property="og:image" content="http://yoursite.com/2019/07/25/Raspberry-Pi-4-Board/image/board-USB-01.png">
+<meta property="og:updated_time" content="2019-07-26T08:02:18.570Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Raspberry-Pi-4-Board">
-<meta name="twitter:description" content="PowerRaspberry Pi 4 使用USB-C供电，其使用的电源管理芯片是MaxLinear公司的MxL7704 MxL7704 Datasheet PDF MXL7704是一款五输出通用PMIC(Power Management IC)，针对为低功耗FPGA、DSP和微处理器供电">
+<meta name="twitter:description" content="Reference目前很多资料还不全面，官网发布的原理图也只有一小部分  product Brief (PDF) Schematics (PDF) Power MxL7704 Datasheet (PDF) Ethernet BCM5421 Datasheet (PDF) USB Host Controller VL805 Datasheet (PDF) Memory MT53D1024M32D4">
+<meta name="twitter:image" content="http://yoursite.com/2019/07/25/Raspberry-Pi-4-Board/image/board-power-01.png">
 
 
 
@@ -426,9 +432,36 @@
       
 
       
-        <h2 id="Power"><a href="#Power" class="headerlink" title="Power"></a>Power</h2><p>Raspberry Pi 4 使用USB-C供电，其使用的电源管理芯片是MaxLinear公司的MxL7704</p>
-<p>MxL7704 <a href="/download/Raspberry-Pi-4-Board/mxl7704.pdf">Datasheet PDF</a></p>
-<p>MXL7704是一款五输出通用PMIC(Power Management IC)，针对为低功耗FPGA、DSP和微处理器供电</p>
+        <h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><p>目前很多资料还不全面，官网发布的原理图也只有一小部分</p>
+<ul>
+<li><a href="/download/Raspberry-Pi-4-Board/Raspberry-Pi-4-Product-Brief.pdf">product Brief (PDF)</a></li>
+<li><a href="/download/Raspberry-Pi-4-Board/rpi_SCH_4b_4p0_reduced.pdf">Schematics (PDF)</a></li>
+<li>Power <a href="/download/Raspberry-Pi-4-Board/mxl7704.pdf">MxL7704 Datasheet (PDF)</a></li>
+<li>Ethernet <a href="/download/Raspberry-Pi-4-Board/5421-PB05-R.pdf">BCM5421 Datasheet (PDF)</a></li>
+<li>USB Host Controller <a href="/download/Raspberry-Pi-4-Board/20120517130647131.pdf">VL805 Datasheet (PDF)</a></li>
+<li>Memory <a href="/download/Raspberry-Pi-4-Board/16Gb_32Gb_x4_x8_3DS_DDR4_SDRAM.pdf">MT53D1024M32D4DT-053 WT:D Datasheet (PDF)</a></li>
+</ul>
+<h2 id="Power"><a href="#Power" class="headerlink" title="Power"></a>Power</h2><p>Raspberry Pi 4 使用USB-C供电，其使用的电源管理芯片是MaxLinear公司的MxL7704</p>
+<p>MxL7704是一款五输出通用PMIC(Power Management IC)，针对为低功耗FPGA、DSP和微处理器供电。其内部有4个同步降压调节器，可将5V输入调节成不同压降的输出，1路LDO+4路Buck。有一个I2C接口用于配置各路降压step，读取状态信息</p>
+<p>封装图<br><img src="/2019/07/25/Raspberry-Pi-4-Board/image/board-power-01.png" alt="MxL7704封装"></p>
+<p>树莓派4 USB-C供电部分<br><img src="/2019/07/25/Raspberry-Pi-4-Board/image/board-power-02.png" alt="Power"><br><img src="/2019/07/25/Raspberry-Pi-4-Board/image/board-power-03.png" alt="Power"></p>
+<p>可看到<code>PD_SENSE</code>接到MxL7704的<code>AN1</code>引脚，<code>AN2</code>接地未使用，<code>INT_SCL</code>和<code>INT_SDA</code>两根I2C数据线应该是接到BCM2711，<code>GLOBAL_EN</code>信号用于控制MxL7704的使能，<code>RUN_PG2</code>连接到<code>PG2</code>引脚用来监控芯片是否工作正常</p>
+<p>5路输出分别为</p>
+<ul>
+<li>LDO —&gt; 3V3_AUD(3.3V) 这应该是给音频供电的</li>
+<li>VOUT1 —&gt; LX1(3.3V/1.7A) 未知</li>
+<li>VOUT2 —&gt; LX2(1.8V/2.3A) 未知</li>
+<li>VOUT3 —&gt; LX3(1.1V/4.4A) 给DDR供电</li>
+<li>VOUT4 —&gt; LX4(5.5A) 给BCM2711供电</li>
+</ul>
+<h2 id="Ethernet"><a href="#Ethernet" class="headerlink" title="Ethernet"></a>Ethernet</h2><p>Gigabit Ethernet PHY 使用的是Broadcom的BCM54213PE，是一个全集成10Base-T/100Base-TX/1000Base-T的以太网千兆收发器。支持IEEE 802.3、802.3u和802.3ab标准，支持MII、GMII、TBI、RGMII和RTBI接口</p>
+<p>树莓派4 Ethernet部分<br><img src="/2019/07/25/Raspberry-Pi-4-Board/image/board-ethernet-01.png" alt="Power"></p>
+<p>目前原理图未公开GE PHY与BCM2711以哪种接口连接</p>
+<h2 id="USB-Host-Controller"><a href="#USB-Host-Controller" class="headerlink" title="USB Host Controller"></a>USB Host Controller</h2><p>USB Host Controller使用的是VLA的LV805，是一个4端口的USB3.0主机控制器，xHCI接口标准</p>
+<p>封装图<br><img src="/2019/07/25/Raspberry-Pi-4-Board/image/board-USB-01.png" alt="LV805"></p>
+<p>原理图中未公开该部分连接</p>
+<h2 id="Memory"><a href="#Memory" class="headerlink" title="Memory"></a>Memory</h2><p>RAM使用的是美光的MT53D1024M32D4DT-053 WT:D，FBGA Code:D9WHV，是一个32Gb的LPDDR4 DRAM，深度为1024Mb，位宽x32</p>
+<p>原理图中未公开该部分连接</p>
 
       
     </div>
@@ -662,7 +695,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Power"><span class="nav-number">1.</span> <span class="nav-text">Power</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Reference"><span class="nav-number">1.</span> <span class="nav-text">Reference</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Power"><span class="nav-number">2.</span> <span class="nav-text">Power</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Ethernet"><span class="nav-number">3.</span> <span class="nav-text">Ethernet</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#USB-Host-Controller"><span class="nav-number">4.</span> <span class="nav-text">USB Host Controller</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Memory"><span class="nav-number">5.</span> <span class="nav-text">Memory</span></a></li></ol></div>
             
 
           </div>
