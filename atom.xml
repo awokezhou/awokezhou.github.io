@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2019-07-31T03:15:39.630Z</updated>
+  <updated>2019-07-31T09:42:40.995Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -15,6 +15,38 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Machine Learning Reference Reading</title>
+    <link href="http://yoursite.com/2019/07/31/Machine-Learning-Reference-Reading/"/>
+    <id>http://yoursite.com/2019/07/31/Machine-Learning-Reference-Reading/</id>
+    <published>2019-07-31T09:17:10.000Z</published>
+    <updated>2019-07-31T09:42:40.995Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="预测"><a href="#预测" class="headerlink" title="预测"></a>预测</h2><ul><li><a href="https://medium.com/analytics-vidhya/using-machine-learning-to-predict-stock-prices-c4d0b23b029a" target="_blank" rel="noopener">Using Machine Learning to Predict Stock Prices</a><br>利用机器学习预测股票价格，作者“Vivek Palaniappan”，该文章使用了小波变换来滤除噪声，使用栈式自编码器自动提取特征，选取LSTM神经网络作为预测模型，在雪佛龙公司和艾森克美孚公司的MSE分别达到2.11和0.0945。Github地址：<a href="https://github.com/VivekPa/AIAlpha?source=post_page---------------------------" target="_blank" rel="noopener">AlphaAI</a></li></ul>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h2 id=&quot;预测&quot;&gt;&lt;a href=&quot;#预测&quot; class=&quot;headerlink&quot; title=&quot;预测&quot;&gt;&lt;/a&gt;预测&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;https://medium.com/analytics-vidhya/using-machine-learn
+      
+    
+    </summary>
+    
+      <category term="机器学习" scheme="http://yoursite.com/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
+    
+      <category term="Paper" scheme="http://yoursite.com/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/Paper/"/>
+    
+    
+      <category term="Prediction" scheme="http://yoursite.com/tags/Prediction/"/>
+    
+      <category term="Python" scheme="http://yoursite.com/tags/Python/"/>
+    
+      <category term="Machine Learning" scheme="http://yoursite.com/tags/Machine-Learning/"/>
+    
+  </entry>
   
   <entry>
     <title>Python Program Skill</title>
@@ -407,9 +439,9 @@
     
       <category term="Python" scheme="http://yoursite.com/tags/Python/"/>
     
-      <category term="Data Analysis" scheme="http://yoursite.com/tags/Data-Analysis/"/>
-    
       <category term="Machine Learning" scheme="http://yoursite.com/tags/Machine-Learning/"/>
+    
+      <category term="Data Analysis" scheme="http://yoursite.com/tags/Data-Analysis/"/>
     
       <category term="天池竞赛" scheme="http://yoursite.com/tags/%E5%A4%A9%E6%B1%A0%E7%AB%9E%E8%B5%9B/"/>
     
@@ -559,33 +591,6 @@
       <category term="公开课" scheme="http://yoursite.com/tags/%E5%85%AC%E5%BC%80%E8%AF%BE/"/>
     
       <category term="sort" scheme="http://yoursite.com/tags/sort/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>github多账户设置</title>
-    <link href="http://yoursite.com/2019/05/15/github%E5%A4%9A%E8%B4%A6%E6%88%B7%E8%AE%BE%E7%BD%AE/"/>
-    <id>http://yoursite.com/2019/05/15/github多账户设置/</id>
-    <published>2019-05-15T02:28:45.000Z</published>
-    <updated>2019-05-29T09:35:28.014Z</updated>
-    
-    <content type="html"><![CDATA[<p>如果有两个github账户，要在windows下同时操作它们，和单账户的配置有些不同</p><p>假设</p><ul><li>两个github的用户名分别为test1、test2</li><li>两个github账户绑定的邮箱分别为test1@example.com和test2@example.com</li><li>github与windows下的用户名一致</li></ul><h2 id="创建ssh-key"><a href="#创建ssh-key" class="headerlink" title="创建ssh key"></a>创建ssh key</h2><p>首先进入ssh目录<br><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> ~/.ssh</span><br></pre></td></tr></table></figure></p><p>为test1创建ssk key<br><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh-keygen -t rsa -b <span class="number">4096</span> -C "test1@example.com"</span><br></pre></td></tr></table></figure></p><p>输入test1保存的密钥文件名称<br><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Enter a file <span class="keyword">in</span> which to save the key (/Users/you/.ssh/id_rsa): [Press enter]</span><br><span class="line"># 这里输入 test1_id_rsa</span><br></pre></td></tr></table></figure></p><p>输入密码<br><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Enter passphrase (empty <span class="keyword">for</span> no passphrase): [<span class="built_in">Type</span> a passphrase]</span><br><span class="line">Enter same passphrase again: [<span class="built_in">Type</span> passphrase again]</span><br></pre></td></tr></table></figure></p><p>test2的ssk key创建步骤同上，保存的密钥文件为test2_id_rsa</p><h2 id="ssh-key-添加到ssh-agent"><a href="#ssh-key-添加到ssh-agent" class="headerlink" title="ssh key 添加到ssh-agent"></a>ssh key 添加到ssh-agent</h2><p>ssh-agent在后台启动<br><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">eval "$(ssh-agent -s)"</span><br></pre></td></tr></table></figure></p><p>将两个密钥文件添加到ssh-agent<br><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ssh-add ~/.ssh/test1_id_rsa</span><br><span class="line">ssh-add ~/.ssh/test2_id_rsa</span><br></pre></td></tr></table></figure></p><h2 id="配置文件config"><a href="#配置文件config" class="headerlink" title="配置文件config"></a>配置文件config</h2><p>配置或者创建并配置config文件(还是在~/.ssh/路径下)<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Host test1.github.com</span><br><span class="line">  HostName github.com</span><br><span class="line">  AddKeysToAgent yes</span><br><span class="line">  IdentityFile ~/.ssh/test1_id_rsa</span><br><span class="line"></span><br><span class="line">Host test2.github.com</span><br><span class="line">  HostName github.com</span><br><span class="line">  AddKeysToAgent yes</span><br><span class="line">  IdentityFile ~/.ssh/test2_id_rsa</span><br></pre></td></tr></table></figure></p><h2 id="ssh-key-添加到github"><a href="#ssh-key-添加到github" class="headerlink" title="ssh key 添加到github"></a>ssh key 添加到github</h2><p>在test1 github页面的Settings—&gt;SSH keys and GPG keys中，点击<code>New SSH key</code>，<br>将test1_id_rsa.pub文件中的所有内容复制粘贴过去</p><p>test2同上</p><h2 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h2><p>测试test1、test2<br><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ssh -T git@test1.github.com</span><br><span class="line">ssh -T git@test2.github.com</span><br></pre></td></tr></table></figure></p><h2 id="clone项目到本地"><a href="#clone项目到本地" class="headerlink" title="clone项目到本地"></a>clone项目到本地</h2><p>例如test1的远程仓库中有project1<br><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git clone git@test1.github.com:test1/project1.git</span><br></pre></td></tr></table></figure></p><p>第一个test1是该账户在windows上配置的config文件中的HostName，后一个test1是github上的用户名</p>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        &lt;p&gt;如果有两个github账户，要在windows下同时操作它们，和单账户的配置有些不同&lt;/p&gt;
-&lt;p&gt;假设&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;两个github的用户名分别为test1、test2&lt;/li&gt;
-&lt;li&gt;两个github账户绑定的邮箱分别为test1@example.com
-      
-    
-    </summary>
-    
-    
-      <category term="github" scheme="http://yoursite.com/tags/github/"/>
     
   </entry>
   
