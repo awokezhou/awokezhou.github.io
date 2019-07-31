@@ -5,7 +5,7 @@ tags: [Python]
 categories:
 - Program Language
 - Python
-- comments: true
+comments: true
 ---
 
 本文记录一些实际工作中使用到的Python语言编程技巧，或者学到的一些好用的用法
