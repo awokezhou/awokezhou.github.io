@@ -43,7 +43,7 @@ MxL7704是一款五输出通用PMIC(Power Management IC)，针对为低功耗FPG
 Gigabit Ethernet PHY 使用的是Broadcom的BCM54213PE，是一个全集成10Base-T/100Base-TX/1000Base-T的以太网千兆收发器。支持IEEE 802.3、802.3u和802.3ab标准，支持MII、GMII、TBI、RGMII和RTBI接口
 
 树莓派4 Ethernet部分
-![Power](Raspberry-Pi-4-Board/image/board-ethernet-01.png)
+![Ethernet](Raspberry-Pi-4-Board/image/board-etherner-01.png)
 
 目前原理图未公开GE PHY与BCM2711以哪种接口连接
 
