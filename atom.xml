@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2019-07-31T03:12:29.922Z</updated>
+  <updated>2019-07-31T03:15:39.630Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -21,7 +21,7 @@
     <link href="http://yoursite.com/2019/07/31/Python-Program-Skill/"/>
     <id>http://yoursite.com/2019/07/31/Python-Program-Skill/</id>
     <published>2019-07-31T02:14:15.000Z</published>
-    <updated>2019-07-31T03:12:29.922Z</updated>
+    <updated>2019-07-31T03:15:39.630Z</updated>
     
     <content type="html"><![CDATA[<p>本文记录一些实际工作中使用到的Python语言编程技巧，或者学到的一些好用的用法</p><h2 id="排序"><a href="#排序" class="headerlink" title="排序"></a>排序</h2><h3 id="矩阵按某列排序"><a href="#矩阵按某列排序" class="headerlink" title="矩阵按某列排序"></a>矩阵按某列排序</h3><p>应用场景：</p><ul><li>线性回归<br>做线性回归时，要拟合某个变量与输出的关系曲线，如果输入训练集在该变量的维度上是乱序的，拟合出的不是曲线，而是一团乱序的线。因此需要以该变量重排列</li></ul><p>方法：</p><ul><li>np.argsort</li><li>sorted &amp; lambda</li></ul><h4 id="np-argsort"><a href="#np-argsort" class="headerlink" title="np.argsort"></a>np.argsort</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># example</span></span><br><span class="line">x = np.array([[<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>],[<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>],[<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>]])</span><br><span class="line">_sort_idx = np.argsort(x[:,<span class="number">0</span>])  <span class="comment"># 按第0列升序排序</span></span><br><span class="line">x = x[_sort_idx].tolist()</span><br><span class="line"></span><br><span class="line"><span class="comment"># wrapper</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">col_sort</span><span class="params">(x, col)</span>:</span></span><br><span class="line">    _x, _sort_idx = np.array(x), np.argsort(_x[:,col])</span><br><span class="line">    <span class="keyword">return</span> _x[_sort_idx].tolist()</span><br></pre></td></tr></table></figure><p>np.argsort()方法可以获取升序(默认)排序后的索引</p><h4 id="sorted-amp-lambda"><a href="#sorted-amp-lambda" class="headerlink" title="sorted &amp; lambda"></a>sorted &amp; lambda</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># example</span></span><br><span class="line">x = [[<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>],[<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>],[<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>]]</span><br><span class="line">x = sorted(x, key=<span class="keyword">lambda</span> x:x[<span class="number">0</span>])</span><br><span class="line"></span><br><span class="line">x = [&#123;<span class="string">'a'</span>:<span class="number">1</span>, <span class="string">'b'</span>:<span class="number">2</span>&#125;, &#123;<span class="string">'a'</span>:<span class="number">2</span>, <span class="string">'b'</span>:<span class="number">1</span>&#125;]</span><br><span class="line">x = sorted(x, key=<span class="keyword">lambda</span> x:x[<span class="string">'b'</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment"># wrapper</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">col_sort</span><span class="params">(x, col)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> sorted(x, key=<span class="keyword">lambda</span> x:x[col])</span><br></pre></td></tr></table></figure><p>这种方法输入矩阵每行可以是一个<code>list</code>，也可以是<code>dict</code></p>]]></content>
     
@@ -38,8 +38,6 @@
       <category term="Program Language" scheme="http://yoursite.com/categories/Program-Language/"/>
     
       <category term="Python" scheme="http://yoursite.com/categories/Program-Language/Python/"/>
-    
-      <category term="[object Object]" scheme="http://yoursite.com/categories/Program-Language/Python/object-Object/"/>
     
     
       <category term="Python" scheme="http://yoursite.com/tags/Python/"/>
