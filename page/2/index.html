@@ -1278,8 +1278,15 @@ testA_record
       
         
           
-          
-          
+          DataFrame基本操作删除删除行或列使用的函数都是drop
+删除列1df.drop('col_name', axis=1)
+
+col_name 是列名标识
+axis用来标识删除的是行还是列
+
+删除行1df.drop([row_nr1, row_nr2, ...])
+要删除的行号以list形式传入
+          ...
           <!--noindex-->
           <div class="post-button text-center">
             <a class="btn" href="/2019/05/27/panda基本操作/#more" rel="contents">

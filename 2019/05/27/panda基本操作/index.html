@@ -79,15 +79,18 @@
 
 
 
+<meta name="description" content="DataFrame基本操作删除删除行或列使用的函数都是drop 删除列1df.drop(&apos;col_name&apos;, axis=1)  col_name 是列名标识 axis用来标识删除的是行还是列  删除行1df.drop([row_nr1, row_nr2, ...]) 要删除的行号以list形式传入 时间序列数据处理将字典列表转化为DataFrame12345678import pandas as">
 <meta name="keywords" content="Python">
 <meta property="og:type" content="article">
 <meta property="og:title" content="panda基本操作">
 <meta property="og:url" content="http://yoursite.com/2019/05/27/panda基本操作/index.html">
 <meta property="og:site_name" content="awokezhou&#39;s blog">
+<meta property="og:description" content="DataFrame基本操作删除删除行或列使用的函数都是drop 删除列1df.drop(&apos;col_name&apos;, axis=1)  col_name 是列名标识 axis用来标识删除的是行还是列  删除行1df.drop([row_nr1, row_nr2, ...]) 要删除的行号以list形式传入 时间序列数据处理将字典列表转化为DataFrame12345678import pandas as">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-07-31T02:27:38.358Z">
+<meta property="og:updated_time" content="2019-08-01T01:55:37.581Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="panda基本操作">
+<meta name="twitter:description" content="DataFrame基本操作删除删除行或列使用的函数都是drop 删除列1df.drop(&apos;col_name&apos;, axis=1)  col_name 是列名标识 axis用来标识删除的是行还是列  删除行1df.drop([row_nr1, row_nr2, ...]) 要删除的行号以list形式传入 时间序列数据处理将字典列表转化为DataFrame12345678import pandas as">
 
 
 
@@ -423,7 +426,19 @@
       
 
       
-        
+        <h2 id="DataFrame基本操作"><a href="#DataFrame基本操作" class="headerlink" title="DataFrame基本操作"></a>DataFrame基本操作</h2><h3 id="删除"><a href="#删除" class="headerlink" title="删除"></a>删除</h3><p>删除行或列使用的函数都是<code>drop</code></p>
+<h4 id="删除列"><a href="#删除列" class="headerlink" title="删除列"></a>删除列</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">df.drop(<span class="string">'col_name'</span>, axis=<span class="number">1</span>)</span><br></pre></td></tr></table></figure>
+<ul>
+<li>col_name 是列名标识</li>
+<li><code>axis</code>用来标识删除的是行还是列</li>
+</ul>
+<h4 id="删除行"><a href="#删除行" class="headerlink" title="删除行"></a>删除行</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">df.drop([row_nr1, row_nr2, ...])</span><br></pre></td></tr></table></figure>
+<p>要删除的行号以<code>list</code>形式传入</p>
+<h2 id="时间序列数据处理"><a href="#时间序列数据处理" class="headerlink" title="时间序列数据处理"></a>时间序列数据处理</h2><h3 id="将字典列表转化为DataFrame"><a href="#将字典列表转化为DataFrame" class="headerlink" title="将字典列表转化为DataFrame"></a>将字典列表转化为DataFrame</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line">x = [&#123;<span class="string">'a'</span>:<span class="number">1</span>, <span class="string">'b'</span>:<span class="number">2</span>, <span class="string">'c'</span>:<span class="string">'2000-01-01'</span>&#125;, </span><br><span class="line">     &#123;<span class="string">'a'</span>:<span class="number">2</span>, <span class="string">'b'</span>:<span class="number">3</span>, <span class="string">'c'</span>:<span class="string">'2000-01-02'</span>&#125;, </span><br><span class="line">     &#123;<span class="string">'a'</span>:<span class="number">3</span>, <span class="string">'b'</span>:<span class="number">4</span>, <span class="string">'c'</span>:<span class="string">'2000-01-03'</span>&#125;,</span><br><span class="line">     &#123;<span class="string">'a'</span>:<span class="number">4</span>, <span class="string">'b'</span>:<span class="number">5</span>, <span class="string">'c'</span>:<span class="string">'2000-01-04'</span>&#125;,</span><br><span class="line">     &#123;<span class="string">'a'</span>:<span class="number">5</span>, <span class="string">'b'</span>:<span class="number">6</span>, <span class="string">'c'</span>:<span class="string">'2000-01-05'</span>&#125;,</span><br><span class="line">     &#123;<span class="string">'a'</span>:<span class="number">6</span>, <span class="string">'b'</span>:<span class="number">7</span>, <span class="string">'c'</span>:<span class="string">'2000-01-06'</span>&#125;,]</span><br><span class="line">df = pd.DataFrame(x, columns=[<span class="string">'a'</span>, <span class="string">'b'</span>, <span class="string">'c'</span>])</span><br></pre></td></tr></table></figure>
+<p>查看数据<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; df</span><br><span class="line">   a  b           c</span><br><span class="line">0  1  2  2000-01-01</span><br><span class="line">1  2  3  2000-01-02</span><br><span class="line">2  3  4  2000-01-03</span><br><span class="line">3  4  5  2000-01-04</span><br><span class="line">4  5  6  2000-01-05</span><br><span class="line">5  6  7  2000-01-06</span><br></pre></td></tr></table></figure></p>
+<h3 id="修改索引为日期"><a href="#修改索引为日期" class="headerlink" title="修改索引为日期"></a>修改索引为日期</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">df.set_index(<span class="string">'c'</span>)</span><br></pre></td></tr></table></figure>
+<p>输出<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; df.set_index(<span class="string">'c'</span>)</span><br><span class="line">            a  b</span><br><span class="line">c</span><br><span class="line">2000-01-01  1  2</span><br><span class="line">2000-01-02  2  3</span><br><span class="line">2000-01-03  3  4</span><br><span class="line">2000-01-04  4  5</span><br><span class="line">2000-01-05  5  6</span><br><span class="line">2000-01-06  6  7</span><br></pre></td></tr></table></figure></p>
+<h3 id="DataFrame转化为csv文件"><a href="#DataFrame转化为csv文件" class="headerlink" title="DataFrame转化为csv文件"></a>DataFrame转化为csv文件</h3>
       
     </div>
     
@@ -520,8 +535,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -641,6 +665,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#DataFrame基本操作"><span class="nav-number">1.</span> <span class="nav-text">DataFrame基本操作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#删除"><span class="nav-number">1.1.</span> <span class="nav-text">删除</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#删除列"><span class="nav-number">1.1.1.</span> <span class="nav-text">删除列</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#删除行"><span class="nav-number">1.1.2.</span> <span class="nav-text">删除行</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#时间序列数据处理"><span class="nav-number">2.</span> <span class="nav-text">时间序列数据处理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#将字典列表转化为DataFrame"><span class="nav-number">2.1.</span> <span class="nav-text">将字典列表转化为DataFrame</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#修改索引为日期"><span class="nav-number">2.2.</span> <span class="nav-text">修改索引为日期</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DataFrame转化为csv文件"><span class="nav-number">2.3.</span> <span class="nav-text">DataFrame转化为csv文件</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       

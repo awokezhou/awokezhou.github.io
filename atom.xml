@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2019-07-31T09:42:40.995Z</updated>
+  <updated>2019-08-01T11:20:35.751Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -21,16 +21,16 @@
     <link href="http://yoursite.com/2019/07/31/Machine-Learning-Reference-Reading/"/>
     <id>http://yoursite.com/2019/07/31/Machine-Learning-Reference-Reading/</id>
     <published>2019-07-31T09:17:10.000Z</published>
-    <updated>2019-07-31T09:42:40.995Z</updated>
+    <updated>2019-08-01T11:20:35.751Z</updated>
     
-    <content type="html"><![CDATA[<h2 id="预测"><a href="#预测" class="headerlink" title="预测"></a>预测</h2><ul><li><a href="https://medium.com/analytics-vidhya/using-machine-learning-to-predict-stock-prices-c4d0b23b029a" target="_blank" rel="noopener">Using Machine Learning to Predict Stock Prices</a><br>利用机器学习预测股票价格，作者“Vivek Palaniappan”，该文章使用了小波变换来滤除噪声，使用栈式自编码器自动提取特征，选取LSTM神经网络作为预测模型，在雪佛龙公司和艾森克美孚公司的MSE分别达到2.11和0.0945。Github地址：<a href="https://github.com/VivekPa/AIAlpha?source=post_page---------------------------" target="_blank" rel="noopener">AlphaAI</a></li></ul>]]></content>
+    <content type="html"><![CDATA[<h2 id="预测"><a href="#预测" class="headerlink" title="预测"></a>预测</h2><ul><li><p><a href="https://medium.com/analytics-vidhya/using-machine-learning-to-predict-stock-prices-c4d0b23b029a" target="_blank" rel="noopener">Using Machine Learning to Predict Stock Prices</a><br>利用机器学习预测股票价格，作者“Vivek Palaniappan”，该文章使用了小波变换来滤除噪声，使用栈式自编码器自动提取特征，选取LSTM神经网络作为预测模型，在雪佛龙公司和艾森克美孚公司的MSE分别达到2.11和0.0945。Github地址：<a href="https://github.com/VivekPa/AIAlpha?source=post_page---------------------------" target="_blank" rel="noopener">AlphaAI</a></p></li><li><p><a href="https://www.analyticsvidhya.com/blog/2016/02/time-series-forecasting-codes-python/" target="_blank" rel="noopener">A comprehensive beginner’s guide to create a Time Series Forecast</a><br>时间序列预测综合指南，详细介绍了时间序列数据分析及预测的一系列思路和方法</p></li></ul>]]></content>
     
     <summary type="html">
     
       
       
         &lt;h2 id=&quot;预测&quot;&gt;&lt;a href=&quot;#预测&quot; class=&quot;headerlink&quot; title=&quot;预测&quot;&gt;&lt;/a&gt;预测&lt;/h2&gt;&lt;ul&gt;
-&lt;li&gt;&lt;a href=&quot;https://medium.com/analytics-vidhya/using-machine-learn
+&lt;li&gt;&lt;p&gt;&lt;a href=&quot;https://medium.com/analytics-vidhya/using-machine-le
       
     
     </summary>
@@ -452,9 +452,16 @@
     <link href="http://yoursite.com/2019/05/27/panda%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C/"/>
     <id>http://yoursite.com/2019/05/27/panda基本操作/</id>
     <published>2019-05-27T06:35:10.000Z</published>
-    <updated>2019-07-31T02:27:38.358Z</updated>
+    <updated>2019-08-01T01:55:37.581Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="DataFrame基本操作"><a href="#DataFrame基本操作" class="headerlink" title="DataFrame基本操作"></a>DataFrame基本操作</h2><h3 id="删除"><a href="#删除" class="headerlink" title="删除"></a>删除</h3><p>删除行或列使用的函数都是<code>drop</code></p><h4 id="删除列"><a href="#删除列" class="headerlink" title="删除列"></a>删除列</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">df.drop(<span class="string">'col_name'</span>, axis=<span class="number">1</span>)</span><br></pre></td></tr></table></figure><ul><li>col_name 是列名标识</li><li><code>axis</code>用来标识删除的是行还是列</li></ul><h4 id="删除行"><a href="#删除行" class="headerlink" title="删除行"></a>删除行</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">df.drop([row_nr1, row_nr2, ...])</span><br></pre></td></tr></table></figure><p>要删除的行号以<code>list</code>形式传入</p><h2 id="时间序列数据处理"><a href="#时间序列数据处理" class="headerlink" title="时间序列数据处理"></a>时间序列数据处理</h2><h3 id="将字典列表转化为DataFrame"><a href="#将字典列表转化为DataFrame" class="headerlink" title="将字典列表转化为DataFrame"></a>将字典列表转化为DataFrame</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line">x = [&#123;<span class="string">'a'</span>:<span class="number">1</span>, <span class="string">'b'</span>:<span class="number">2</span>, <span class="string">'c'</span>:<span class="string">'2000-01-01'</span>&#125;, </span><br><span class="line">     &#123;<span class="string">'a'</span>:<span class="number">2</span>, <span class="string">'b'</span>:<span class="number">3</span>, <span class="string">'c'</span>:<span class="string">'2000-01-02'</span>&#125;, </span><br><span class="line">     &#123;<span class="string">'a'</span>:<span class="number">3</span>, <span class="string">'b'</span>:<span class="number">4</span>, <span class="string">'c'</span>:<span class="string">'2000-01-03'</span>&#125;,</span><br><span class="line">     &#123;<span class="string">'a'</span>:<span class="number">4</span>, <span class="string">'b'</span>:<span class="number">5</span>, <span class="string">'c'</span>:<span class="string">'2000-01-04'</span>&#125;,</span><br><span class="line">     &#123;<span class="string">'a'</span>:<span class="number">5</span>, <span class="string">'b'</span>:<span class="number">6</span>, <span class="string">'c'</span>:<span class="string">'2000-01-05'</span>&#125;,</span><br><span class="line">     &#123;<span class="string">'a'</span>:<span class="number">6</span>, <span class="string">'b'</span>:<span class="number">7</span>, <span class="string">'c'</span>:<span class="string">'2000-01-06'</span>&#125;,]</span><br><span class="line">df = pd.DataFrame(x, columns=[<span class="string">'a'</span>, <span class="string">'b'</span>, <span class="string">'c'</span>])</span><br></pre></td></tr></table></figure><p>查看数据<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; df</span><br><span class="line">   a  b           c</span><br><span class="line">0  1  2  2000-01-01</span><br><span class="line">1  2  3  2000-01-02</span><br><span class="line">2  3  4  2000-01-03</span><br><span class="line">3  4  5  2000-01-04</span><br><span class="line">4  5  6  2000-01-05</span><br><span class="line">5  6  7  2000-01-06</span><br></pre></td></tr></table></figure></p><h3 id="修改索引为日期"><a href="#修改索引为日期" class="headerlink" title="修改索引为日期"></a>修改索引为日期</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">df.set_index(<span class="string">'c'</span>)</span><br></pre></td></tr></table></figure><p>输出<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; df.set_index(<span class="string">'c'</span>)</span><br><span class="line">            a  b</span><br><span class="line">c</span><br><span class="line">2000-01-01  1  2</span><br><span class="line">2000-01-02  2  3</span><br><span class="line">2000-01-03  3  4</span><br><span class="line">2000-01-04  4  5</span><br><span class="line">2000-01-05  5  6</span><br><span class="line">2000-01-06  6  7</span><br></pre></td></tr></table></figure></p><h3 id="DataFrame转化为csv文件"><a href="#DataFrame转化为csv文件" class="headerlink" title="DataFrame转化为csv文件"></a>DataFrame转化为csv文件</h3>]]></content>
     
     <summary type="html">
+    
+      
+      
+        &lt;h2 id=&quot;DataFrame基本操作&quot;&gt;&lt;a href=&quot;#DataFrame基本操作&quot; class=&quot;headerlink&quot; title=&quot;DataFrame基本操作&quot;&gt;&lt;/a&gt;DataFrame基本操作&lt;/h2&gt;&lt;h3 id=&quot;删除&quot;&gt;&lt;a href=&quot;#删除&quot; cla
+      
     
     </summary>
     

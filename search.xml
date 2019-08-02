@@ -3,7 +3,7 @@
   <entry>
     <title><![CDATA[Machine Learning Reference Reading]]></title>
     <url>%2F2019%2F07%2F31%2FMachine-Learning-Reference-Reading%2F</url>
-    <content type="text"><![CDATA[预测 Using Machine Learning to Predict Stock Prices利用机器学习预测股票价格，作者“Vivek Palaniappan”，该文章使用了小波变换来滤除噪声，使用栈式自编码器自动提取特征，选取LSTM神经网络作为预测模型，在雪佛龙公司和艾森克美孚公司的MSE分别达到2.11和0.0945。Github地址：AlphaAI]]></content>
+    <content type="text"><![CDATA[预测 Using Machine Learning to Predict Stock Prices利用机器学习预测股票价格，作者“Vivek Palaniappan”，该文章使用了小波变换来滤除噪声，使用栈式自编码器自动提取特征，选取LSTM神经网络作为预测模型，在雪佛龙公司和艾森克美孚公司的MSE分别达到2.11和0.0945。Github地址：AlphaAI A comprehensive beginner’s guide to create a Time Series Forecast时间序列预测综合指南，详细介绍了时间序列数据分析及预测的一系列思路和方法]]></content>
       <categories>
         <category>机器学习</category>
         <category>Paper</category>
@@ -184,7 +184,7 @@
   <entry>
     <title><![CDATA[panda基本操作]]></title>
     <url>%2F2019%2F05%2F27%2Fpanda%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C%2F</url>
-    <content type="text"></content>
+    <content type="text"><![CDATA[DataFrame基本操作删除删除行或列使用的函数都是drop 删除列1df.drop('col_name', axis=1) col_name 是列名标识 axis用来标识删除的是行还是列 删除行1df.drop([row_nr1, row_nr2, ...]) 要删除的行号以list形式传入 时间序列数据处理将字典列表转化为DataFrame12345678import pandas as pdx = [&#123;'a':1, 'b':2, 'c':'2000-01-01'&#125;, &#123;'a':2, 'b':3, 'c':'2000-01-02'&#125;, &#123;'a':3, 'b':4, 'c':'2000-01-03'&#125;, &#123;'a':4, 'b':5, 'c':'2000-01-04'&#125;, &#123;'a':5, 'b':6, 'c':'2000-01-05'&#125;, &#123;'a':6, 'b':7, 'c':'2000-01-06'&#125;,]df = pd.DataFrame(x, columns=['a', 'b', 'c']) 查看数据12345678&gt;&gt;&gt; df a b c0 1 2 2000-01-011 2 3 2000-01-022 3 4 2000-01-033 4 5 2000-01-044 5 6 2000-01-055 6 7 2000-01-06 修改索引为日期1df.set_index('c') 输出123456789&gt;&gt;&gt; df.set_index('c') a bc2000-01-01 1 22000-01-02 2 32000-01-03 3 42000-01-04 4 52000-01-05 5 62000-01-06 6 7 DataFrame转化为csv文件]]></content>
       <categories>
         <category>Program Language</category>
         <category>Python</category>
@@ -329,7 +329,7 @@
   <entry>
     <title><![CDATA[加密测试]]></title>
     <url>%2F2019%2F04%2F28%2F%E5%8A%A0%E5%AF%86%E6%B5%8B%E8%AF%95%2F</url>
-    <content type="text"><![CDATA[请输入密码 Incorrect Password! No content to display! U2FsdGVkX1/Nlf6Lkh2VFQVENpaRvDTsdyA8bN2TsvytY/iVXENDd1uExV3e5OvVKl7Cs8VMBZn3t8gjk3x+sRqddsEriZU0yYRgnkrclijGTJ5gV1HKXxM0UI7KJqv8RGBvy5mAbn5/jSZLfhU/2ELmluCqqOKm5HmCspxkVXP75pHG+Yo0xH6W6/0m1k1eN6maieqZ3CLX661dNGE39o8Bfueil14ACG3XCpjS3o8ijDCGu2UQBFhW1iYQi0z9upEqTWLjJI4iLbBsjtnlZ4sfoTjeCam5nGxMDDPt9AJCkxLCRjyyGRS0XBRJ7Fvd6LCMBz4SoUcbrHipbhAjfNl47CASKYAttETtfUkH/lyGWTsUtCKnkBfyAaf4i+lMCUmwaaJRiFlQlCnUwqFszg==]]></content>
+    <content type="text"><![CDATA[请输入密码 Incorrect Password! No content to display! U2FsdGVkX1/P1s2lR0aJm40hixhAweNC1LstbLHC1JBkAGrA5efMhnPEtREUt/E1L9cHf61NkijzvoncDZ9HiUbSv/JIPY+623mhacuP7PyA4UuiAMfHMtGYhKUreMcIgh+pLKGW7iPO1tMHtgmHEg8IJaLlRrgs2gZGW2GCfoy7GbGmNrxUiEWg0fskHWNByQY2m4a4dFzBOvTy0XSSwiEJdDxrrt/bUvpFxLsTxvnrvw5zuDvIrAZT+0NASh9ZWP6Jst2YfYiFcOs/Al/vRtSV+Msg0kUK+/F1dONc7aVz9brHpl+nDaeKWDSzSGID5mz33nkg0MbGBZRwbiVd4HEW6OHucSoXGYNrif/3WT5QIW+/Kdld7xD//p6cPAb+DrWpSVdeqKXoZU88PXp0Fg==]]></content>
       <tags>
         <tag>加密</tag>
       </tags>
