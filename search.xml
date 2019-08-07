@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title><![CDATA[每月见闻201908]]></title>
+    <url>%2F2019%2F08%2F07%2F%E6%AF%8F%E6%9C%88%E8%A7%81%E9%97%BB201908%2F</url>
+    <content type="text"><![CDATA[工具 videodownloader一个使用Electron制作的Youtube-dl的图形界面，可以下载包括Youtube、优酷、网易云音乐等在内的110个网站的视频 lazydocker命令行管理Docker服务的一个图形界面工具 新闻 生菜收割机器人英国剑桥大学开发了一个收割生菜的机器人。它用摄像头识别出每棵生菜，然后使用机器学习算法判断是否生长成熟，有没有感染疾病，如果一切正常，就进行收割]]></content>
+      <categories>
+        <category>每月见闻</category>
+      </categories>
+  </entry>
+  <entry>
     <title><![CDATA[Machine Learning Reference Reading]]></title>
     <url>%2F2019%2F07%2F31%2FMachine-Learning-Reference-Reading%2F</url>
     <content type="text"><![CDATA[预测 Using Machine Learning to Predict Stock Prices利用机器学习预测股票价格，作者“Vivek Palaniappan”，该文章使用了小波变换来滤除噪声，使用栈式自编码器自动提取特征，选取LSTM神经网络作为预测模型，在雪佛龙公司和艾森克美孚公司的MSE分别达到2.11和0.0945。Github地址：AlphaAI A comprehensive beginner’s guide to create a Time Series Forecast时间序列预测综合指南，详细介绍了时间序列数据分析及预测的一系列思路和方法]]></content>
@@ -329,7 +337,7 @@
   <entry>
     <title><![CDATA[加密测试]]></title>
     <url>%2F2019%2F04%2F28%2F%E5%8A%A0%E5%AF%86%E6%B5%8B%E8%AF%95%2F</url>
-    <content type="text"><![CDATA[请输入密码 Incorrect Password! No content to display! U2FsdGVkX1/P1s2lR0aJm40hixhAweNC1LstbLHC1JBkAGrA5efMhnPEtREUt/E1L9cHf61NkijzvoncDZ9HiUbSv/JIPY+623mhacuP7PyA4UuiAMfHMtGYhKUreMcIgh+pLKGW7iPO1tMHtgmHEg8IJaLlRrgs2gZGW2GCfoy7GbGmNrxUiEWg0fskHWNByQY2m4a4dFzBOvTy0XSSwiEJdDxrrt/bUvpFxLsTxvnrvw5zuDvIrAZT+0NASh9ZWP6Jst2YfYiFcOs/Al/vRtSV+Msg0kUK+/F1dONc7aVz9brHpl+nDaeKWDSzSGID5mz33nkg0MbGBZRwbiVd4HEW6OHucSoXGYNrif/3WT5QIW+/Kdld7xD//p6cPAb+DrWpSVdeqKXoZU88PXp0Fg==]]></content>
+    <content type="text"><![CDATA[请输入密码 Incorrect Password! No content to display! U2FsdGVkX19WljnH06jFR7Xa9HCZe3K99aj0vrjBL4jkz1IjWCgaamyySXBJ3qsdlk7cZmOJMSgmjwNDCBOvb6KLEAIqoST353Uap1rwnuK21UDkWM0r9kIOZ5LUejxa3rUjyXcZMFBXIFj0QmNx2XFHy3yp3/QgIJqB2Za5a3GZbZcMylZiK02J8u+Ov5NJPjROKrXHQs2phJzJLSI0okcp11wOuVRcjHyKmKCDkisMPNciN8uKbv2GYFJy+/WtKArBHv63YMrtxsmc2pWzM7M/nmZt4xj8KpI+F9qjIQYLE673X1UMS6ODNd0Y/rgI4NRmgCyNq6PviBiw1dK6eL6bH4dMW1lGDeS2yhYiwBD0wohw4G+/VDRgu7oAmPtUVW5KCl7kCipicoVzYyM3yg==]]></content>
       <tags>
         <tag>加密</tag>
       </tags>
