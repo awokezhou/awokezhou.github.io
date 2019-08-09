@@ -168,7 +168,7 @@
   <entry>
     <title><![CDATA[一些链接]]></title>
     <url>%2F2019%2F05%2F29%2F%E4%B8%80%E4%BA%9B%E9%93%BE%E6%8E%A5%2F</url>
-    <content type="text"><![CDATA[嵌入式开发ARM Developer Document Python Pandas官方文档 一个将python代码转化为可视化动画的网站：pythontutor Machine Learning FloydHub Blog一个深度学习、AI、云GPU的博客，里面的文章很前沿 Jason Brownlee PhD一个机器学习博主，写了很多机器学习、数据分析相关文章]]></content>
+    <content type="text"><![CDATA[嵌入式开发ARM Developer Document Python Pandas官方文档 pythontutor一个将python代码转化为可视化动画的网站 PywaveletsPython小波变换库官方网站，包括安装使用说明，以及API介绍 Machine Learning FloydHub Blog一个深度学习、AI、云GPU的博客，里面的文章很前沿 Jason Brownlee PhD一个机器学习博主，写了很多机器学习、数据分析相关文章 其他 Medium一个类似简书的阅读写作平台，支持start、follow功能，内容质量较高]]></content>
       <categories>
         <category>其他</category>
       </categories>
@@ -337,7 +337,7 @@
   <entry>
     <title><![CDATA[加密测试]]></title>
     <url>%2F2019%2F04%2F28%2F%E5%8A%A0%E5%AF%86%E6%B5%8B%E8%AF%95%2F</url>
-    <content type="text"><![CDATA[请输入密码 Incorrect Password! No content to display! U2FsdGVkX19WljnH06jFR7Xa9HCZe3K99aj0vrjBL4jkz1IjWCgaamyySXBJ3qsdlk7cZmOJMSgmjwNDCBOvb6KLEAIqoST353Uap1rwnuK21UDkWM0r9kIOZ5LUejxa3rUjyXcZMFBXIFj0QmNx2XFHy3yp3/QgIJqB2Za5a3GZbZcMylZiK02J8u+Ov5NJPjROKrXHQs2phJzJLSI0okcp11wOuVRcjHyKmKCDkisMPNciN8uKbv2GYFJy+/WtKArBHv63YMrtxsmc2pWzM7M/nmZt4xj8KpI+F9qjIQYLE673X1UMS6ODNd0Y/rgI4NRmgCyNq6PviBiw1dK6eL6bH4dMW1lGDeS2yhYiwBD0wohw4G+/VDRgu7oAmPtUVW5KCl7kCipicoVzYyM3yg==]]></content>
+    <content type="text"><![CDATA[请输入密码 Incorrect Password! No content to display! U2FsdGVkX1+fFOyKQWcr0hEAKdYu9yXwVEzjm69mMbP4I738liFf/D8iTApgw1ihh6KkXaOzWkWTaD3Jbr+OQ/776eXmfOldkk4DL+Gz9NOD/1doIElo3rHDf25SD9KJDqENLSPrnRwIFo1h+KMBbEf0CHUethRVfAnB6e2JQ7h0C1SBW5xBDDJIWYd6Ig6NstqQQ1VQk66LZJavjJYYGupw/qrAe9Bj8RI8QMZKqah5lbgfbCArchTJWDmwgZj9KOFQE8gFEsMq3x9HDvMaykZf2usIJiu2/JRrnqHROU1PrjkP/TD0NjMlKSZnZiC9ghkOPCKjqDkoUdoW2LL6JHcTILINN3/LrowuUtJwlGiyr7TapNgns0kTf3VkMVgbOEPpNn8LgzjeXa1neDftWQ==]]></content>
       <tags>
         <tag>加密</tag>
       </tags>
