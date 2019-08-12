@@ -3,7 +3,7 @@
   <entry>
     <title><![CDATA[每月见闻201908]]></title>
     <url>%2F2019%2F08%2F07%2F%E6%AF%8F%E6%9C%88%E8%A7%81%E9%97%BB201908%2F</url>
-    <content type="text"><![CDATA[工具 videodownloader一个使用Electron制作的Youtube-dl的图形界面，可以下载包括Youtube、优酷、网易云音乐等在内的110个网站的视频 lazydocker命令行管理Docker服务的一个图形界面工具 新闻 生菜收割机器人英国剑桥大学开发了一个收割生菜的机器人。它用摄像头识别出每棵生菜，然后使用机器学习算法判断是否生长成熟，有没有感染疾病，如果一切正常，就进行收割]]></content>
+    <content type="text"><![CDATA[工具 videodownloader一个使用Electron制作的Youtube-dl的图形界面，可以下载包括Youtube、优酷、网易云音乐等在内的110个网站的视频 lazydocker命令行管理Docker服务的一个图形界面工具 新闻 生菜收割机器人英国剑桥大学开发了一个收割生菜的机器人。它用摄像头识别出每棵生菜，然后使用机器学习算法判断是否生长成熟，有没有感染疾病，如果一切正常，就进行收割 华为发布HarmonyOS 鸿蒙操作系统2019年8月9日，华为在其开发者大会上正式向全球发布了其自研的HarmonyOS。该系统是基于微内核的面向全场景的分布式操作系统，具有分布架构、内核安全、生态共享、天生流畅四大优势。鸿蒙OS不同于宏内核的Linux，属于微内核，并且属于seL4阶段，能够进行形式化验证(数学方法验证Bug Free)，仅仅将时钟管理、内存、中断、网络等内容放在微核中，其他系统级服务都在应用层以服务的形式提供，因此微内核代码量很小(9000行)]]></content>
       <categories>
         <category>每月见闻</category>
       </categories>
@@ -337,7 +337,7 @@
   <entry>
     <title><![CDATA[加密测试]]></title>
     <url>%2F2019%2F04%2F28%2F%E5%8A%A0%E5%AF%86%E6%B5%8B%E8%AF%95%2F</url>
-    <content type="text"><![CDATA[请输入密码 Incorrect Password! No content to display! U2FsdGVkX1+fFOyKQWcr0hEAKdYu9yXwVEzjm69mMbP4I738liFf/D8iTApgw1ihh6KkXaOzWkWTaD3Jbr+OQ/776eXmfOldkk4DL+Gz9NOD/1doIElo3rHDf25SD9KJDqENLSPrnRwIFo1h+KMBbEf0CHUethRVfAnB6e2JQ7h0C1SBW5xBDDJIWYd6Ig6NstqQQ1VQk66LZJavjJYYGupw/qrAe9Bj8RI8QMZKqah5lbgfbCArchTJWDmwgZj9KOFQE8gFEsMq3x9HDvMaykZf2usIJiu2/JRrnqHROU1PrjkP/TD0NjMlKSZnZiC9ghkOPCKjqDkoUdoW2LL6JHcTILINN3/LrowuUtJwlGiyr7TapNgns0kTf3VkMVgbOEPpNn8LgzjeXa1neDftWQ==]]></content>
+    <content type="text"><![CDATA[请输入密码 Incorrect Password! No content to display! U2FsdGVkX19i7qAOREJuu8H8VjtGjeGZm1oaI5kthALgfhVl2mYzx+ALxzxm7Nev2rd8DA8bHKPZYm19uRSaZcHRZ2FPb08eA5D8KYUO6Fml1d7fIj451+ksBpd6MoP1tGF3ZiIgXR2vRQfslhBYinCMOHE0V7oIjITqqtviSf2p6ibO50cvFcy0weHQMkI11v4ppuKJU+UWZx4jvmo/OWKBX5PCSj82g/YfSo7bl90lrWJspFMYgJyvCApl/OXxdetaHSgMRzhptFvAbxUTAN8jDb74L26GlIfeGDag9gop8LT5Es0dIGAkzMmycUt/hC6Mvo6zrJTS7n2+HHe3f6fBxfTnr7hoExkj+tXZp1XYdZXEpGtM8DpTGg+MGufJmy/l9361K9ldav53ZSFi0A==]]></content>
       <tags>
         <tag>加密</tag>
       </tags>
