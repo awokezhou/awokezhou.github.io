@@ -1,9 +1,9 @@
 ---
 title: Machine Learning Reference Reading
 date: 2019-07-31 17:17:10
-tags: [Prediction,Python,Machine Learning]
+tags: [Python,ML]
 categories:
-- 机器学习
+- ML
 - Paper
 comments: true
 ---
