@@ -50,9 +50,9 @@
     <link href="http://yoursite.com/2019/08/07/%E6%AF%8F%E6%9C%88%E8%A7%81%E9%97%BB201908/"/>
     <id>http://yoursite.com/2019/08/07/每月见闻201908/</id>
     <published>2019-08-07T10:00:18.000Z</published>
-    <updated>2019-08-17T06:36:49.745Z</updated>
+    <updated>2019-08-17T06:58:31.702Z</updated>
     
-    <content type="html"><![CDATA[<h1 id="工具"><a href="#工具" class="headerlink" title="工具"></a>工具</h1><ul><li><p><a href="https://github.com/mayeaux/videodownloader" target="_blank" rel="noopener">videodownloader</a><br>一个使用Electron制作的Youtube-dl的图形界面，可以下载包括Youtube、优酷、网易云音乐等在内的110个网站的视频</p></li><li><p><a href="https://github.com/jesseduffield/lazydocker" target="_blank" rel="noopener">lazydocker</a><br>命令行管理Docker服务的一个图形界面工具</p></li></ul><h1 id="新闻"><a href="#新闻" class="headerlink" title="新闻"></a>新闻</h1><ul><li><p><a href="https://www.cam.ac.uk/research/news/robot-uses-machine-learning-to-harvest-lettuce" target="_blank" rel="noopener">生菜收割机器人</a><br>英国剑桥大学开发了一个收割生菜的机器人。它用摄像头识别出每棵生菜，然后使用机器学习算法判断是否生长成熟，有没有感染疾病，如果一切正常，就进行收割</p></li><li><p><a href="https://www.zhihu.com/question/339567108/answer/781523669" target="_blank" rel="noopener">华为发布HarmonyOS 鸿蒙操作系统</a><br>2019年8月9日，华为在其开发者大会上正式向全球发布了其自研的HarmonyOS。该系统是基于微内核的面向全场景的分布式操作系统，具有分布架构、内核安全、生态共享、天生流畅四大优势。鸿蒙OS不同于宏内核的Linux，属于微内核，并且属于seL4阶段，能够进行形式化验证(数学方法验证Bug Free)，仅仅将时钟管理、内存、中断、网络等内容放在微核中，其他系统级服务都在应用层以服务的形式提供，因此微内核代码量很小(9000行)</p></li></ul><h1 id="开源"><a href="#开源" class="headerlink" title="开源"></a>开源</h1><ul><li><a href="https://github.com/codeplea/genann" target="_blank" rel="noopener">genann</a><br>Genann是一个轻量级、测试稳定的C语言神经网络库，其使用前向反馈神经网络，简单、快速、可靠、稳定</li></ul>]]></content>
+    <content type="html"><![CDATA[<h1 id="工具"><a href="#工具" class="headerlink" title="工具"></a>工具</h1><ul><li><p><a href="https://github.com/mayeaux/videodownloader" target="_blank" rel="noopener">videodownloader</a><br>一个使用Electron制作的Youtube-dl的图形界面，可以下载包括Youtube、优酷、网易云音乐等在内的110个网站的视频</p></li><li><p><a href="https://github.com/jesseduffield/lazydocker" target="_blank" rel="noopener">lazydocker</a><br>命令行管理Docker服务的一个图形界面工具</p></li></ul><h1 id="新闻"><a href="#新闻" class="headerlink" title="新闻"></a>新闻</h1><ul><li><p><a href="https://www.cam.ac.uk/research/news/robot-uses-machine-learning-to-harvest-lettuce" target="_blank" rel="noopener">生菜收割机器人</a><br>英国剑桥大学开发了一个收割生菜的机器人。它用摄像头识别出每棵生菜，然后使用机器学习算法判断是否生长成熟，有没有感染疾病，如果一切正常，就进行收割</p></li><li><p><a href="https://www.zhihu.com/question/339567108/answer/781523669" target="_blank" rel="noopener">华为发布HarmonyOS 鸿蒙操作系统</a><br>2019年8月9日，华为在其开发者大会上正式向全球发布了其自研的HarmonyOS。该系统是基于微内核的面向全场景的分布式操作系统，具有分布架构、内核安全、生态共享、天生流畅四大优势。鸿蒙OS不同于宏内核的Linux，属于微内核，并且属于seL4阶段，能够进行形式化验证(数学方法验证Bug Free)，仅仅将时钟管理、内存、中断、网络等内容放在微核中，其他系统级服务都在应用层以服务的形式提供，因此微内核代码量很小(9000行)</p></li></ul><h1 id="开源"><a href="#开源" class="headerlink" title="开源"></a>开源</h1><ul><li><a href="https://github.com/codeplea/genann" target="_blank" rel="noopener">genann</a><br>Genann是一个轻量级、测试稳定的C语言神经网络库，其使用前向反馈神经网络，简单、快速、可靠、稳定<br><img src="/2019/08/07/每月见闻201908/image/201908-01.png" alt></li></ul><h1 id="人物"><a href="#人物" class="headerlink" title="人物"></a>人物</h1><ul><li><a href="http://michaelnielsen.org/" target="_blank" rel="noopener">Michael Nielsen</a><br>Michael Nielsen 是⼀位量⼦物理学家、科学作家、计算机编程研究⼈员，Neural Networks and Deep Learning(神经⽹络与深度学习)这本书的作者</li></ul>]]></content>
     
     <summary type="html">
     
@@ -93,9 +93,9 @@
       <category term="Paper" scheme="http://yoursite.com/categories/ML/Paper/"/>
     
     
-      <category term="Python" scheme="http://yoursite.com/tags/Python/"/>
-    
       <category term="ML" scheme="http://yoursite.com/tags/ML/"/>
+    
+      <category term="Python" scheme="http://yoursite.com/tags/Python/"/>
     
   </entry>
   
@@ -488,9 +488,9 @@
       <category term="天池竞赛" scheme="http://yoursite.com/categories/ML/%E5%AE%9E%E6%88%98%E9%A1%B9%E7%9B%AE/%E5%A4%A9%E6%B1%A0%E7%AB%9E%E8%B5%9B/"/>
     
     
-      <category term="Python" scheme="http://yoursite.com/tags/Python/"/>
-    
       <category term="ML" scheme="http://yoursite.com/tags/ML/"/>
+    
+      <category term="Python" scheme="http://yoursite.com/tags/Python/"/>
     
       <category term="天池竞赛" scheme="http://yoursite.com/tags/%E5%A4%A9%E6%B1%A0%E7%AB%9E%E8%B5%9B/"/>
     
