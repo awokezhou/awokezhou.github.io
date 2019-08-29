@@ -393,7 +393,7 @@
 <div id="decryptionError" style="display: none;">Incorrect Password!</div>
 <div id="noContentError" style="display: none;">No content to display!</div>
 <div id="encrypt-blog" style="display:none">
-U2FsdGVkX19YWdw+kayXLkT0xAwmCdjtOca3AaWDN8A1btj1FO+JZ1EDH4rytTm+/dmYLGGpzU2+nvFzo/+WOXnmVfhyJ8GfsbMkcAOHxfMHgT6j6K1968fPLXIlPUwOViTbbdEO6uD4GRmzCxc5N/iuaY6WWVn+ydw6pfLl49pWvJdghHIJnbV0LzIm3o3ysIiTbF+WnofN8HnFjKtg8eniJnByf/R0bA/WYWxvdu8ABBhd6howt8Ts7V778LxW8IM3pqJQ5Ft+nY9MzBkuiLjJElvtduAorJ4EYzzjvw9lLGj+a+oy4toiw5RLFtXdrowiPvOIWllcj0Wq3ACkSX7dS5pJNY1vaQm3B/T/FTwUdedVYw68ZifPy7LsBPtFU0H6b11X/8WE2n3dIO7tsQ==
+U2FsdGVkX19L7UA2oZ107k8x1DlN2HB4RpKCrdT2kXdpmvBI6IDnQjC7gN+X4m+7wm76nTtb3XI8MhCgEu3HOrHB9I5+vzoLuF6wYUNvqiOo0zTERyOB6CwnwIW2VMm26AHEuU3+KIS6qduLjCXRKz59ei28FyQWZx5jn2/7yYYjy1Y9oT7v5Z0kkiHeW8gOE/GaWmgANOHDr10BGjsbivpOtD22L2LxYdi320aTT9RzvQgUFPJkJQ+vaD/bJA6s8mEf01bLIIBuZCc1AM76VSA9BxE0gRiiJ8qr7Z9mXi6jKh4oJZQh5qfp1PuP/cYi2FLS6UExAMrKrni6cyIu7wz/DUIYlYiHIQ4kONZgYTZShZE5t72IJpl0+POiNg0PFgcy7czrCTQkF5zPfS6WUA==
 </div>
 <script src="/lib/crypto-js.js"></script><script src="/lib/blog-encrypt.js"></script><link href="/css/blog-encrypt.css" rel="stylesheet" type="text/css">
       
@@ -418,6 +418,21 @@ U2FsdGVkX19YWdw+kayXLkT0xAwmCdjtOca3AaWDN8A1btj1FO+JZ1EDH4rytTm+/dmYLGGpzU2+nvFz
       
 
       
+      
+        <div class="post-widgets">
+        
+
+        
+
+        
+          
+          <div id="needsharebutton-postbottom">
+            <span class="btn">
+              <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </span>
+          </div>
+        
+        </div>
       
       
 
@@ -510,7 +525,7 @@ U2FsdGVkX19YWdw+kayXLkT0xAwmCdjtOca3AaWDN8A1btj1FO+JZ1EDH4rytTm+/dmYLGGpzU2+nvFz
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">30</span>
+                  <span class="site-state-item-count">32</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -521,7 +536,7 @@ U2FsdGVkX19YWdw+kayXLkT0xAwmCdjtOca3AaWDN8A1btj1FO+JZ1EDH4rytTm+/dmYLGGpzU2+nvFz
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">29</span>
+                  <span class="site-state-item-count">31</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -532,7 +547,7 @@ U2FsdGVkX19YWdw+kayXLkT0xAwmCdjtOca3AaWDN8A1btj1FO+JZ1EDH4rytTm+/dmYLGGpzU2+nvFz
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">32</span>
+                  <span class="site-state-item-count">33</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -673,6 +688,12 @@ U2FsdGVkX19YWdw+kayXLkT0xAwmCdjtOca3AaWDN8A1btj1FO+JZ1EDH4rytTm+/dmYLGGpzU2+nvFz
       </div>
     
 
+    
+      <div id="needsharebutton-float">
+        <span class="btn">
+          <i class="fa fa-share-alt" aria-hidden="true"></i>
+        </span>
+      </div>
     
 
   </div>
@@ -1147,6 +1168,43 @@ U2FsdGVkX19YWdw+kayXLkT0xAwmCdjtOca3AaWDN8A1btj1FO+JZ1EDH4rytTm+/dmYLGGpzU2+nvFz
   
 
   
+  
+  
+  <link rel="stylesheet" href="/lib/needsharebutton/needsharebutton.css">
+
+  
+  
+  <script src="/lib/needsharebutton/needsharebutton.js"></script>
+
+  <script>
+    
+      pbOptions = {};
+      
+          pbOptions.iconStyle = "box";
+      
+          pbOptions.boxForm = "horizontal";
+      
+          pbOptions.position = "bottomCenter";
+      
+          pbOptions.networks = "Weibo,Wechat,Douban,QQZone,Twitter,Facebook";
+      
+      new needShareButton('#needsharebutton-postbottom', pbOptions);
+    
+    
+      flOptions = {};
+      
+          flOptions.iconStyle = "box";
+      
+          flOptions.boxForm = "horizontal";
+      
+          flOptions.position = "middleRight";
+      
+          flOptions.networks = "Weibo,Wechat,Douban,QQZone,Twitter,Facebook";
+      
+      new needShareButton('#needsharebutton-float', flOptions);
+    
+  </script>
+
   
 
   
