@@ -26,6 +26,8 @@ comments: true
 
 ![TI9全程](TI9-CN-DOTA的落寞/images/ti9-01.jpg)
 
+![TI9全程](TI9-CN-DOTA的落寞/images/ti9-02.jpg)
+
 本届Ti我所知道的梗
 * 虾之国
 * 奇桶伪
