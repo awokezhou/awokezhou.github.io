@@ -1,7 +1,7 @@
 ---
 title: ReverseLinkList
 date: 2019-07-16 16:02:55
-tags: [数据结构, Link List]
+tags: [LinkList]
 categories:
 - 算法与数据结构
 - LeetCode
