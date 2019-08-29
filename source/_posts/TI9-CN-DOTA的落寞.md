@@ -15,7 +15,7 @@ comments: true
 
 ![LGD](TI9-CN-DOTA的落寞/images/ti9-12.jpg)
 
-最后我还是决定继续看下去，毕竟接下来还有一场Ti7冠军与Ti8冠军的决战，我想看看这两个冲击不朽盾的队伍到底有多强，想看看1穿7的李逵和可能连续两年双冠的OG能给我们带来什么样的对决，他们是如何BP如何理解这款游戏的，同时也想彻底让自己死心，想知道LGD是否真的不配这个冠军。决赛确实没有让我失望，我想应该也没有让大多数或是在现场或是在屏幕前的玩家失望，心服口服，每场比赛节奏都非常紧凑，用FG的话说就是没有一分钟是划的。我们看到了w33的绝活米波、风行，看到了ana的大哥IO，看到了tposen可怕的英雄池以及中期抗局势的强大能力，看到了强队的冷静与韧性，抓住对方一丁点失误，就能绝地翻盘的敏锐，看到了他们对目前版本阵容体系最优解的理解，也看到了CN DOTA与他们的差距，LGD确实配不上决赛的任意一边，配不上这个冠军，今年的CN DOTA不配举起不朽盾
+最后我还是决定继续看下去，毕竟接下来还有一场Ti7冠军与Ti8冠军的决战，我想看看这两个冲击不朽盾的队伍到底有多强，想看看1穿7的李逵和可能连续两年双冠的OG能给我们带来什么样的对决，他们是如何BP如何理解这款游戏的，同时也想彻底让自己死心，想知道LGD是否真的不配这个冠军。决赛确实没有让我失望，我想应该也没有让大多数或是在现场或是在屏幕前的玩家失望，心服口服，每场比赛节奏都非常紧凑，用FG的话说就是没有一分钟是划的。我们看到了w33的绝活米波、风行，看到了ana的大哥IO，看到了topson可怕的英雄池以及中期抗局势的强大能力，看到了强队的冷静与韧性，抓住对方一丁点失误，就能绝地翻盘的敏锐，看到了他们对目前版本阵容体系最优解的理解，也看到了CN DOTA与他们的差距，LGD确实配不上决赛的任意一边，配不上这个冠军，今年的CN DOTA不配举起不朽盾
 
 8月25日晚，当ana大哥小精灵一路杀进李逵泉水，李逵被迫打出gg时，宣告了本届Ti9的结束，也无情的宣告了CN DOTA Best DOTA的结束...
 
@@ -132,11 +132,6 @@ Ti9赛程
 * [追梦人-TI6 wings夺冠纪录片](https://www.bilibili.com/video/av52704238?from=search&seid=15049770013698761140)
 {% raw %}
 <iframe class="ti-video" src="//player.bilibili.com/player.html?aid=52704238&cid=92228301&page=29" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>
-{% endraw %}
-
-* [TI9战队介绍bgm]
-{% raw %}
-<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=3&id=2062759594&auto=1&height=66"></iframe>
 {% endraw %}
 
 * [TI6 wings夺冠纪录片bgm]
