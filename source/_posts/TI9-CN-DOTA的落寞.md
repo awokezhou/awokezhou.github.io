@@ -89,34 +89,47 @@ Ti9赛程
 如果你在机器学习、数据挖掘领域练就了一些本领，考虑一下DOTA数据分析师吧，帮助CN DOTA重回辉煌
 
 ## 附
+
+{% raw %}
+<style>
+@media all and (orientation : landscape) {
+    .ti-video {width:800px; height:600px;}
+}
+
+@media all and (orientation : portrait){
+    .ti-video {width:80%; height:300px;}
+}
+</style>
+{% endraw %}
+
 * [Ti9战队出场合集](https://www.bilibili.com/video/av64735868)
 {% raw %}
-<iframe width=800 height=600 src="//player.bilibili.com/player.html?aid=64735868&cid=112379201&page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>
+<iframe class="ti-video" src="//player.bilibili.com/player.html?aid=64735868&cid=112379201&page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>
 {% endraw %}
 
 * [V社纪录片-OG](https://www.bilibili.com/video/av63217399)
 {% raw %}
-<iframe width=800 height=600 src="//player.bilibili.com/player.html?aid=63217399&cid=109955122&page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>
+<iframe class="ti-video" src="//player.bilibili.com/player.html?aid=63217399&cid=109955122&page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>
 {% endraw %}
 
 * [V社纪录片-ANA](https://www.bilibili.com/video/av13190224)
 {% raw %}
-<iframe width=800 height=600 src="//player.bilibili.com/player.html?aid=13190224&cid=21631438&page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>
+<iframe class="ti-video" src="//player.bilibili.com/player.html?aid=13190224&cid=21631438&page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>
 {% endraw %}
 
 * [真视界-TI8决赛纪录片](https://www.bilibili.com/video/av40848652?from=search&seid=14015347028407073729)
 {% raw %}
-<iframe width=800 height=600 src="//player.bilibili.com/player.html?aid=40848652&cid=71747908&page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>
+<iframe class="ti-video" src="//player.bilibili.com/player.html?aid=40848652&cid=71747908&page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>
 {% endraw %}
 
 * [真视界-TI7决赛纪录片](https://www.bilibili.com/video/av14848216?from=search&seid=12271260459333372694)
 {% raw %}
-<iframe width=800 height=600 src="//player.bilibili.com/player.html?aid=14848216&cid=24192646&page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>
+<iframe class="ti-video" src="//player.bilibili.com/player.html?aid=14848216&cid=24192646&page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>
 {% endraw %}
 
 * [追梦人-TI6 wings夺冠纪录片](https://www.bilibili.com/video/av52704238?from=search&seid=15049770013698761140)
 {% raw %}
-<iframe width=800 height=600 src="//player.bilibili.com/player.html?aid=52704238&cid=92228301&page=29" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>
+<iframe class="ti-video" src="//player.bilibili.com/player.html?aid=52704238&cid=92228301&page=29" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>
 {% endraw %}
 
 * [TI9战队介绍bgm]
