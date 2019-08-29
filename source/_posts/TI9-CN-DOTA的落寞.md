@@ -97,7 +97,7 @@ Ti9赛程
 }
 
 @media all and (orientation : portrait){
-    .ti-video {width:80%; height:300px;}
+    .ti-video {width:90%; height:250px;}
 }
 </style>
 {% endraw %}
