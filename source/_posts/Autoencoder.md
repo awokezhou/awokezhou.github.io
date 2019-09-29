@@ -5,7 +5,7 @@ tags: [ML]
 categories:
 - ML
 - 理论
-- neural network
+- DeepLearning
 mathjax: true
 ---
 
