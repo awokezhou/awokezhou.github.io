@@ -84,6 +84,15 @@ Sigmoid函数的图像如图所示
 ![](Deep-Learning-Overview/image/NN-04.png)
 sigmoid函数当输入x趋近于负无穷时，输出y趋近于0，当输入x趋近于正无穷时，输出y趋近于1，即把输入归一化到0~1范围内
 
+Sigmoid函数的导数
+
+$$
+f'(x) = f(x)*(1-f(x))
+$$
+
+Sigmoid导数的图像如图所示
+![](Deep-Learning-Overview/image/NN-08.png)
+
 #### tanh
 tanh函数的定义如下
 
@@ -94,6 +103,13 @@ $$
 tanh函数的图像如图所示
 ![](Deep-Learning-Overview/image/NN-05.png)
 
+tanh函数的导数
+$$
+f'(x) = 1 − f(x)^{2}
+$$
+tanh导数的图像如图所示
+![](Deep-Learning-Overview/image/NN-09.png)
+
 #### ReLU
 ReLU函数定义如下
 
@@ -103,6 +119,19 @@ $$
 
 ReLU函数的图像如图所示
 ![](Deep-Learning-Overview/image/NN-06.png)
+
+ReLU函数的导数
+$$
+\begin{equation}  
+f(x) = 
+\left\{
+        \begin{array}{**lr**}  
+        0, & x \leq 0 \\  
+        1, & x > 0 \\   
+        \end{array}
+\right.  
+\end{equation}  
+$$
 
 当输入x小于0时输出为0，当大于0时输出y
 
