@@ -1,8 +1,9 @@
 ---
 title: AES-CBC
 date: 2019-05-23 14:28:26
-tags: [Security, Encryption, algorithm]
+tags: [加密]
 categories:
+- 协议
 - 安全
 - 加密算法
 comments: true
