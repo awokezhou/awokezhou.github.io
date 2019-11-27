@@ -5,7 +5,7 @@ date: 2019-11-27 10:31:08
 tags: [Program Skill, C]
 categories:
 - Program Language
-- Python
+- C
 comments: true
 ---
 本文记录一些实际工作中使用到的Python语言编程技巧，或者学到的一些好用的用法
