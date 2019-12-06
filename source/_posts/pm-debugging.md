@@ -1,7 +1,7 @@
 ---
 title: pm-debugging
 date: 2019-12-05 13:53:05
-tags:
+tags: [Kernel, PM]
 categories:
 - Linux Kernel
 - 电源管理
@@ -183,6 +183,7 @@ resume同suspend
 后续的调试验证将在qksleep设备节点的基础上来做
 
 ## 调试工具
+
 kernel的电源管理框架在“/sys/power”目录下创建了一系列供用户空间操作的sysfs节点，kernel文档“/Document/power/basic-pm-debugging.txt”中详细说明了如何将`pm_test`节点用于调试suspend/resume过程。“/Document/power/s2ram.txt”文档介绍了使用“s2ram”工具来调试和排查suspend/resume问题。stackexchange问题“How to debug a suspend problem?”的回答中介绍了“pm_utils”工具。英特尔开源社区的文章“BEST PRACTICE TO DEBUG LINUX* SUSPEND/HIBERNATE ISSUES”中系统的介绍了系统级的调试方法和遇到问题的排查步骤
 
 总的来说，Linux电源管理的调试工具主要分为3大类：系统级调试工具(system debug tools)、PM专用调试方法(pm debug tools)和应用层开发的工具(application tools)
