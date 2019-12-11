@@ -476,3 +476,81 @@ static int suspend_test(int level)
 [  234.945607] Restarting tasks ... done.
 /sys/devices/platform/qksleep # 
 ```
+
+### /sys/kernel/debug/wakeup_source
+
+该节点列举了当前系统中所有唤醒源以及他们的状况
+
+```
+/sys/kernel/debug # cat wakeup_sources 
+name		active_count	event_count	wakeup_count	expire_count	active_since	total_time	max_time	last_change	prevent_suspend_time
+10017000.rtc	0		        0		    0		        0		        0		        0		    0		    6937		    0
+qksleep     	1		        1		    0		        1		        0		        196		    196		    1231539		    0
+alarmtimer  	0		        0		    0		        0		        0		        0		    0		    4021		    0
+autosleep   	0		        0		    0		        0		        0		        0		    0		    280		        0
+/sys/kernel/debug # 
+
+```
+
+* name：唤醒源的驱动名称
+* active_count：wake lock 活跃次数
+* event_count：唤醒源唤醒事件次数
+* wakeup_count：唤醒源强制设备唤醒的次数
+* expire_count：唤醒源已到期次数
+* active_since：唤醒源处于活跃状态的时间(以jiffies时间为单位)
+* total_time：唤醒源活跃的总时间(以jiffies时间为单位)
+* max_time：唤醒源持续活跃的最长时间
+* last_change：上次更改唤醒源为活跃的时间戳
+* prevent_suspend_time：如果没有这个唤醒源，系统进入suspend可以节省多少时间。这对于计算对电池寿命的影响特别有用
+
+#### 验证
+
+首次启动系统，查看该节点，所有唤醒源均未唤醒过系统
+
+```cmd
+/ # cat /sys/kernel/debug/wakeup_sources 
+name		active_count	event_count	wakeup_count	expire_count	active_since	total_time	max_time	last_change	prevent_suspend_time
+10017000.rtc	 0		        0		    0		        0		        0		        0		    0		    7296		    0
+qksleep     	 0		        0		    0		        0		        0		        0		    0		    6725		    0
+alarmtimer  	 0		        0		    0		        0		        0		        0		    0		    4358		    0
+autosleep   	 0		        0		    0		        0		        0		        0		    0		    300		        0
+/ # 
+
+```
+
+手动进入休眠，待系统唤醒后，查看唤醒源
+
+```cmd
+/ # echo mem > /sys/power/state
+[  292.573467] PM: Syncing filesystems ... done.
+[  292.578116] PM: Preparing system for mem sleep
+[  292.644122] Freezing user space processes ... (elapsed 0.036 seconds) done.
+[  292.681593] Freezing remaining freezable tasks ... (elapsed 0.020 seconds) done.
+[  292.704121] PM: Entering mem sleep
+[  292.722582] [debug] [qksleep_suspend:89] qksleep suspend in
+[  292.726072] PM: suspend of devices complete after 13.506 msecs
+[  292.726509] PM: suspend devices took 0.020 seconds
+[  292.728801] PM: late suspend of devices complete after 1.917 msecs
+[  292.732123] PM: noirq suspend of devices complete after 2.847 msecs
+[  292.733016] PM: suspend-to-idle
+[  302.741766] [debug] [qksleep_work_suspend_wakeup:51] qksleep is suspended, wakeup...
+[  302.743342] PM: resume from suspend-to-idle
+[  302.746235] PM: noirq resume of devices complete after 1.903 msecs
+[  302.748644] PM: early resume of devices complete after 1.406 msecs
+[  302.751825] [debug] [qksleep_resume:108] qksleep resume in
+[  302.754932] PM: resume of devices complete after 5.491 msecs
+[  302.756098] PM: resume devices took 0.010 seconds
+[  302.756843] PM: Finishing wakeup.
+[  302.757105] Restarting tasks ... done.
+/ # 
+/ # cat /sys/kernel/debug/wakeup_sources 
+name		active_count	event_count	wakeup_count	expire_count	active_since	total_time	max_time	last_change	prevent_suspend_time
+10017000.rtc	0		        0		    0		        0		        0		        0		    0		    7296		    0
+qksleep     	1		        1		    0		        1		        0		        198		    198		    302929		    0
+alarmtimer  	0		        0		    0		        0		        0		        0		    0		    4358		    0
+autosleep   	0		        0		    0		        0		        0		        0		    0		    300		        0
+/ # 
+
+```
+
+可看到是qksleep驱动唤醒了系统
