@@ -275,8 +275,6 @@ plt.show()
 
 将模型用于TFLite微控制器，需要将其转换为正确的格式，为此我们将使用Tensorflow Lite转换器，转换器可以以一种特殊的、节省空间的格式将模型输出到文件。由于是部署到微控制器上，我们希望它尽可能小，可以通过量化的方法减小尺寸。它降低了模型权重的精度，以节省内存。因为量化模型更小，因此运行起来也更快
 
-
-
 转换器可以在转换时选择是否进行量化
 
 ```python
@@ -329,8 +327,6 @@ plt.show()
 
 从图中我们可以看出，对原始模型、转换模型和量化模型的预测都非常接近，无法区分。这意味着我们的量化模型已经可以使用了！
 
-
-
 ## 使用C++程序执行推断
 
 这里使用C++程序需要依赖TFLite Micro动态链接库，参见[]()
@@ -365,6 +361,7 @@ TFLite Micro程序需要引用一些必要的头文件
 #include "tensorflow/lite/micro/micro_interpreter.h"
 #include "tensorflow/lite/micro/debug_log.h"
 #include "tensorlfow/lite/version.h"
+#include "sine_model_data.h"
 
 #include <iostream>
 #include <fstream>
@@ -373,4 +370,160 @@ TFLite Micro程序需要引用一些必要的头文件
 using namespace std;
 ```
 
+all_ops_resolver.h文件中定义了一些优化器相关的运算组建，例如全连接(Full Connected, FC)、柔性最大化函数Softmax、卷积conv
 
+micro_error_reporter.h文件中定义了调试方法
+
+micro_interpreter.h文件中是解释器的定义
+
+sin_model_data.h引用模型文件
+
+### 加载模型
+
+首先创建一个调试器reporter
+
+```cpp
+tflite::MicroErrorReporter micro_error_reporter;
+tflite::ErrorReporter* error_reporter = & micro_error_reporter;
+```
+
+调用GetModel()方法加载模型
+
+```cpp
+    const tflite::Model* model = ::tflite::GetModel(g_sine_model_data);
+    if (model->version() != TFLITE_SCHEMA_VERSION) {
+        error_reporter->Report(
+            "Model provided is schema version %d not equal "
+            "to supported version %d.\n",
+            model->version(), TFLITE_SCHEMA_VERSION);
+        return 0;
+    }
+```
+
+创建一个运算器
+
+```cpp
+tflite::ops::micro::AllOpsResolver resolver;
+```
+
+创建解释器，并为模型推断分配内存空间
+
+```cpp
+    const int tensor_arena_size = 10 * 1024;
+    uint8_t tensor_arena[tensor_arena_size];
+    tflite::MicroInterpreter interpreter(model, resolver,tensor_arena,
+                                         tensor_arena_size, error_reporter);
+
+    TfLiteStatus alloc_status = interpreter.AllocateTensors();
+    if (alloc_status != kTfLiteOk) {
+        error_reporter->Report("Alloc tensors Error:%d", alloc_status);
+        return 0;
+    }
+```
+
+创建指针指向模型输入和输出
+
+```cpp
+    tflite::MicroInterpreter *inter = &interpreter;
+    TfLiteTensor* input = interpreter.input(0);
+    TfLiteTensor* output = interpreter.output(0);
+```
+
+创建csv文件"data.csv"
+
+```cpp
+    ofstream outFile;
+    outFile.open("data.csv", ios::out);
+```
+
+以下循环，产生1000个输入，执行模型推断，并将输入和输出保存到csv文件，并打印到屏幕
+
+```cpp
+    int kInferencesPerCycle = 1000;
+    const float kXrange = 2.f * 3.14159265359f;
+    int inference_count = 0;
+
+    while (true) {
+        float position = static_cast<float>(inference_count) /
+                         static_cast<float>(kInferencesPerCycle);
+        float x_val = position * kXrange;
+        //error_reporter->Report("x_val:%f", x_val);
+        input->data.f[0] = x_val;
+        TfLiteStatus invoke_status = inter->Invoke();
+        if (invoke_status != kTfLiteOk) {
+            error_reporter->Report("Invoke Error:%d", invoke_status);
+            return 0;
+        }
+
+        float y_val = output->data.f[0];
+
+        printf("x:%f, y:%f\r\n",x_val, y_val);
+        outFile<<x_val<<','<<y_val<<endl;
+
+        inference_count += 1;
+        if (inference_count >= kInferencesPerCycle) break;
+    }
+
+    outFile.close();
+```
+
+### 运行结果
+
+编译程序并运行，数据保存到了"data.csv"文件中，查看其内容
+
+```shell
+cat data.csv | head -n 20
+0,0.0486171
+0.00628319,0.0537117
+0.0125664,0.0588063
+0.0188496,0.0639008
+0.0251327,0.0689952
+0.0314159,0.0740901
+0.0376991,0.0791845
+0.0439823,0.0842792
+0.0502655,0.0893737
+0.0565487,0.0944682
+0.0628319,0.0995628
+0.069115,0.104657
+0.0753982,0.109752
+0.0816814,0.114847
+0.0879646,0.119941
+0.0942478,0.125036
+0.100531,0.13013
+0.106814,0.135225
+0.113097,0.14032
+0.119381,0.145414
+```
+
+编写python脚本draw.py读取data.csv文件并将数值绘制出来
+
+```python
+import matplotlib.pyplot as plt
+import csv
+
+X = []
+Y = []
+
+with open('data.csv','r') as myFile:
+    lines=csv.reader(myFile)
+    for line in lines:
+        x = float(line[0])
+        y = float(line[1])
+        X.append(x)
+        Y.append(y)
+
+plt.plot(X, Y)
+plt.show()
+```
+
+执行脚本
+
+```shell
+python draw.py
+```
+
+结果如图
+
+![](TFLite-Micro-Hello-World/images/13.png)
+
+可见模型输出的结果准确
