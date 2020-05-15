@@ -41,7 +41,7 @@ $(warning $(OBJS))
 %.o:%.c:
     echo "compile start"
     ......
-    
+
 # 实际会打印
 # echo "compile start"
 # compile start
@@ -53,7 +53,7 @@ $(warning $(OBJS))
 %.o:%.c:
     @echo "compile start"
     ......
-    
+
 # 实际会打印
 # compile start
 ```
@@ -68,7 +68,7 @@ gcc编译工具"arm-linux-eabi-size"可以输出统计所有目标文件的占�
 $(OBJSIZE) $(OBJS) >> test.size
 
 cat libtensorflow-microlite.size 
-   text	   data	    bss	    dec	    hex	filename
+   text       data        bss        dec        hex    filename
 ......
 ```
 
