@@ -5,8 +5,6 @@ tags: [Tensorflow, 嵌入式]
 
 ---
 
-
-
 研究Tensorflow Lite Microcontroller(TFLite Micro)好一段时间了，终于是搞明白了如何按照自己的需求编译生成动态链接库"libtensorflow-microlite.so"了！目前能够编译输出的库大小为2.5M，支持"full-connected"、"softmax"和卷积算子，两层全连接网络运行时占用16k内存
 
 ## TFLite Micro介绍
@@ -25,11 +23,7 @@ Tensorflow Lite的核心功能在于它将模型的训练(train)和推断(infere
 
 Tensorflow希望TFLite可以在多种平台上部署，目前共支持Android、IOS、Linux和和Microcontrollers四种大类型的平台。Microcontrollers版本官方宣称可以适用于资源非常有限的嵌入式设备，例如在内存资源只有数千字节的ARM Cortex Mx架构上，不依赖操作系统，只需要支持标准C/C++和动态内存分配，运行时只占用不到20K内存空间，可完成语音识别等功能
 
-
-
 听上去是个非常有吸引力的方向，但是在研究的时候，你会发现真正要把TFLite Micro落地，是一件非常困难的事情。首先，Tensorflow官方文档对这部分的介绍非常少，将TFLite源码编译生成动态或者静态库倒是很方便，但是要编译TFLite Micro生成库文件并调用，基本找不到说明文档。另外，源码只为几种特定的目标平台提供了完整的部署方案和示例，而真正项目中开发，并不会用到这些目标平台和相关的配套工具，而通常是源码+Makefile+交叉编译链这种非常原始原生的开发方式，需要提取一套非常独立的精简的源码来编译，甚至需要裁减部分功能，而这一点，我搜遍了百度、google，找不到任何一个有相关研究的文章
-
-
 
 经过我大约一周的研究探索，终于是搞清楚了如何使用Tensorflow2.1版本编译生成TFLite Micro的动态链接库，并运行推断。关键点如下
 
@@ -89,10 +83,6 @@ cp xxx/tensorflow/tensorflow/lite/micro/micro_interpreter.cc full_connected/tens
 
 编译的时候，因为有.c和.cc两种文件，编译命令要分开，.c的用gcc，.cc的用g++。我的做法是先把必要的文件加进来，然后一边编译一边看报错，找不到定义的话就是缺头文件，找不到符号的话就是缺源文件，慢慢往里面添加，最终就会得到一个所有依赖都封闭的源文件夹。注意创建的文件路径一定要与源码中一致，例如"kernels"不要写成"kernel"
 
-
-
 ### 算子裁减
 
 在tensorflow/lite/micro/kernels/all_ops_resolver.cc文件中声明了所有需要用到的算子，源码中非常多，由于我只测试全连接，很多都不需要，因此只保留了"Register_FULL_CONNECTED()"、"Register_SOFTMAX()"和"Register_DEPTHWISE_CONV_2D"这3个
-
-
