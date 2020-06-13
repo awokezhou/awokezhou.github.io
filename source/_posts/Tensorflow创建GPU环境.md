@@ -8,11 +8,7 @@ categories:
 - Tensorflow
 ---
 
-
-
 在使用Tensorflow做CS230触发词检测的train时，发现如果`learning rate=0.0001`，训练500个epochs，12小时都训练不完，实在是太慢了。看CS230的教程上说在GPU上训练用时3个小时，因此研究了一下如何搭建一套支持GPU训练的Tensorflow环境，能够快捷简单正确的安装出一整套环境
-
-
 
 ## Problem
 
@@ -25,8 +21,6 @@ categories:
 Tensorflow要支持GPU，实际上是显卡厂商提供了深度学习的计算支持，Tensorflow适配和调用显卡厂商的支持库。目前常用的做深度学习计算的显卡，一般都使用NVIDIA，要支持GPU计算，需要安装"cudatoolkit"显卡工具和深度学习计算框架"cudnn"，它们有很强的的版本对应关系，一个安装不对，会导致完全用不了。网上有很多版本对应的介绍和列表，这里就不再赘述
 
 很多关于Tensorflow GPU环境的介绍，都是在Tensorflow1的版本上介绍的，v1版本CPU和GPU版本是分开的，需要单独安装。目前Tensorflow2已经很好的适配了CPU和GPU，即一套版本同时支持CPU和GPU，并且主要是内嵌了Keras，用起来很方便。网上关于这方面的介绍比较少
-
-
 
 ## Solution
 
