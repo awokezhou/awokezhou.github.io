@@ -1,4 +1,3 @@
-
 ---
 title: C Program Skill
 date: 2019-11-27 10:31:08
@@ -8,19 +7,23 @@ categories:
 - C
 comments: true
 ---
+
 本文记录一些实际工作中使用到的C语言编程技巧，或者学到的一些好用的用法
 
 ## kernel与application通信
 
-
 ### proc文件系统&mmap
+
 kernel和application通信方式有很多，但是当数据量较大时，常用的`ioctl`、`netlink`方式并不适合，`mmap`较为适用。
 
 #### 原理
+
 对于应用层程序而言，系统调用`mmap()`可以将一个文件映射到内存空间，对该文件的读写就是对该块内存的读写。对于内核空间而言，proc文件系统的文件操作集`file_operations`支持`mmap`方法，在文件proc方法的具体实现中，可以将内存映射到应用层调用`mmap()`的虚拟地址上，从而实现应用层和内核空间通过proc文件关联同一块内存
 
 #### 代码
+
 内核空间
+
 ```c
 #define MMAP_PROCFILE    "mmap_test"
 #define LINUX_PAGE_SIZE 4096
@@ -52,7 +55,7 @@ static int proc_mmap(struct file *filp, struct vm_area_struct *vma)
     /* your operation */
 
     return 0;
-    
+
 err:
     return ret;
 }
@@ -81,6 +84,7 @@ static int proc_mmap_create()
 ```
 
 用户空间
+
 ```c
 static int mmap_read_once()
 {
