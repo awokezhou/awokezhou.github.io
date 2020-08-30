@@ -79,18 +79,18 @@
 
 
 
-<meta name="description" content="记录一些常用的docker命令 基本查看命令查看所有正在运行的容器1docker ps 查看所有容器1docker ps -a 查看所有镜像1docker images 容器基本操作从镜像文件创建一个容器12345docker run [options] image# -d 后台运行# -it ... /bin/bash 终端连接# --name 设置容器名称# --net=host/brideg">
+<meta name="description" content="记录一些常用的docker命令 基本查看命令查看所有正在运行的容器 1docker ps 查看所有容器 1docker ps -a 查看所有镜像 1docker images 容器基本操作从镜像文件创建一个容器 12345docker run [options] image# -d 后台运行# -it ... /bin/bash 终端连接# --name 设置容器名称# --net=host/br">
 <meta name="keywords" content="Docker,命令">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Docker基本操作">
 <meta property="og:url" content="http://yoursite.com/2019/05/07/docker基本操作/index.html">
 <meta property="og:site_name" content="awokezhou&#39;s blog">
-<meta property="og:description" content="记录一些常用的docker命令 基本查看命令查看所有正在运行的容器1docker ps 查看所有容器1docker ps -a 查看所有镜像1docker images 容器基本操作从镜像文件创建一个容器12345docker run [options] image# -d 后台运行# -it ... /bin/bash 终端连接# --name 设置容器名称# --net=host/brideg">
+<meta property="og:description" content="记录一些常用的docker命令 基本查看命令查看所有正在运行的容器 1docker ps 查看所有容器 1docker ps -a 查看所有镜像 1docker images 容器基本操作从镜像文件创建一个容器 12345docker run [options] image# -d 后台运行# -it ... /bin/bash 终端连接# --name 设置容器名称# --net=host/br">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-05-21T10:47:33.033Z">
+<meta property="og:updated_time" content="2020-08-29T19:13:30.886Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Docker基本操作">
-<meta name="twitter:description" content="记录一些常用的docker命令 基本查看命令查看所有正在运行的容器1docker ps 查看所有容器1docker ps -a 查看所有镜像1docker images 容器基本操作从镜像文件创建一个容器12345docker run [options] image# -d 后台运行# -it ... /bin/bash 终端连接# --name 设置容器名称# --net=host/brideg">
+<meta name="twitter:description" content="记录一些常用的docker命令 基本查看命令查看所有正在运行的容器 1docker ps 查看所有容器 1docker ps -a 查看所有镜像 1docker images 容器基本操作从镜像文件创建一个容器 12345docker run [options] image# -d 后台运行# -it ... /bin/bash 终端连接# --name 设置容器名称# --net=host/br">
 
 
 
@@ -405,22 +405,38 @@
 
       
         <p>记录一些常用的docker命令</p>
-<h2 id="基本查看命令"><a href="#基本查看命令" class="headerlink" title="基本查看命令"></a>基本查看命令</h2><p>查看所有正在运行的容器<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker ps</span><br></pre></td></tr></table></figure></p>
-<p>查看所有容器<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker ps -a</span><br></pre></td></tr></table></figure></p>
-<p>查看所有镜像<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker images</span><br></pre></td></tr></table></figure></p>
-<h2 id="容器基本操作"><a href="#容器基本操作" class="headerlink" title="容器基本操作"></a>容器基本操作</h2><p>从镜像文件创建一个容器<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">docker run [options] image</span><br><span class="line"><span class="meta">#</span> -d 后台运行</span><br><span class="line"><span class="meta">#</span> -it ... /bin/bash 终端连接</span><br><span class="line"><span class="meta">#</span> --name 设置容器名称</span><br><span class="line"><span class="meta">#</span> --net=host/bridege... 设置网络</span><br></pre></td></tr></table></figure></p>
-<p>启动某个已存在的容器<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker start id/name</span><br></pre></td></tr></table></figure></p>
-<p>停止某个容器<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker stop id/name</span><br></pre></td></tr></table></figure></p>
-<p>删除某个容器<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker rm id/name</span><br></pre></td></tr></table></figure></p>
-<p>停止所有容器<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker stop $(docker ps -a -q)</span><br></pre></td></tr></table></figure></p>
-<p>删除所有容器<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker rm $(docker ps -a -q)</span><br></pre></td></tr></table></figure></p>
-<p>连接容器<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker exec -it id/name /bin/bash</span><br></pre></td></tr></table></figure></p>
-<p>保存容器的修改，提交到镜像<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker commit id name</span><br></pre></td></tr></table></figure></p>
-<p>保存容器为文件<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker export id &gt; name</span><br><span class="line"><span class="meta">#</span> docker export 3b86889153b0 &gt; dk-test.tar</span><br></pre></td></tr></table></figure></p>
-<p>加载容器文件<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker import name newname</span><br><span class="line"><span class="meta">#</span> docker import dk-test.tar dk-test-v2</span><br></pre></td></tr></table></figure></p>
-<h2 id="镜像操作"><a href="#镜像操作" class="headerlink" title="镜像操作"></a>镜像操作</h2><p>加载镜像<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker load file_name &lt; image_name</span><br></pre></td></tr></table></figure></p>
-<p>保存镜像到文件<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker save id &gt; name</span><br></pre></td></tr></table></figure></p>
-<p>删除镜像<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker rmi id</span><br></pre></td></tr></table></figure></p>
+<h2 id="基本查看命令"><a href="#基本查看命令" class="headerlink" title="基本查看命令"></a>基本查看命令</h2><p>查看所有正在运行的容器</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker ps</span><br></pre></td></tr></table></figure>
+<p>查看所有容器</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker ps -a</span><br></pre></td></tr></table></figure>
+<p>查看所有镜像</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker images</span><br></pre></td></tr></table></figure>
+<h2 id="容器基本操作"><a href="#容器基本操作" class="headerlink" title="容器基本操作"></a>容器基本操作</h2><p>从镜像文件创建一个容器</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">docker run [options] image</span><br><span class="line"><span class="meta">#</span> -d 后台运行</span><br><span class="line"><span class="meta">#</span> -it ... /bin/bash 终端连接</span><br><span class="line"><span class="meta">#</span> --name 设置容器名称</span><br><span class="line"><span class="meta">#</span> --net=host/bridege... 设置网络</span><br></pre></td></tr></table></figure>
+<p>启动某个已存在的容器</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker start id/name</span><br></pre></td></tr></table></figure>
+<p>停止某个容器</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker stop id/name</span><br></pre></td></tr></table></figure>
+<p>删除某个容器</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker rm id/name</span><br></pre></td></tr></table></figure>
+<p>停止所有容器</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker stop $(docker ps -a -q)</span><br></pre></td></tr></table></figure>
+<p>删除所有容器</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker rm $(docker ps -a -q)</span><br></pre></td></tr></table></figure>
+<p>连接容器</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker exec -it id/name /bin/bash</span><br></pre></td></tr></table></figure>
+<p>保存容器的修改，提交到镜像</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker commit id name</span><br></pre></td></tr></table></figure>
+<p>保存容器为文件</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker export id &gt; name</span><br><span class="line"><span class="meta">#</span> docker export 3b86889153b0 &gt; dk-test.tar</span><br></pre></td></tr></table></figure>
+<p>加载容器文件</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker import name newname</span><br><span class="line"><span class="meta">#</span> docker import dk-test.tar dk-test-v2</span><br></pre></td></tr></table></figure>
+<h2 id="镜像操作"><a href="#镜像操作" class="headerlink" title="镜像操作"></a>镜像操作</h2><p>加载镜像</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker load file_name &lt; image_name</span><br></pre></td></tr></table></figure>
+<p>保存镜像到文件</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker save id &gt; name</span><br></pre></td></tr></table></figure>
+<p>删除镜像</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker rmi id</span><br></pre></td></tr></table></figure>
 
       
     </div>
@@ -562,7 +578,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">32</span>
+                  <span class="site-state-item-count">55</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -573,7 +589,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">31</span>
+                  <span class="site-state-item-count">40</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -584,7 +600,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">33</span>
+                  <span class="site-state-item-count">45</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -664,6 +680,18 @@
                     <a href="https://towardsdatascience.com/" title="Towards Data Science" target="_blank">Towards Data Science</a>
                   </li>
                 
+                  <li class="links-of-blogroll-item">
+                    <a href="http://colah.github.io/" title="colah" target="_blank">colah</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://www.cnblogs.com/popsuper1982/" title="网易云计算架构师刘超" target="_blank">网易云计算架构师刘超</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://biscuitos.github.io/" title="Biscuitos" target="_blank">Biscuitos</a>
+                  </li>
+                
               </ul>
             </div>
           
@@ -703,7 +731,7 @@
 
     <footer id="footer" class="footer">
       <div class="footer-inner">
-        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>

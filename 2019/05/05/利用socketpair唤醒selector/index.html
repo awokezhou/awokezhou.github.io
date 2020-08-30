@@ -88,7 +88,7 @@
 <meta property="og:description" content="在分析kafka-python源码时发现生产者经常调用其子对象Client的一个wakeup()方法，它利用了socketpair管道发送一个数据来快速唤醒selector，快速中断selector的轮询。上下文关系如图所示程序运行中有两个线程，主线程’main loop’和客户端线程’client thread’。主线程定时利用client发送数据到server，而client线程本身要调用se">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://yoursite.com/2019/05/05/利用socketpair唤醒selector/image/wakeup-selector-01.png">
-<meta property="og:updated_time" content="2019-05-15T02:13:26.560Z">
+<meta property="og:updated_time" content="2020-08-29T19:13:31.008Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="利用socketpair唤醒selector">
 <meta name="twitter:description" content="在分析kafka-python源码时发现生产者经常调用其子对象Client的一个wakeup()方法，它利用了socketpair管道发送一个数据来快速唤醒selector，快速中断selector的轮询。上下文关系如图所示程序运行中有两个线程，主线程’main loop’和客户端线程’client thread’。主线程定时利用client发送数据到server，而client线程本身要调用se">
@@ -570,7 +570,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">32</span>
+                  <span class="site-state-item-count">55</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -581,7 +581,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">31</span>
+                  <span class="site-state-item-count">40</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -592,7 +592,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">33</span>
+                  <span class="site-state-item-count">45</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -672,6 +672,18 @@
                     <a href="https://towardsdatascience.com/" title="Towards Data Science" target="_blank">Towards Data Science</a>
                   </li>
                 
+                  <li class="links-of-blogroll-item">
+                    <a href="http://colah.github.io/" title="colah" target="_blank">colah</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://www.cnblogs.com/popsuper1982/" title="网易云计算架构师刘超" target="_blank">网易云计算架构师刘超</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://biscuitos.github.io/" title="Biscuitos" target="_blank">Biscuitos</a>
+                  </li>
+                
               </ul>
             </div>
           
@@ -711,7 +723,7 @@
 
     <footer id="footer" class="footer">
       <div class="footer-inner">
-        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>
