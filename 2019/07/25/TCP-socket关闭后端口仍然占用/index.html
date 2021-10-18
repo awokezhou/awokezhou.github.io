@@ -1,0 +1,1393 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/../image/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/../image/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="TCP,protocol," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="在使用TCP做一些数据传输的测试时发现，Server端程序关闭再启动时常常会出现该地址或端口已被占用的错误(关闭时socket已经释放)，如下是python脚本执行时错误打印：123456Traceback (most recent call last):  File &quot;server.py&quot;, line 35, in &lt;module&gt;    sock.bind((h">
+<meta property="og:type" content="article">
+<meta property="og:title" content="TCP-socket关闭后端口仍然占用">
+<meta property="og:url" content="http://yoursite.com/2019/07/25/TCP-socket%E5%85%B3%E9%97%AD%E5%90%8E%E7%AB%AF%E5%8F%A3%E4%BB%8D%E7%84%B6%E5%8D%A0%E7%94%A8/index.html">
+<meta property="og:site_name" content="awokezhou&#39;s blog">
+<meta property="og:description" content="在使用TCP做一些数据传输的测试时发现，Server端程序关闭再启动时常常会出现该地址或端口已被占用的错误(关闭时socket已经释放)，如下是python脚本执行时错误打印：123456Traceback (most recent call last):  File &quot;server.py&quot;, line 35, in &lt;module&gt;    sock.bind((h">
+<meta property="og:locale">
+<meta property="og:image" content="http://yoursite.com/2019/07/25/TCP-socket%E5%85%B3%E9%97%AD%E5%90%8E%E7%AB%AF%E5%8F%A3%E4%BB%8D%E7%84%B6%E5%8D%A0%E7%94%A8/image/tcp-socket-release-error-01.png">
+<meta property="article:published_time" content="2019-07-25T08:48:39.000Z">
+<meta property="article:modified_time" content="2021-08-13T02:24:21.698Z">
+<meta property="article:author" content="awokezhou">
+<meta property="article:tag" content="TCP">
+<meta property="article:tag" content="protocol">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/2019/07/25/TCP-socket%E5%85%B3%E9%97%AD%E5%90%8E%E7%AB%AF%E5%8F%A3%E4%BB%8D%E7%84%B6%E5%8D%A0%E7%94%A8/image/tcp-socket-release-error-01.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"hide","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/07/25/TCP-socket关闭后端口仍然占用/"/>
+
+
+
+
+
+  <title>TCP-socket关闭后端口仍然占用 | awokezhou's blog</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">awokezhou's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-message">
+          <a href="/message/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            message
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/07/25/TCP-socket%E5%85%B3%E9%97%AD%E5%90%8E%E7%AB%AF%E5%8F%A3%E4%BB%8D%E7%84%B6%E5%8D%A0%E7%94%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/../image/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="awokezhou's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">TCP-socket关闭后端口仍然占用</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-07-25T16:48:39+08:00">
+                2019-07-25
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%8F%E8%AE%AE/" itemprop="url" rel="index">
+                    <span itemprop="name">协议</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%8F%E8%AE%AE/TCP/" itemprop="url" rel="index">
+                    <span itemprop="name">TCP</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2019/07/25/TCP-socket%E5%85%B3%E9%97%AD%E5%90%8E%E7%AB%AF%E5%8F%A3%E4%BB%8D%E7%84%B6%E5%8D%A0%E7%94%A8/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2019/07/25/TCP-socket%E5%85%B3%E9%97%AD%E5%90%8E%E7%AB%AF%E5%8F%A3%E4%BB%8D%E7%84%B6%E5%8D%A0%E7%94%A8/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>在使用TCP做一些数据传输的测试时发现，Server端程序关闭再启动时常常会出现该地址或端口已被占用的错误(关闭时socket已经释放)，如下是python脚本执行时错误打印：<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Traceback (most recent call last):</span><br><span class="line">  File &quot;server.py&quot;, line 35, in &lt;module&gt;</span><br><span class="line">    sock.bind((host, port))</span><br><span class="line">  File &quot;/usr/lib64/python2.7/socket.py&quot;, line 224, in meth</span><br><span class="line">    return getattr(self._sock,name)(*args)</span><br><span class="line">socket.error: [Errno 98] Address already in use</span><br></pre></td></tr></table></figure></p>
+<p>关闭脚本使用的是”Ctrl+C”按键组合，代码中会监听<code>SIGINT</code>信号，在信号处理函数中关闭Server socket<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">handler</span>(<span class="params">signal_num,frame</span>):</span></span><br><span class="line">    <span class="keyword">global</span> sock</span><br><span class="line">    <span class="built_in">print</span> <span class="string">&quot;\nYou Pressed Ctrl-C. Exit&quot;</span></span><br><span class="line">    sock.shutdown(socket.SHUT_RDWR)</span><br><span class="line">    sock.close()</span><br><span class="line">    sys.exit(signal_num)</span><br><span class="line">signal.signal(signal.SIGINT, handler)</span><br></pre></td></tr></table></figure></p>
+<p>为什么已经释放的socket再次绑定时会出现地址被占用的错误？</p>
+<p>使用netstat命令查看占用的端口，发现存在一个处于<code>TIME_WAIT</code>的连接<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost awokezhou]# netstat -tn | grep &quot;9091&quot;</span><br><span class="line">tcp        0      0 172.16.79.132:9091      172.16.79.182:64775     TIME_WAIT</span><br></pre></td></tr></table></figure></p>
+<h2 id="TCP连接状态"><a href="#TCP连接状态" class="headerlink" title="TCP连接状态"></a>TCP连接状态</h2><p>查看RFC-793文档，阅读了其中和TCP状态转换相关的内容</p>
+<h3 id="Connect-States"><a href="#Connect-States" class="headerlink" title="Connect States"></a>Connect States</h3><p>RFC-793中定义了一个TCP Connect在其生命周期的所有状态，原文如下</p>
+<ul>
+<li><strong>LISTEN</strong> represents waiting for a connection request from any remote TCP and port</li>
+<li><strong>SYN-SENT</strong> represents waiting for a matching connection request after having sent a connection request</li>
+<li><strong>SYN-RECEIVED</strong> represents waiting for a confirming connection request acknowledgment after having both received and sent a connection request</li>
+<li><strong>ESTABLISHED</strong> represents an open connection, data received can be delivered to the user. The normal state for the data transfer phase of the connection</li>
+<li><strong>FIN-WAIT-1</strong> represents waiting for a connection termination request from the remote TCP, or an acknowledgment of the connection termination request previously sent</li>
+<li><strong>FIN-WAIT-2</strong> represents waiting for a connection termination request from the remote TCP</li>
+<li><strong>CLOSE-WAIT</strong> represents waiting for a connection termination request from the local user</li>
+<li><strong>CLOSING</strong> represents waiting for a connection termination request acknowledgment from the remote TCP</li>
+<li><strong>LAST-ACK</strong> represents waiting for an acknowledgment of the connection termination request previously sent to the remote TCP (which includes an acknowledgment of its connection termination request)</li>
+<li><strong>TIME-WAIT</strong> represents waiting for enough time to pass to be sure the remote TCP received the acknowledgment of its connection termination request</li>
+<li><strong>CLOSED</strong> represents no connection state at all</li>
+</ul>
+<p>一个TCP连接共有11种状态：LISTEN、SYN-SEND、SYN-RECEIVED、ESTABLISHED、FIN-WAIT-1、FIN-WAIT-2、CLOSE-WAIT、CLOSING、LAST-ACK、TIME-WAIT和CLOSED</p>
+<p>重点关注和连接关闭有关的几个状态</p>
+<ul>
+<li><strong>FIN-WAIT-1</strong> 等待远端的连接终止请求，或者等待自己发送的连接终止请求被远端确认</li>
+<li><strong>FIN-WAIT-2</strong> 等待远端的连接终止请求</li>
+<li><strong>CLOSE-WAIT</strong> 等待本地用户的连接终止请求</li>
+<li><strong>CLOSING</strong> 等待自己发送的连接终止请求被远端确认</li>
+<li><strong>LAST-ACK</strong> 等待自己发送的连接终止请求被远端确认</li>
+<li><strong>TIME-WAIT</strong> 表示等待足够的时间以确保远端收到自己的终止请求确认</li>
+<li><strong>CLOSED</strong> 表示连接已经被完全关闭</li>
+</ul>
+<p>只从字面意思理解，这几个状态有很多相似的地方，并不能理解到每个状态位于什么阶段</p>
+<h3 id="状态转移"><a href="#状态转移" class="headerlink" title="状态转移"></a>状态转移</h3><p>RFC-793文档中有一个TCP连接的状态转换示意图<br><img src="/2019/07/25/TCP-socket%E5%85%B3%E9%97%AD%E5%90%8E%E7%AB%AF%E5%8F%A3%E4%BB%8D%E7%84%B6%E5%8D%A0%E7%94%A8/image/tcp-socket-release-error-01.png" alt="状态转移示意图"></p>
+<p>由该图可以看出以下区别</p>
+<ul>
+<li><strong>FIN-WAIT-1</strong> 有两种情况会触发该状态：<ul>
+<li>Server端在接收到Client端的连接请求后就主动关闭连接，向Client发送FIN后立即进入<code>FIN-WAIT-1</code>状态</li>
+<li>建立连接后(双方都进入<code>ESTABLISHED</code>)，任何一方主动关闭连接，向对端发送FIN后立即进入<code>FIN-WAIT-1</code>状态</li>
+</ul>
+</li>
+<li><strong>FIN-WAIT-2</strong> 只有处于<code>FIN-WAIT-1</code>的一方收到对方的FIN ACK后，立即进入该状态</li>
+<li><strong>CLOSE-WAIT</strong> 建立连接后，收到远端FIN后，回复FIN ACK，立即进入该状态</li>
+<li><strong>CLOSING</strong> 只有处于<code>FIN-WAIT-1</code>的一方收到对方FIN后，进入该状态</li>
+<li><strong>LAST-ACK</strong> 只有处于<code>CLOSE-WAIT</code>的一方主动关闭连接，向对方发送FIN后，进入该状态</li>
+<li><strong>TIME-WAIT</strong> 只有处于<code>FIN-WAIT-12</code>的一方收到对方FIN后，进入该状态</li>
+</ul>
+<p>按照该图的状态转移流程，其实主要的转移路线有以下两条：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">FIN-WAIT-1 --&gt; FIN-WAIT-2 --&gt; TIME-WAIT --&gt; CLOSED</span><br><span class="line">CLOSE-WAIT --&gt; LAST-ACK --&gt; CLOSED</span><br></pre></td></tr></table></figure></p>
+<p>这两条路线的区别在于谁先发起连接终止请求，也就是谁先关闭socket</p>
+<h3 id="MSL"><a href="#MSL" class="headerlink" title="MSL"></a>MSL</h3><p>先关闭连接的一方最终会进入<code>TIME-WAIT</code>状态，由<code>TIME-WAIT</code>状态切换到<code>CLOSED</code>状态，但是中间需要等待一个超时时间2MSL。正是由于这个2MSL超时时间的存在，导致Server再次bind时发生错误</p>
+<p>提出以下3个问题</p>
+<ul>
+<li>什么是MSL，为什么需要MSL？</li>
+<li>先关闭的一方，接收到对端的FIN，发送FIN ACK后直接释放连接资源不行吗，为什么需要等待2个MSL时间？</li>
+<li>后关闭的一方，为什么不需要MSL？</li>
+</ul>
+<h4 id="什么是MSL"><a href="#什么是MSL" class="headerlink" title="什么是MSL"></a>什么是MSL</h4><p>MSL英文全称是”Maximum Segment Lifetime”，即TCP片的最大存活时间</p>
+<p>RFC-793原文中对于MSL的解释如下<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Knowing When to Keep Quiet</span><br><span class="line"></span><br><span class="line">To be sure that a TCP does not create a segment that carries a sequence number which may be duplicated by</span><br><span class="line">an old segment remaining in the network, the TCP must keep quiet for a maximum segment lifetime (MSL) before</span><br><span class="line">assigning any sequence numbers upon starting up or recovering from a crash in which memory of sequence numbers</span><br><span class="line">in use was lost. For this specification the MSL is taken to be 2 minutes. This is an engineering choice, and</span><br><span class="line">may be changed if experience indicates it is desirable to do so. Note that if a TCP is reinitialized in some</span><br><span class="line">sense, yet retains its memory of sequence numbers in use, then it need not wait at all; it must only be sure</span><br><span class="line">to use sequence numbers larger than those recently used.</span><br></pre></td></tr></table></figure><br>大意为：为了确保TCP不会创建一个序列号与网络中已经存在的分片序列号重复的分片，在分配新的序列号之前必须在MSL时间内保持静默。标准规定的MSL时间为2分钟，是一个基于工程经验的选择</p>
+<h4 id="TIME-WAIT后为什么需要等待2个MSL？"><a href="#TIME-WAIT后为什么需要等待2个MSL？" class="headerlink" title="TIME-WAIT后为什么需要等待2个MSL？"></a><code>TIME-WAIT</code>后为什么需要等待2个MSL？</h4><p>为了保证处于<code>FIN-WAIT-2</code>状态(记为A)时发送的最后一个ACK能够到达对端(记为B)。最后一个ACK可能在网络中丢失，使得B处于<code>LAST-ACK</code>状态无法进入<code>CLOSED</code>状态。B会超时重传这个FIN，A发送ACK丢失+B重传FIN到达A，这个时间刚好是2倍的MSL</p>
+<h4 id="后关闭的一方，为什么不需要2MSL？"><a href="#后关闭的一方，为什么不需要2MSL？" class="headerlink" title="后关闭的一方，为什么不需要2MSL？"></a>后关闭的一方，为什么不需要2MSL？</h4><p>2MSL本质上是在等待最后一个ACK，后关闭的一方是FIN的发送方，等待ACK，有重传机制作保障，其状态是可控的，因此不需要其他等待超时</p>
+<h2 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h2><h3 id="环境介绍"><a href="#环境介绍" class="headerlink" title="环境介绍"></a>环境介绍</h3><ul>
+<li><strong>Server端</strong> centos7虚拟机，IP地址172.16.79.132, python2.7，创建socket绑定localhost、9091端口</li>
+<li><strong>Client端</strong> windows10，IP地址172.16.79.182，python2.7，创建socket向Server发起连接</li>
+<li>linux 使用如下命令查看连接状态<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">netstat -tn | grep &#x27;9091&#x27;</span><br></pre></td></tr></table></figure></li>
+<li>windows使用如下命令查看连接状态<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">netstat -tn | findstr &#x27;9091&#x27;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="创建连接"><a href="#创建连接" class="headerlink" title="创建连接"></a>创建连接</h3><p>Server创建socket代码<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> socket</span><br><span class="line">s = socket.socket()</span><br><span class="line">host = <span class="string">&#x27;0.0.0.0&#x27;</span></span><br><span class="line">port = <span class="number">9091</span></span><br><span class="line">s.bind((host, port))</span><br><span class="line">s.listen(<span class="number">5</span>)</span><br><span class="line"></span><br><span class="line">c, addr = s.accept()</span><br></pre></td></tr></table></figure></p>
+<p>Client创建socket并向<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> socket</span><br><span class="line">s = socket.socket()</span><br><span class="line">s.connect((<span class="string">&#x27;172.16.79.132&#x27;</span>, <span class="number">9091</span>))</span><br></pre></td></tr></table></figure></p>
+<p>查看Server连接状态<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost awokezhou]# netstat -tn | grep &quot;9091&quot;</span><br><span class="line">tcp        0      0 172.16.79.132:9091      172.16.79.182:51725     ESTABLISHED</span><br></pre></td></tr></table></figure><br>查看Client连接状态<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">λ  netstat -tn | findstr &#x27;9091&#x27;</span><br><span class="line">  TCP    172.16.79.182:51725    172.16.79.132:9091     ESTABLISHED     InHost</span><br></pre></td></tr></table></figure></p>
+<p>双方都进入了<code>ESTABLISHED</code>状态，表明连接建立成功</p>
+<h3 id="Server先关闭socket"><a href="#Server先关闭socket" class="headerlink" title="Server先关闭socket"></a>Server先关闭socket</h3><p>Server关闭连接<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">c.close()</span><br></pre></td></tr></table></figure></p>
+<p>查看Server连接状态<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost awokezhou]# netstat -tn | grep &quot;9091&quot;</span><br><span class="line">tcp        0      0 172.16.79.132:9091      172.16.79.182:51725     FIN_WAIT2</span><br></pre></td></tr></table></figure><br>查看Client连接状态<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">λ  netstat -tn | findstr &#x27;9091&#x27;</span><br><span class="line">  TCP    172.16.79.182:51725    172.16.79.132:9091     CLOSE_WAIT      InHost</span><br></pre></td></tr></table></figure></p>
+<p>Client关闭连接<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">c.close()</span><br></pre></td></tr></table></figure></p>
+<p>查看Server连接状态<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost awokezhou]# netstat -tn | grep &quot;9091&quot;</span><br><span class="line">tcp        0      0 172.16.79.132:9091      172.16.79.182:51725     TIME_WAIT</span><br></pre></td></tr></table></figure><br>查看Client连接状态<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">λ  netstat -tn | findstr &#x27;9091&#x27;</span><br></pre></td></tr></table></figure></p>
+<p>Server最终进入了<code>TIME-WAIT</code>状态，Client连接已经释放。如果此时关闭并重启Server，在调用bind时就会报错</p>
+<h3 id="Client先关闭socket"><a href="#Client先关闭socket" class="headerlink" title="Client先关闭socket"></a>Client先关闭socket</h3><p>Client关闭连接<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">s.close()</span><br></pre></td></tr></table></figure></p>
+<p>查看Server连接状态<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost awokezhou]# netstat -tn | grep &quot;9091&quot;</span><br><span class="line">tcp        1      0 172.16.79.132:9091      172.16.79.182:51740     CLOSE_WAIT</span><br></pre></td></tr></table></figure><br>查看Client连接状态<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">λ  netstat -tn | findstr &#x27;9091&#x27;</span><br><span class="line">  TCP    172.16.79.182:51740    172.16.79.132:9091     FIN_WAIT_2      InHost</span><br></pre></td></tr></table></figure></p>
+<p>Server关闭连接<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">c.close()</span><br></pre></td></tr></table></figure></p>
+<p>查看Server连接状态<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost awokezhou]# netstat -tn | grep &quot;9091&quot;</span><br></pre></td></tr></table></figure><br>查看Client连接状态<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">λ  netstat -tn | findstr &#x27;9091&#x27;</span><br><span class="line">  TCP    172.16.79.182:51740    172.16.79.132:9091     TIME_WAIT       InHost</span><br></pre></td></tr></table></figure></p>
+<p>Client再次发起连接<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">s = socke.socket()</span><br><span class="line">s.connect((<span class="string">&#x27;172.16.79.132&#x27;</span>, <span class="number">9091</span>))</span><br></pre></td></tr></table></figure></p>
+<p>查看Client连接状态<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">λ  netstat -tn | findstr &#x27;9091&#x27;</span><br><span class="line">  TCP    172.16.79.182:51740    172.16.79.132:9091     TIME_WAIT       InHost</span><br><span class="line">  TCP    172.16.79.182:51750    172.16.79.132:9091     ESTABLISHED     InHost</span><br></pre></td></tr></table></figure></p>
+<p>上一个连接还处于<code>TIME-WAIT</code>状态，但是又创建了一个新的连接。如果重启Client并不会报错，因为Client不用bind端口和地址</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>socket关闭后端口仍然占用的错误原因是Server端先关闭了连接，再次重启时旧连接并未释放，而是处于<code>TIME-WAIT</code>状态导致的。解决该问题有如下几种方法</p>
+<ul>
+<li>Server端创建socket时设置端口重用<code>SO_REUSEADDR</code></li>
+<li>等待2MSL超时之后再创建socket</li>
+<li>Server端不要先关闭连接，让Client先关闭连接</li>
+</ul>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><p>RFC-793 <a href="/download/TCP-socket关闭后端口仍然占用/rfc793.txt.pdf">PDF</a><br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/10087622blog/p/7281883.html">服务器大量的fin_wait1 状态长时间存在原因分析</a><br><a target="_blank" rel="noopener" href="https://kld208.iteye.com/blog/1626701">网络的FIN_WAIT_2状态解释和分析</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/q1007729991/article/details/69686781">TCP 协议（TIME_WAIT 状态</a><br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/gtarcoder/articles/10699965.html">TCP TIME-WAIT</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/dog250/article/details/81697403">TCP在FIN_WAIT1状态到底能持续多久以及TCP假连接问题</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/talent210/article/details/65441819">防止linux出现大量 FIN_WAIT1,提高性能</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/kkgbn/article/details/77859881">深入理解TCP(2)TCP的断开一定是四次挥手吗?FIN_WAIT_2和CLOSE_WAIT，TIME_WAIT以及LAST_ACK的细节</a><br><a target="_blank" rel="noopener" href="https://blog.51cto.com/10706198/1775555">TCP/IP中MSL详解</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/overstack/article/details/8833894">Time-wait状态(2MSL)一些理解</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/TCP/" rel="tag"># TCP</a>
+          
+            <a href="/tags/protocol/" rel="tag"># protocol</a>
+          
+        </div>
+      
+
+      
+      
+        <div class="post-widgets">
+        
+
+        
+
+        
+          
+          <div id="needsharebutton-postbottom">
+            <span class="btn">
+              <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </span>
+          </div>
+        
+        </div>
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/07/25/Raspberry-Pi-4-CPU/" rel="next" title="Raspberry-Pi-4-CPU">
+                <i class="fa fa-chevron-left"></i> Raspberry-Pi-4-CPU
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/07/25/Raspberry-Pi-4-Board/" rel="prev" title="Raspberry-Pi-4-Board">
+                Raspberry-Pi-4-Board <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/../image/avatar.png"
+                alt="" />
+            
+              <p class="site-author-name" itemprop="name"></p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%20%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">57</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">40</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">45</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/awokezhou" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="awokezhou@gmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                Links
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://www.ruanyifeng.com/blog/" title="阮一峰" target="_blank">阮一峰</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://dave.cheney.net/about/" title="Dave Cheney" target="_blank">Dave Cheney</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://codingsans.com/" title="codingsans" target="_blank">codingsans</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://www.openai.com/" title="openAI" target="_blank">openAI</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://www.wowotech.net/author/3/" title="linuxer - 蜗窝科技" target="_blank">linuxer - 蜗窝科技</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://www.iii.run/" title="mmmwhy" target="_blank">mmmwhy</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://www.jasongj.com/" title="技术世界" target="_blank">技术世界</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://machinelearningmastery.com/" title="Jason Brownlee" target="_blank">Jason Brownlee</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://www.jeremyjordan.me/" title="Jeremy Jordan" target="_blank">Jeremy Jordan</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://towardsdatascience.com/" title="Towards Data Science" target="_blank">Towards Data Science</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://colah.github.io/" title="colah" target="_blank">colah</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://www.cnblogs.com/popsuper1982/" title="网易云计算架构师刘超" target="_blank">网易云计算架构师刘超</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://biscuitos.github.io/" title="Biscuitos" target="_blank">Biscuitos</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#TCP%E8%BF%9E%E6%8E%A5%E7%8A%B6%E6%80%81"><span class="nav-number">1.</span> <span class="nav-text">TCP连接状态</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Connect-States"><span class="nav-number">1.1.</span> <span class="nav-text">Connect States</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%8A%B6%E6%80%81%E8%BD%AC%E7%A7%BB"><span class="nav-number">1.2.</span> <span class="nav-text">状态转移</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MSL"><span class="nav-number">1.3.</span> <span class="nav-text">MSL</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFMSL"><span class="nav-number">1.3.1.</span> <span class="nav-text">什么是MSL</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#TIME-WAIT%E5%90%8E%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E7%AD%89%E5%BE%852%E4%B8%AAMSL%EF%BC%9F"><span class="nav-number">1.3.2.</span> <span class="nav-text">TIME-WAIT后为什么需要等待2个MSL？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%90%8E%E5%85%B3%E9%97%AD%E7%9A%84%E4%B8%80%E6%96%B9%EF%BC%8C%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%8D%E9%9C%80%E8%A6%812MSL%EF%BC%9F"><span class="nav-number">1.3.3.</span> <span class="nav-text">后关闭的一方，为什么不需要2MSL？</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95"><span class="nav-number">2.</span> <span class="nav-text">测试</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%8E%AF%E5%A2%83%E4%BB%8B%E7%BB%8D"><span class="nav-number">2.1.</span> <span class="nav-text">环境介绍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E8%BF%9E%E6%8E%A5"><span class="nav-number">2.2.</span> <span class="nav-text">创建连接</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Server%E5%85%88%E5%85%B3%E9%97%ADsocket"><span class="nav-number">2.3.</span> <span class="nav-text">Server先关闭socket</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Client%E5%85%88%E5%85%B3%E9%97%ADsocket"><span class="nav-number">2.4.</span> <span class="nav-text">Client先关闭socket</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">3.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Reference"><span class="nav-number">4.</span> <span class="nav-text">Reference</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">awokezhou</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+      <div id="needsharebutton-float">
+        <span class="btn">
+          <i class="fa fa-share-alt" aria-hidden="true"></i>
+        </span>
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+  
+  <script type="text/javascript">
+    var GUEST = ['nick','mail','link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item=>{
+      return GUEST.indexOf(item)>-1;
+    });
+    new Valine({
+        el: '#comments' ,
+        verify: false,
+        notify: false,
+        appId: 'fRviEm3V5t70yJuO2anF9b3q-gzGzoHsz',
+        appKey: 'hWNhMYbcRQVolyrvqSI7fVgz',
+        placeholder: '快来吐槽吧',
+        avatar:'mm',
+        guest_info:guest,
+        pageSize:'10' || 10,
+    });
+  </script>
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+  
+  <link rel="stylesheet" href="/lib/needsharebutton/needsharebutton.css">
+
+  
+  
+  <script src="/lib/needsharebutton/needsharebutton.js"></script>
+
+  <script>
+    
+      pbOptions = {};
+      
+          pbOptions.iconStyle = "box";
+      
+          pbOptions.boxForm = "horizontal";
+      
+          pbOptions.position = "bottomCenter";
+      
+          pbOptions.networks = "Weibo,Wechat,Douban,QQZone,Twitter,Facebook";
+      
+      new needShareButton('#needsharebutton-postbottom', pbOptions);
+    
+    
+      flOptions = {};
+      
+          flOptions.iconStyle = "box";
+      
+          flOptions.boxForm = "horizontal";
+      
+          flOptions.position = "middleRight";
+      
+          flOptions.networks = "Weibo,Wechat,Douban,QQZone,Twitter,Facebook";
+      
+      new needShareButton('#needsharebutton-float', flOptions);
+    
+  </script>
+
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

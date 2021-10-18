@@ -1,0 +1,1366 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/../image/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/../image/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Python,问题解决,性能,内存,机器学习," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="最近在研究天池竞赛的城市计算AI挑战赛题目，在编写代码过程中发现一个非常诡异的事情，最后经过一系列排查，最终定位到是在使用linecache模块处理大文件时发生了内存溢出 问题描述赛题给出了杭州市2019年1月1日到1月25日的3条地铁线路81个站点的刷卡数据，每天一个文件，25天共25个文件。文件类型为.csv文件，文件中以行为单位记录了每个刷卡事件，包括时间、地铁线、站点、用户、刷卡类型等，每">
+<meta property="og:type" content="article">
+<meta property="og:title" content="linecache处理大文件时内存溢出">
+<meta property="og:url" content="http://yoursite.com/2019/05/09/linecache%E5%A4%84%E7%90%86%E5%A4%A7%E6%96%87%E4%BB%B6%E6%97%B6%E5%86%85%E5%AD%98%E6%BA%A2%E5%87%BA/index.html">
+<meta property="og:site_name" content="awokezhou&#39;s blog">
+<meta property="og:description" content="最近在研究天池竞赛的城市计算AI挑战赛题目，在编写代码过程中发现一个非常诡异的事情，最后经过一系列排查，最终定位到是在使用linecache模块处理大文件时发生了内存溢出 问题描述赛题给出了杭州市2019年1月1日到1月25日的3条地铁线路81个站点的刷卡数据，每天一个文件，25天共25个文件。文件类型为.csv文件，文件中以行为单位记录了每个刷卡事件，包括时间、地铁线、站点、用户、刷卡类型等，每">
+<meta property="og:locale">
+<meta property="og:image" content="http://yoursite.com/2019/05/09/linecache%E5%A4%84%E7%90%86%E5%A4%A7%E6%96%87%E4%BB%B6%E6%97%B6%E5%86%85%E5%AD%98%E6%BA%A2%E5%87%BA/image/linecache-bigfile-memoryerror-01.png">
+<meta property="og:image" content="http://yoursite.com/2019/05/09/linecache%E5%A4%84%E7%90%86%E5%A4%A7%E6%96%87%E4%BB%B6%E6%97%B6%E5%86%85%E5%AD%98%E6%BA%A2%E5%87%BA/image/linecache-bigfile-memoryerror-03.png">
+<meta property="og:image" content="http://yoursite.com/2019/05/09/linecache%E5%A4%84%E7%90%86%E5%A4%A7%E6%96%87%E4%BB%B6%E6%97%B6%E5%86%85%E5%AD%98%E6%BA%A2%E5%87%BA/image/linecache-bigfile-memoryerror-04.png">
+<meta property="og:image" content="http://yoursite.com/2019/05/09/linecache%E5%A4%84%E7%90%86%E5%A4%A7%E6%96%87%E4%BB%B6%E6%97%B6%E5%86%85%E5%AD%98%E6%BA%A2%E5%87%BA/image/linecache-bigfile-memoryerror-02.png">
+<meta property="article:published_time" content="2019-05-09T08:53:37.000Z">
+<meta property="article:modified_time" content="2021-08-13T02:24:21.723Z">
+<meta property="article:author" content="awokezhou">
+<meta property="article:tag" content="Python">
+<meta property="article:tag" content="问题解决">
+<meta property="article:tag" content="性能">
+<meta property="article:tag" content="内存">
+<meta property="article:tag" content="机器学习">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/2019/05/09/linecache%E5%A4%84%E7%90%86%E5%A4%A7%E6%96%87%E4%BB%B6%E6%97%B6%E5%86%85%E5%AD%98%E6%BA%A2%E5%87%BA/image/linecache-bigfile-memoryerror-01.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"hide","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/05/09/linecache处理大文件时内存溢出/"/>
+
+
+
+
+
+  <title>linecache处理大文件时内存溢出 | awokezhou's blog</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">awokezhou's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-message">
+          <a href="/message/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            message
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/05/09/linecache%E5%A4%84%E7%90%86%E5%A4%A7%E6%96%87%E4%BB%B6%E6%97%B6%E5%86%85%E5%AD%98%E6%BA%A2%E5%87%BA/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/../image/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="awokezhou's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">linecache处理大文件时内存溢出</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-05-09T16:53:37+08:00">
+                2019-05-09
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Program-Language/" itemprop="url" rel="index">
+                    <span itemprop="name">Program Language</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Program-Language/Python/" itemprop="url" rel="index">
+                    <span itemprop="name">Python</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Program-Language/Python/%E5%A4%A7%E6%96%87%E4%BB%B6%E5%A4%84%E7%90%86/" itemprop="url" rel="index">
+                    <span itemprop="name">大文件处理</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2019/05/09/linecache%E5%A4%84%E7%90%86%E5%A4%A7%E6%96%87%E4%BB%B6%E6%97%B6%E5%86%85%E5%AD%98%E6%BA%A2%E5%87%BA/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2019/05/09/linecache%E5%A4%84%E7%90%86%E5%A4%A7%E6%96%87%E4%BB%B6%E6%97%B6%E5%86%85%E5%AD%98%E6%BA%A2%E5%87%BA/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>最近在研究天池竞赛的城市计算AI挑战赛题目，在编写代码过程中发现一个非常诡异的事情，最后经过一系列排查，<br>最终定位到是在使用linecache模块处理大文件时发生了内存溢出</p>
+<h2 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h2><p>赛题给出了杭州市2019年1月1日到1月25日的3条地铁线路81个站点的刷卡数据，每天一个文件，25天共25个文件。<br>文件类型为.csv文件，文件中以行为单位记录了每个刷卡事件，包括时间、地铁线、站点、用户、刷卡类型等，每个文件大小160M左右，行数在250万行左右</p>
+<h3 id="为什么使用linecache？"><a href="#为什么使用linecache？" class="headerlink" title="为什么使用linecache？"></a>为什么使用linecache？</h3><p>按理说.csv文件，python直接使用csv模块来操作就行了，为啥还要用linecache呢？因为效率！</p>
+<p>csv读文件的方式为<code>cvs.reader(fileobj)</code>，该函数返回一个可迭代对象，代码中使用<code>for</code>循环来遍历每一行，然后做操作。但是当我对25天的数据做统计分析时，依次读取25个文件，按行遍历，结果是要将近2个小时才能处理完，太慢了！</p>
+<p>经过查阅资料结合自己分析，单次循环我的操作复杂度并不高，所以性能的瓶颈应该在csv的I/O操作上，而这种I/O操作又不能用并发的方式去做，大文件的处理应该使用批量化</p>
+<p>网上有人说可以用linecache读取文件的指定行，所以我封装了一个简单的批量化操作文件的类<code>Batch</code>，代码入下<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Batcher</span>(<span class="params"><span class="built_in">object</span></span>):</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self, filename, batch_size=<span class="number">2000</span>, offset=<span class="number">0</span>, end=<span class="literal">None</span></span>):</span></span><br><span class="line">        self.filename = filename</span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            self._n_lines = lines(self.filename)</span><br><span class="line">        <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">            <span class="built_in">print</span> e</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> batch_size &gt; self._n_lines:</span><br><span class="line">            self._size = self._n_lines</span><br><span class="line">            self._n_batchs = <span class="number">1</span></span><br><span class="line">            <span class="built_in">print</span> <span class="string">&#x27;batch_size too big, adjust to file lines &#123;&#125;&#x27;</span>.<span class="built_in">format</span>(self._n_lines)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            self._size = batch_size</span><br><span class="line">            self._n_batchs = (self._n_lines/self._size) + <span class="number">1</span></span><br><span class="line">        self._offset = offset</span><br><span class="line">        self._end = end</span><br><span class="line">        self.getlines = linecache.getlines</span><br><span class="line">        self.clearcache = linecache.clearcache</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">_batch</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="keyword">if</span> self._end <span class="keyword">and</span> self._offset &gt;= self._end:</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">None</span></span><br><span class="line">        offset = self._offset</span><br><span class="line">        size = self._size</span><br><span class="line">        end = offset+size</span><br><span class="line">        batch = self.getlines(self.filename)[offset:end]</span><br><span class="line">        self._offset += size</span><br><span class="line">        <span class="keyword">return</span> batch</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__iter__</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">            batch = self._batch()</span><br><span class="line">            <span class="keyword">if</span> <span class="keyword">not</span> batch:</span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line">            <span class="keyword">yield</span> batch</span><br></pre></td></tr></table></figure></p>
+<p>思路是利用<code>yield</code>将Batch做成一个可遍历的生成器，每次返回一个小批量的数据，而小批量数据的获得就通过linecache来做，最后在一个循环中来使用就行了，例如：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">batcher = Batcher(filename, <span class="number">2000</span>)</span><br><span class="line"><span class="keyword">for</span> batch <span class="keyword">in</span> batcher:</span><br><span class="line">    ......</span><br></pre></td></tr></table></figure></p>
+<p>实践证明该方法确实将时间压缩了很多，单个文件处理速度5秒左右，处理25个文件时间只花了2分43秒<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">from</span> analysis <span class="keyword">import</span> DataAnalysis</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>da = DataAnalysis()</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>flows = da.subway_line_analysis(<span class="string">&#x27;2019-01-01&#x27;</span>)</span><br><span class="line">one file calculating: <span class="number">100</span>%|██████████| <span class="number">127</span>/<span class="number">127</span> [<span class="number">00</span>:05&lt;<span class="number">00</span>:<span class="number">00</span>, <span class="number">26.54</span>it/s]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>flows = da.subway_line_analysis()</span><br><span class="line">subway line calculating: <span class="number">100</span>%|██████████| <span class="number">25</span>/<span class="number">25</span> [02:<span class="number">43</span>&lt;<span class="number">00</span>:<span class="number">00</span>,  <span class="number">6.90</span>s/it]</span><br><span class="line">&gt;&gt;&gt;</span><br></pre></td></tr></table></figure></p>
+<h3 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h3><p>处理单个文件时并没有发生异常情况，而在处理多个文件时，每个文件会返回一个统计列表，其中几个统计列表会是空的，代码逻辑类似<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">process_one</span>(<span class="params">file</span>):</span></span><br><span class="line">    <span class="built_in">list</span> = []</span><br><span class="line">    batcher = Batch(file, <span class="number">20000</span>)</span><br><span class="line">    <span class="keyword">for</span> batch <span class="keyword">in</span> batcher:</span><br><span class="line">        <span class="keyword">for</span> line <span class="keyword">in</span> csv.reader(batch)</span><br><span class="line">        <span class="comment"># 处理每一行</span></span><br><span class="line">        ......</span><br><span class="line">        <span class="built_in">list</span>.append(xxx)</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">list</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">process</span>():</span></span><br><span class="line">    <span class="keyword">for</span> f <span class="keyword">in</span> files:</span><br><span class="line">        <span class="built_in">list</span> = process_one(f)</span><br><span class="line">        ......</span><br></pre></td></tr></table></figure></p>
+<p>处理单个文件的函数<code>process_one</code>的逻辑经检查是正确的，只要按代码执行顺序读到文件的每一行，返回的list一定不为空，但现象就是有几个文件的处理结果返回值为空</p>
+<h2 id="问题排查"><a href="#问题排查" class="headerlink" title="问题排查"></a>问题排查</h2><p>排查问题并没有想太多，猜测到什么情况，就立即实现验证</p>
+<h3 id="文件内容不对？"><a href="#文件内容不对？" class="headerlink" title="文件内容不对？"></a>文件内容不对？</h3><p>最先想到的可能原因就是这些异常的文件本身内容有误，因此我单独调用<code>process_one</code>来处理单个文件，结果发现单独处理这些文件是能够返回正常值的</p>
+<p>接着我又在<code>process</code>函数中将文件列表乱序，结果发现出现问题的文件并不固定，而是处理了8到9个文件之后一定发生一次问题，然后再处理了4到5个之后再发生一次问题…</p>
+<h3 id="打印调试"><a href="#打印调试" class="headerlink" title="打印调试"></a>打印调试</h3><p>因为排除了文件本身的问题，那只能是程序逻辑执行上的问题了。我在<code>process_one</code>函数逻辑中加入了很多调试信息，尝试将出现错误的执行情况过程中运行逻辑打印出来，我在函数头部、list追加操作前后以及函数返回前都加入了调试信息</p>
+<p>结果很奇怪，居然有两种情况</p>
+<ul>
+<li>list追加操作前后有打印信息</li>
+<li>list追加操作前后没有打印信息<br>第一种情况运行是正常的，返回值是有的。第二种是不正常现象，因为没有进行追加操作，因此list为空</li>
+</ul>
+<p>但是按照程序逻辑执行，如果读每一行都正常，list是不可能为空的，怀疑是我的<code>Batch()</code>操作或者<code>linecache</code>或者<code>csv.reader()</code>可能存在使用或者执行上的问题</p>
+<h3 id="超出自己知识范围？"><a href="#超出自己知识范围？" class="headerlink" title="超出自己知识范围？"></a>超出自己知识范围？</h3><p>排查到这个地步，我觉得问题已经超出了我的知识范围，该怎么排查？我在网络上查阅csv、linecache与运行异常相关问题，没啥结果</p>
+<p>突然想到能不能用资源管理器看出来什么门道?我一边运行程序，一边对着看资源管理器的CPU、内存等视图，结果发现每次出问题时，内存的走势都是一个断崖式下跌，如图<br><img src="/2019/05/09/linecache%E5%A4%84%E7%90%86%E5%A4%A7%E6%96%87%E4%BB%B6%E6%97%B6%E5%86%85%E5%AD%98%E6%BA%A2%E5%87%BA/image/linecache-bigfile-memoryerror-01.png" alt="回调上下文"></p>
+<p>内存占用走势是阶梯式上升，然后突然下跌，再阶梯式上升，下跌，且下跌的时间刚好是出问题的循环</p>
+<h3 id="哪里占用内存？"><a href="#哪里占用内存？" class="headerlink" title="哪里占用内存？"></a>哪里占用内存？</h3><p>很明显，是内存占用过高，python解释器或者系统强制把内存释放了，但是程序中哪里会占用内存呢？我怀疑是我的<code>Batch</code>或者列表操作。我在代码中加入了一些<code>del</code>操作，把可能占用内存的变量在使用后都释放掉，再运行程序看内存变化，结果并没有任何变化。又陷入了困境</p>
+<h2 id="分析解决"><a href="#分析解决" class="headerlink" title="分析解决"></a>分析解决</h2><p>观察内存的上升，发现每次上升的的幅度差不多，感觉很像C语言的<code>malloc</code>向系统很有规律的申请了一次次内存块，程序中哪里占用内存最多呢？</p>
+<p>我在网上查到可以用<code>memory_profiler</code>模块来分析内存，但是使用后程序运行太过缓慢，而且这个模块是必须将程序运行完后才分析显示出来，我放弃了</p>
+<p>主要的操作是读文件，这块会比较消耗内存，文件是读取到内存中，再访问的，难道是每次读完一个文件后，内存中的内容没释放吗？我想到了linecache，<code>cache</code>不是缓存的意思吗？我怀疑可能是linecache这里操作有什么问题。我在网上查linecache和内存占用相关问题，结果发现有一篇文章恰好提到这个问题</p>
+<p>参考连接：<a target="_blank" rel="noopener" href="https://www.cnblogs.com/wennn/p/6725194.html?utm_source=itdadao&amp;utm_medium=referral">python linecache读取过程</a></p>
+<p>该文章中作者也是发现linecache操作导致高内存占用，他读了源码发现其实际上也是调用<code>readlines</code>函数，将文件内容预先缓存在内存中，用户才能调用<code>lines = readlines(file)[x:y]</code>获取指定行数。而linecache提供了<code>clearcache</code>方法来清理缓存</p>
+<h3 id="linecache源码分析"><a href="#linecache源码分析" class="headerlink" title="linecache源码分析"></a>linecache源码分析</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># The cache</span></span><br><span class="line">cache = &#123;&#125; <span class="comment"># The cache</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">getlines</span>(<span class="params">filename, module_globals=<span class="literal">None</span></span>):</span></span><br><span class="line">    <span class="string">&quot;&quot;&quot;Get the lines for a file from the cache.</span></span><br><span class="line"><span class="string">    Update the cache if it doesn&#x27;t contain an entry for this file already.&quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> filename <span class="keyword">in</span> cache:</span><br><span class="line">        <span class="keyword">return</span> cache[filename][<span class="number">2</span>]</span><br><span class="line"></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        <span class="keyword">return</span> updatecache(filename, module_globals)</span><br><span class="line">    <span class="keyword">except</span> MemoryError:</span><br><span class="line">        clearcache()</span><br><span class="line">        <span class="keyword">return</span> []</span><br></pre></td></tr></table></figure>
+<p><code>getlines</code>函数会优先从cache中获取文件内容，如果cache不存在，才会从<code>updatecache</code>函数获取</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">updatecache</span>(<span class="params">filename, module_globals=<span class="literal">None</span></span>):</span></span><br><span class="line">    <span class="string">&quot;&quot;&quot;Update a cache entry and return its list of lines.</span></span><br><span class="line"><span class="string">    If something&#x27;s wrong, print a message, discard the cache entry,</span></span><br><span class="line"><span class="string">    and return an empty list.&quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> filename <span class="keyword">in</span> cache:</span><br><span class="line">        <span class="keyword">del</span> cache[filename]</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> filename <span class="keyword">or</span> (filename.startswith(<span class="string">&#x27;&lt;&#x27;</span>) <span class="keyword">and</span> filename.endswith(<span class="string">&#x27;&gt;&#x27;</span>)):</span><br><span class="line">        <span class="keyword">return</span> []</span><br><span class="line"></span><br><span class="line">    fullname = filename</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        stat = os.stat(fullname)</span><br><span class="line">    <span class="keyword">except</span> Exception:</span><br><span class="line">        ......</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        <span class="keyword">with</span> <span class="built_in">open</span>(fullname, <span class="string">&#x27;rU&#x27;</span>) <span class="keyword">as</span> fp:</span><br><span class="line">            lines = fp.readlines()</span><br><span class="line">    <span class="keyword">except</span> IOError:</span><br><span class="line">        <span class="keyword">return</span> []</span><br><span class="line">    <span class="keyword">if</span> lines <span class="keyword">and</span> <span class="keyword">not</span> lines[-<span class="number">1</span>].endswith(<span class="string">&#x27;\n&#x27;</span>):</span><br><span class="line">        lines[-<span class="number">1</span>] += <span class="string">&#x27;\n&#x27;</span></span><br><span class="line">    size, mtime = stat.st_size, stat.st_mtime</span><br><span class="line">    cache[filename] = size, mtime, lines, fullname</span><br><span class="line">    <span class="keyword">return</span> lines</span><br></pre></td></tr></table></figure>
+<p>由最后一行可以看到，文件内容被放在cache字典结构的第3个元素中，cache结构如图<br><img src="/2019/05/09/linecache%E5%A4%84%E7%90%86%E5%A4%A7%E6%96%87%E4%BB%B6%E6%97%B6%E5%86%85%E5%AD%98%E6%BA%A2%E5%87%BA/image/linecache-bigfile-memoryerror-03.png" alt="回调上下文"></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">clearcache</span>():</span></span><br><span class="line">    <span class="string">&quot;&quot;&quot;Clear the cache entirely.&quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">global</span> cache</span><br><span class="line">    cache = &#123;&#125;</span><br></pre></td></tr></table></figure>
+<p>清理缓存函数会将cache清空，因为我的操作里没有清空缓存，每读一次文件，cache里都会新增一个文件的全部内容，当经过几个文件处理之后，cache结构如下<br><img src="/2019/05/09/linecache%E5%A4%84%E7%90%86%E5%A4%A7%E6%96%87%E4%BB%B6%E6%97%B6%E5%86%85%E5%AD%98%E6%BA%A2%E5%87%BA/image/linecache-bigfile-memoryerror-04.png" alt="回调上下文"></p>
+<h3 id="验证"><a href="#验证" class="headerlink" title="验证"></a>验证</h3><p>既然是因为缓存没有清理导致的，我修改<code>Batch</code>类，在其<code>__del__</code>方法上调用<code>clearcache</code>来释放内存，这样每次操作完一个文件后，缓存清空一次，应该就不会一直占用内存了</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">__del__</span>(<span class="params">self</span>):</span></span><br><span class="line">    self.clearcache()</span><br></pre></td></tr></table></figure>
+<p>修改代码，运行程序，结果竟然没有发生异常！内存视图如下<br><img src="/2019/05/09/linecache%E5%A4%84%E7%90%86%E5%A4%A7%E6%96%87%E4%BB%B6%E6%97%B6%E5%86%85%E5%AD%98%E6%BA%A2%E5%87%BA/image/linecache-bigfile-memoryerror-02.png" alt="回调上下文"><br>每读一次文件，在操作结束后都会将cache清空，因此内存趋势是上下起伏</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Python/" rel="tag"># Python</a>
+          
+            <a href="/tags/%E9%97%AE%E9%A2%98%E8%A7%A3%E5%86%B3/" rel="tag"># 问题解决</a>
+          
+            <a href="/tags/%E6%80%A7%E8%83%BD/" rel="tag"># 性能</a>
+          
+            <a href="/tags/%E5%86%85%E5%AD%98/" rel="tag"># 内存</a>
+          
+            <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" rel="tag"># 机器学习</a>
+          
+        </div>
+      
+
+      
+      
+        <div class="post-widgets">
+        
+
+        
+
+        
+          
+          <div id="needsharebutton-postbottom">
+            <span class="btn">
+              <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </span>
+          </div>
+        
+        </div>
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/05/07/python-kafka%E6%8A%93%E5%8C%85%E5%88%86%E6%9E%90/" rel="next" title="python-kafka抓包分析">
+                <i class="fa fa-chevron-left"></i> python-kafka抓包分析
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/05/15/github%E5%A4%9A%E8%B4%A6%E6%88%B7%E8%AE%BE%E7%BD%AE/" rel="prev" title="github多账户设置">
+                github多账户设置 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/../image/avatar.png"
+                alt="" />
+            
+              <p class="site-author-name" itemprop="name"></p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%20%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">57</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">40</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">45</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/awokezhou" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="awokezhou@gmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                Links
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://www.ruanyifeng.com/blog/" title="阮一峰" target="_blank">阮一峰</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://dave.cheney.net/about/" title="Dave Cheney" target="_blank">Dave Cheney</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://codingsans.com/" title="codingsans" target="_blank">codingsans</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://www.openai.com/" title="openAI" target="_blank">openAI</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://www.wowotech.net/author/3/" title="linuxer - 蜗窝科技" target="_blank">linuxer - 蜗窝科技</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://www.iii.run/" title="mmmwhy" target="_blank">mmmwhy</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://www.jasongj.com/" title="技术世界" target="_blank">技术世界</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://machinelearningmastery.com/" title="Jason Brownlee" target="_blank">Jason Brownlee</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://www.jeremyjordan.me/" title="Jeremy Jordan" target="_blank">Jeremy Jordan</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://towardsdatascience.com/" title="Towards Data Science" target="_blank">Towards Data Science</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://colah.github.io/" title="colah" target="_blank">colah</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://www.cnblogs.com/popsuper1982/" title="网易云计算架构师刘超" target="_blank">网易云计算架构师刘超</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://biscuitos.github.io/" title="Biscuitos" target="_blank">Biscuitos</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E6%8F%8F%E8%BF%B0"><span class="nav-number">1.</span> <span class="nav-text">问题描述</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BD%BF%E7%94%A8linecache%EF%BC%9F"><span class="nav-number">1.1.</span> <span class="nav-text">为什么使用linecache？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%97%AE%E9%A2%98"><span class="nav-number">1.2.</span> <span class="nav-text">问题</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5"><span class="nav-number">2.</span> <span class="nav-text">问题排查</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E5%86%85%E5%AE%B9%E4%B8%8D%E5%AF%B9%EF%BC%9F"><span class="nav-number">2.1.</span> <span class="nav-text">文件内容不对？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%89%93%E5%8D%B0%E8%B0%83%E8%AF%95"><span class="nav-number">2.2.</span> <span class="nav-text">打印调试</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B6%85%E5%87%BA%E8%87%AA%E5%B7%B1%E7%9F%A5%E8%AF%86%E8%8C%83%E5%9B%B4%EF%BC%9F"><span class="nav-number">2.3.</span> <span class="nav-text">超出自己知识范围？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%93%AA%E9%87%8C%E5%8D%A0%E7%94%A8%E5%86%85%E5%AD%98%EF%BC%9F"><span class="nav-number">2.4.</span> <span class="nav-text">哪里占用内存？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%86%E6%9E%90%E8%A7%A3%E5%86%B3"><span class="nav-number">3.</span> <span class="nav-text">分析解决</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#linecache%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90"><span class="nav-number">3.1.</span> <span class="nav-text">linecache源码分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%AA%8C%E8%AF%81"><span class="nav-number">3.2.</span> <span class="nav-text">验证</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">awokezhou</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+      <div id="needsharebutton-float">
+        <span class="btn">
+          <i class="fa fa-share-alt" aria-hidden="true"></i>
+        </span>
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+  
+  <script type="text/javascript">
+    var GUEST = ['nick','mail','link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item=>{
+      return GUEST.indexOf(item)>-1;
+    });
+    new Valine({
+        el: '#comments' ,
+        verify: false,
+        notify: false,
+        appId: 'fRviEm3V5t70yJuO2anF9b3q-gzGzoHsz',
+        appKey: 'hWNhMYbcRQVolyrvqSI7fVgz',
+        placeholder: '快来吐槽吧',
+        avatar:'mm',
+        guest_info:guest,
+        pageSize:'10' || 10,
+    });
+  </script>
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+  
+  <link rel="stylesheet" href="/lib/needsharebutton/needsharebutton.css">
+
+  
+  
+  <script src="/lib/needsharebutton/needsharebutton.js"></script>
+
+  <script>
+    
+      pbOptions = {};
+      
+          pbOptions.iconStyle = "box";
+      
+          pbOptions.boxForm = "horizontal";
+      
+          pbOptions.position = "bottomCenter";
+      
+          pbOptions.networks = "Weibo,Wechat,Douban,QQZone,Twitter,Facebook";
+      
+      new needShareButton('#needsharebutton-postbottom', pbOptions);
+    
+    
+      flOptions = {};
+      
+          flOptions.iconStyle = "box";
+      
+          flOptions.boxForm = "horizontal";
+      
+          flOptions.position = "middleRight";
+      
+          flOptions.networks = "Weibo,Wechat,Douban,QQZone,Twitter,Facebook";
+      
+      new needShareButton('#needsharebutton-float', flOptions);
+    
+  </script>
+
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

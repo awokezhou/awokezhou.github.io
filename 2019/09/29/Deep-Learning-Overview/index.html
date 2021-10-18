@@ -1,0 +1,1416 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/../image/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/../image/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Deep Learning," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="神经网络是有史以来人类最接近“智能”的一次尝试，尽管就目前而言，这项技术与图灵测试所定义的智能存在极大的差距，但是它独特的解决问题的角度和方式，堪称一项伟大而优美的发明。神经网络起源于对人类大脑学习、思考和记忆产生的研究，说白了就是在研究造物主是如何创造我们的智慧的。虽然现阶段脑科学、神经科学和计算机科学还有很多关键问题仍待突破，但是神经网络和一系列衍生的应用已经能够达到商用级别，它的跨领域渗透能">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Deep Learning Overview">
+<meta property="og:url" content="http://yoursite.com/2019/09/29/Deep-Learning-Overview/index.html">
+<meta property="og:site_name" content="awokezhou&#39;s blog">
+<meta property="og:description" content="神经网络是有史以来人类最接近“智能”的一次尝试，尽管就目前而言，这项技术与图灵测试所定义的智能存在极大的差距，但是它独特的解决问题的角度和方式，堪称一项伟大而优美的发明。神经网络起源于对人类大脑学习、思考和记忆产生的研究，说白了就是在研究造物主是如何创造我们的智慧的。虽然现阶段脑科学、神经科学和计算机科学还有很多关键问题仍待突破，但是神经网络和一系列衍生的应用已经能够达到商用级别，它的跨领域渗透能">
+<meta property="og:locale">
+<meta property="og:image" content="http://yoursite.com/2019/09/29/Deep-Learning-Overview/image/NN-01.jpg">
+<meta property="og:image" content="http://yoursite.com/2019/09/29/Deep-Learning-Overview/image/NN-02.png">
+<meta property="og:image" content="http://yoursite.com/2019/09/29/Deep-Learning-Overview/image/NN-03.png">
+<meta property="og:image" content="http://yoursite.com/2019/09/29/Deep-Learning-Overview/image/NN-04.png">
+<meta property="og:image" content="http://yoursite.com/2019/09/29/Deep-Learning-Overview/image/NN-08.png">
+<meta property="og:image" content="http://yoursite.com/2019/09/29/Deep-Learning-Overview/image/NN-05.png">
+<meta property="og:image" content="http://yoursite.com/2019/09/29/Deep-Learning-Overview/image/NN-09.png">
+<meta property="og:image" content="http://yoursite.com/2019/09/29/Deep-Learning-Overview/image/NN-06.png">
+<meta property="article:published_time" content="2019-09-29T02:28:05.000Z">
+<meta property="article:modified_time" content="2021-08-13T02:24:21.627Z">
+<meta property="article:author" content="awokezhou">
+<meta property="article:tag" content="Deep Learning">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/2019/09/29/Deep-Learning-Overview/image/NN-01.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"hide","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/09/29/Deep-Learning-Overview/"/>
+
+
+
+
+
+  <title>Deep Learning Overview | awokezhou's blog</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">awokezhou's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-message">
+          <a href="/message/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            message
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/09/29/Deep-Learning-Overview/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/../image/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="awokezhou's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Deep Learning Overview</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-09-29T10:28:05+08:00">
+                2019-09-29
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/ML/" itemprop="url" rel="index">
+                    <span itemprop="name">ML</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/ML/%E7%90%86%E8%AE%BA/" itemprop="url" rel="index">
+                    <span itemprop="name">理论</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/ML/%E7%90%86%E8%AE%BA/DeepLearning/" itemprop="url" rel="index">
+                    <span itemprop="name">DeepLearning</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2019/09/29/Deep-Learning-Overview/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2019/09/29/Deep-Learning-Overview/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>神经网络是有史以来人类最接近“智能”的一次尝试，尽管就目前而言，这项技术与图灵测试所定义的智能存在极大的差距，但是它独特的解决问题的角度和方式，堪称一项伟大而优美的发明。神经网络起源于对人类大脑学习、思考和记忆产生的研究，说白了就是在研究造物主是如何创造我们的智慧的。虽然现阶段脑科学、神经科学和计算机科学还有很多关键问题仍待突破，但是神经网络和一系列衍生的应用已经能够达到商用级别，它的跨领域渗透能力在未来的发展中存在巨大的潜力，并将深刻的变革现代信息社会</p>
+<p>神经网络同时也是有史以来发明的最优美的编程范式之一，在传统的编程中，人们告诉计算机做什么，把大问题分成许多小的、精确定义的任务，计算机可以很容易的执行。相比之下，在神经网络中，我们不会告诉计算机如何解决问题，而是让它在数据中学习，从而找到解决问题的方法</p>
+<p>本文是一篇关于神经网络的综述性文章，包括对神经网络发展历史、基本概念、目前发展现状以及前沿领域的介绍</p>
+<h2 id="历史"><a href="#历史" class="headerlink" title="历史"></a>历史</h2><p>深度学习模型来源于从生物大脑(无论是人类大脑还是动物大脑)中受到的启发<br><img src="/2019/09/29/Deep-Learning-Overview/image/NN-01.jpg" alt><br>听觉、视觉、触觉、味觉，通过身体不同器官，最终都将转化为生物电信号从末梢神经一层一层传递到大脑的深层神经网中，思维的过程也是电信号在成百上千亿神经元之间非常快速的传递过程。传统生物学中认为，大脑中的不同区域有着不同的功能，专门用于处理语言、图像、运动等问题，但是最新的研究结果表明，在专门处理某类问题的区域上长期施加另一类信号的刺激，这个区域能够适应并处理这些刺激，例如在舌头上放置声音转换成电信号的刺激装置让舌头能够“听”声音，在手臂上放置超声波距离转换成电信号的刺激装置能够让皮肤“看”前方的障碍物。这说明大脑中这种神经元构成的网状结构是一种极其通用化的学习模型，能够对任何外界的刺激做出反应</p>
+<p>深度学习中的神经网络是由两个主要观点驱动的：</p>
+<ul>
+<li>大脑模型是一个很好的例子来证明智能行为的可能，从这一点出发，创造智能最直截了当的方向是运用逆向工程对大脑背后的运作原理进行分析并复制</li>
+<li>理解大脑和人类智能的基础原理本身是非常有趣的，因此深度学习模型除了解决工程应用之外，对于研究阐明大脑、神经等基本科学问题也是有作用的</li>
+</ul>
+<h3 id="3个命名阶段"><a href="#3个命名阶段" class="headerlink" title="3个命名阶段"></a>3个命名阶段</h3><p>概括地说，深度学习的发展经历了三个阶段</p>
+<ul>
+<li><strong>cybernetics</strong> 20世纪40-60年代的深度学习被称为控制论</li>
+<li><strong>connectionism</strong> 20世纪80-90年代神经网络被称为连接主义</li>
+<li><strong>deep learning</strong> 2006年开始以深度学习命名</li>
+</ul>
+<p><img src="/2019/09/29/Deep-Learning-Overview/image/NN-02.png" alt></p>
+<p>上图中显示了3次人工神经网络研究的历史浪潮中的两次，第一次浪潮始于20世纪40年代至60年代的控制论，随着生物学习理论(McCulloch and Pitts, 1943; Hebb, 1949)的发展，Rosenblatt实现了第一个感知器模型(Rosenblatt, 1958)，允许训练单个神经元。第二次浪潮始于1980-1995年期间的连接主义方法，用反向传播(Rumelhart et al., 1986)来训练一个带有一个或两个隐藏层的神经网络。第三次浪潮始于2006年(Hintonet al., 2006; Bengio et al., 2007; Ranzato et al., 2007a)</p>
+<p>在上个世纪60~90年代，神经网络的研究较为缓慢，研究者发现了处理神经网络的计算机器的两个关键问题。第一个问题是单层神经网络不能处理异或电路。第二个重要问题是计算机不够复杂，无法有效地处理大型神经网络所需的长时间运行。然而20世纪末期直到今天，由于第三次工业革命，信息的产生呈爆炸式增长，计算机的性能也有了极大的提升，这使得大型深层次的神经网络成为可能，其性能也在高速增长</p>
+<h2 id="神经网络框架"><a href="#神经网络框架" class="headerlink" title="神经网络框架"></a>神经网络框架</h2><p>基本的神经网络结构如下图所示</p>
+<p><img src="/2019/09/29/Deep-Learning-Overview/image/NN-03.png" alt></p>
+<p>最左侧的称为<strong>输入层</strong>，其中的神经元称为输入神经元，最右边的称为<strong>输出层</strong>，中间层被称为<strong>隐藏层</strong>。这种结构在有些地方也被称为MLP(多层感知器)，也叫做FF(Feed Forward Network, 前馈神经网络)</p>
+<p>网络中的每个神经元都是一个最简单的线性模型</p>
+<script type="math/tex; mode=display">
+\begin{equation}
+y = \omega{x} + b 
+\end{equation}</script><p>其中$\omega$和$b$分别叫做神经元的权重和偏置。神经网络的运行，是从输入层向输出层，一层一层传递结果的，上一层的输出作为下一层的输入，最终传递到输出层，而每个神经元上的权重和偏置的微小改变，都会影响最终的输出。学习的本质就是不断地调整这些神经元上的权重和偏置值</p>
+<h3 id="激活函数"><a href="#激活函数" class="headerlink" title="激活函数"></a>激活函数</h3><p>对于某一个神经元而言，由于简单的权重和偏置是一个线性模型，有以下缺陷</p>
+<ul>
+<li>单个神经元的改变对网络的影响过大</li>
+<li>线性函数无法理解输入变量之间的相互作用，最简单的就是线性模型不能学习异或关系$XOR$</li>
+</ul>
+<p>为了解决以上问题，我们可以不直接把线性模型用于神经元本身，而是用在一个变换后的输入上</p>
+<script type="math/tex; mode=display">
+\begin{align}
+y &= \sigma(z)\\
+z &= \omega{x} + b
+\end{align}</script><p>这里的$\sigma$是一个非线性变换，而这种非线性变换就叫做激活函数。目前常用的激活函数有4种</p>
+<ul>
+<li><strong>Sigmoid</strong> S型生长曲线</li>
+<li><strong>tanh</strong> 双曲正切函数</li>
+<li><strong>ReLU</strong> 线性整流函数</li>
+<li><strong>Maxout</strong></li>
+</ul>
+<h4 id="Sigmoid"><a href="#Sigmoid" class="headerlink" title="Sigmoid"></a>Sigmoid</h4><p>Sigmoid函数的定义如下</p>
+<script type="math/tex; mode=display">
+f(x) = \frac{1}{1 + e^{-x}}</script><p>Sigmoid函数的图像如图所示<br><img src="/2019/09/29/Deep-Learning-Overview/image/NN-04.png" alt><br>sigmoid函数当输入x趋近于负无穷时，输出y趋近于0，当输入x趋近于正无穷时，输出y趋近于1，即把输入归一化到0~1范围内</p>
+<p>Sigmoid函数的导数</p>
+<script type="math/tex; mode=display">
+f'(x) = f(x)*(1-f(x))</script><p>Sigmoid导数的图像如图所示<br><img src="/2019/09/29/Deep-Learning-Overview/image/NN-08.png" alt></p>
+<h4 id="tanh"><a href="#tanh" class="headerlink" title="tanh"></a>tanh</h4><p>tanh函数的定义如下</p>
+<script type="math/tex; mode=display">
+f(x) = \frac{e^x - e^{-x}}{e^x + e^{-x}}</script><p>tanh函数的图像如图所示<br><img src="/2019/09/29/Deep-Learning-Overview/image/NN-05.png" alt></p>
+<p>tanh函数的导数</p>
+<script type="math/tex; mode=display">
+f'(x) = 1 − f(x)^{2}</script><p>tanh导数的图像如图所示<br><img src="/2019/09/29/Deep-Learning-Overview/image/NN-09.png" alt></p>
+<h4 id="ReLU"><a href="#ReLU" class="headerlink" title="ReLU"></a>ReLU</h4><p>ReLU函数定义如下</p>
+<script type="math/tex; mode=display">
+f(x) = max(0, x)</script><p>ReLU函数的图像如图所示<br><img src="/2019/09/29/Deep-Learning-Overview/image/NN-06.png" alt></p>
+<p>ReLU函数的导数</p>
+<script type="math/tex; mode=display">
+\begin{equation}  
+f(x) = 
+\left\{
+        \begin{array}{**lr**}  
+        0, & x \leq 0 \\  
+        1, & x > 0 \\   
+        \end{array}
+\right.  
+\end{equation}</script><p>当输入x小于0时输出为0，当大于0时输出y</p>
+<p>激活函数各有优劣，适用于不同的应用场景，合理选择才能达到好的效果</p>
+<h3 id="代价函数、梯度下降"><a href="#代价函数、梯度下降" class="headerlink" title="代价函数、梯度下降"></a>代价函数、梯度下降</h3><p>神经网络的学习，其目的是要达到给定训练样本${(x1,y1),(x2,y2)…}$，训练网络后，使得网络对于未知的输入数据能够尽可能逼近真实的输出。常用以下函数来描述这一目标，称作代价函数</p>
+<script type="math/tex; mode=display">
+C = \frac{1}{2n}\sum_{x}\vert{y(x) - a^{L}(x)}\vert^2</script><p>其中$n$是训练样本总数，$L$表示网络层数，$a^{L}(x)$是网络输入为$x$时的激活向量</p>
+<p>当代价函数被定义好了之后，如何通过代价函数来调整网络呢？要想让网络的输出尽量逼近真实值，则要将代价函数最小化。通常要最小化函数是通过求导取极值来实现的，但是对于神经网络而言，输入$x$通常不是一个变量，而是一组变量构成的向量，因此代价函数其实是个多元函数$C(x1,x2,x3…)$，其最小化通过梯度下降算法来实现。梯度是数学上多元函数偏导数的概念，梯度永远指向函数下降最快的方向，梯度下降算法的思想是每次将代价函数减去一个由梯度和一个步长构成的微小值，那么经过多次迭代，代价函数总是朝着最小值逼近，最终代价函数趋近于最小值不再变化时，表明网络已经收敛</p>
+<h3 id="反向传播"><a href="#反向传播" class="headerlink" title="反向传播"></a>反向传播</h3><p>神经网络中使用反向传播(backprop)来计算梯度，</p>
+<h2 id="发展现状"><a href="#发展现状" class="headerlink" title="发展现状"></a>发展现状</h2><p>一般在具体应用领域中不会直接使用这种基本的神经网络结构，在长时间的发展中，针对不同种类的问题，神经网络已经演化出了多种结构</p>
+<ul>
+<li>CNN(Convolutional Neural Network，卷积神经网络)，适用于图像识别领域</li>
+<li>RNN(Recursion Neural Network，递归/循环神经网络)，适用于语音、文字处理</li>
+<li>LSTM(Long Short-Term Memory Network，长短记忆网络)，RNN的改进版</li>
+<li>DBN(Deep Belief Network，深度信念网络)，多个神经网络堆叠，适用于识别</li>
+<li>GAN(Generative Adversarial Network，生成对抗网络)，用于自学习</li>
+</ul>
+<p>目前神经网络也已经有很多成熟的开发框架</p>
+<ul>
+<li>sklearn</li>
+<li>caffe</li>
+<li>pytorch</li>
+<li>tensorflow</li>
+<li>keras</li>
+</ul>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li>Michael A. Nielsen, “Neural Networks and Deep Learning”, Determination Press, 2015</li>
+<li>Ian Goodfellow and Yoshua Bengio and Aaron Courville, “Deep Learning”, MIT Press, 2016</li>
+<li>wikipedia:<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Neural_network">Neural network</a></li>
+</ol>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Deep-Learning/" rel="tag"># Deep Learning</a>
+          
+        </div>
+      
+
+      
+      
+        <div class="post-widgets">
+        
+
+        
+
+        
+          
+          <div id="needsharebutton-postbottom">
+            <span class="btn">
+              <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </span>
+          </div>
+        
+        </div>
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/09/10/%E6%AF%8F%E6%9C%88%E8%A7%81%E9%97%BB201909/" rel="next" title="每月见闻201909">
+                <i class="fa fa-chevron-left"></i> 每月见闻201909
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/09/30/%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D%E5%92%8C%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD/" rel="prev" title="梯度下降和反向传播">
+                梯度下降和反向传播 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/../image/avatar.png"
+                alt="" />
+            
+              <p class="site-author-name" itemprop="name"></p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%20%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">57</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">40</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">45</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/awokezhou" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="awokezhou@gmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                Links
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://www.ruanyifeng.com/blog/" title="阮一峰" target="_blank">阮一峰</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://dave.cheney.net/about/" title="Dave Cheney" target="_blank">Dave Cheney</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://codingsans.com/" title="codingsans" target="_blank">codingsans</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://www.openai.com/" title="openAI" target="_blank">openAI</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://www.wowotech.net/author/3/" title="linuxer - 蜗窝科技" target="_blank">linuxer - 蜗窝科技</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://www.iii.run/" title="mmmwhy" target="_blank">mmmwhy</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://www.jasongj.com/" title="技术世界" target="_blank">技术世界</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://machinelearningmastery.com/" title="Jason Brownlee" target="_blank">Jason Brownlee</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://www.jeremyjordan.me/" title="Jeremy Jordan" target="_blank">Jeremy Jordan</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://towardsdatascience.com/" title="Towards Data Science" target="_blank">Towards Data Science</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://colah.github.io/" title="colah" target="_blank">colah</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://www.cnblogs.com/popsuper1982/" title="网易云计算架构师刘超" target="_blank">网易云计算架构师刘超</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://biscuitos.github.io/" title="Biscuitos" target="_blank">Biscuitos</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8E%86%E5%8F%B2"><span class="nav-number">1.</span> <span class="nav-text">历史</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3%E4%B8%AA%E5%91%BD%E5%90%8D%E9%98%B6%E6%AE%B5"><span class="nav-number">1.1.</span> <span class="nav-text">3个命名阶段</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%A1%86%E6%9E%B6"><span class="nav-number">2.</span> <span class="nav-text">神经网络框架</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%BF%80%E6%B4%BB%E5%87%BD%E6%95%B0"><span class="nav-number">2.1.</span> <span class="nav-text">激活函数</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Sigmoid"><span class="nav-number">2.1.1.</span> <span class="nav-text">Sigmoid</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#tanh"><span class="nav-number">2.1.2.</span> <span class="nav-text">tanh</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ReLU"><span class="nav-number">2.1.3.</span> <span class="nav-text">ReLU</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%A3%E4%BB%B7%E5%87%BD%E6%95%B0%E3%80%81%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D"><span class="nav-number">2.2.</span> <span class="nav-text">代价函数、梯度下降</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD"><span class="nav-number">2.3.</span> <span class="nav-text">反向传播</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%91%E5%B1%95%E7%8E%B0%E7%8A%B6"><span class="nav-number">3.</span> <span class="nav-text">发展现状</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">4.</span> <span class="nav-text">参考</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">awokezhou</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+      <div id="needsharebutton-float">
+        <span class="btn">
+          <i class="fa fa-share-alt" aria-hidden="true"></i>
+        </span>
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+  
+  <script type="text/javascript">
+    var GUEST = ['nick','mail','link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item=>{
+      return GUEST.indexOf(item)>-1;
+    });
+    new Valine({
+        el: '#comments' ,
+        verify: false,
+        notify: false,
+        appId: 'fRviEm3V5t70yJuO2anF9b3q-gzGzoHsz',
+        appKey: 'hWNhMYbcRQVolyrvqSI7fVgz',
+        placeholder: '快来吐槽吧',
+        avatar:'mm',
+        guest_info:guest,
+        pageSize:'10' || 10,
+    });
+  </script>
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+  
+  <link rel="stylesheet" href="/lib/needsharebutton/needsharebutton.css">
+
+  
+  
+  <script src="/lib/needsharebutton/needsharebutton.js"></script>
+
+  <script>
+    
+      pbOptions = {};
+      
+          pbOptions.iconStyle = "box";
+      
+          pbOptions.boxForm = "horizontal";
+      
+          pbOptions.position = "bottomCenter";
+      
+          pbOptions.networks = "Weibo,Wechat,Douban,QQZone,Twitter,Facebook";
+      
+      new needShareButton('#needsharebutton-postbottom', pbOptions);
+    
+    
+      flOptions = {};
+      
+          flOptions.iconStyle = "box";
+      
+          flOptions.boxForm = "horizontal";
+      
+          flOptions.position = "middleRight";
+      
+          flOptions.networks = "Weibo,Wechat,Douban,QQZone,Twitter,Facebook";
+      
+      new needShareButton('#needsharebutton-float', flOptions);
+    
+  </script>
+
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,1398 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/../image/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/../image/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="ML,DOTA,译,OpenAI," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="待续~ 我们的OpenAI Five神经网络团队，已经开始击败业余的Dota2人类团队。虽然今天我们仍然存在一些限制，但我们的目标是在今年8月份的国际邀请赛上在有限的英雄上击败一只顶尖的专业战队。我们不一定会成功：dota 2是世界上最受欢迎和最复杂的电子竞技游戏之一，拥有富有创造力和积极性的专业人士，他们全年都在训练，以赢得dota每年4000万美元奖金池(所有电子竞技游戏中最大的一个)的一部分">
+<meta property="og:type" content="article">
+<meta property="og:title" content="OpenAI Five[译]">
+<meta property="og:url" content="http://yoursite.com/2019/09/02/OpenAI-Five-%E8%AF%91/index.html">
+<meta property="og:site_name" content="awokezhou&#39;s blog">
+<meta property="og:description" content="待续~ 我们的OpenAI Five神经网络团队，已经开始击败业余的Dota2人类团队。虽然今天我们仍然存在一些限制，但我们的目标是在今年8月份的国际邀请赛上在有限的英雄上击败一只顶尖的专业战队。我们不一定会成功：dota 2是世界上最受欢迎和最复杂的电子竞技游戏之一，拥有富有创造力和积极性的专业人士，他们全年都在训练，以赢得dota每年4000万美元奖金池(所有电子竞技游戏中最大的一个)的一部分">
+<meta property="og:locale">
+<meta property="og:image" content="http://yoursite.com/2019/09/02/OpenAI-Five-%E8%AF%91/OpenAI-Five-译/images/OpenAI-01.png">
+<meta property="og:image" content="http://yoursite.com/2019/09/02/OpenAI-Five-%E8%AF%91/OpenAI-Five-译/images/OpenAI-01.png">
+<meta property="og:image" content="http://yoursite.com/2019/09/02/OpenAI-Five-%E8%AF%91/OpenAI-Five-译/images/OpenAI-02.png">
+<meta property="og:image" content="http://yoursite.com/2019/09/02/OpenAI-Five-%E8%AF%91/OpenAI-Five-译/images/OpenAI-03.png">
+<meta property="og:image" content="http://yoursite.com/2019/09/02/OpenAI-Five-%E8%AF%91/OpenAI-Five-译/images/OpenAI-04.png">
+<meta property="og:image" content="http://yoursite.com/2019/09/02/OpenAI-Five-%E8%AF%91/OpenAI-Five-译/images/OpenAI-05.png">
+<meta property="og:image" content="http://yoursite.com/2019/09/02/OpenAI-Five-%E8%AF%91/OpenAI-Five-译/images/OpenAI-06.png">
+<meta property="og:image" content="http://yoursite.com/2019/09/02/OpenAI-Five-%E8%AF%91/OpenAI-Five-译/images/OpenAI-07.png">
+<meta property="og:image" content="http://yoursite.com/2019/09/02/OpenAI-Five-%E8%AF%91/OpenAI-Five-译/images/OpenAI-08.png">
+<meta property="article:published_time" content="2019-09-02T02:32:05.000Z">
+<meta property="article:modified_time" content="2021-08-13T02:24:21.642Z">
+<meta property="article:author" content="awokezhou">
+<meta property="article:tag" content="ML">
+<meta property="article:tag" content="DOTA">
+<meta property="article:tag" content="译">
+<meta property="article:tag" content="OpenAI">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/2019/09/02/OpenAI-Five-%E8%AF%91/OpenAI-Five-译/images/OpenAI-01.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"hide","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/09/02/OpenAI-Five-译/"/>
+
+
+
+
+
+  <title>OpenAI Five[译] | awokezhou's blog</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">awokezhou's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-message">
+          <a href="/message/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            message
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/09/02/OpenAI-Five-%E8%AF%91/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/../image/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="awokezhou's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">OpenAI Five[译]</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-09-02T10:32:05+08:00">
+                2019-09-02
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/ML/" itemprop="url" rel="index">
+                    <span itemprop="name">ML</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/ML/Paper/" itemprop="url" rel="index">
+                    <span itemprop="name">Paper</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2019/09/02/OpenAI-Five-%E8%AF%91/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2019/09/02/OpenAI-Five-%E8%AF%91/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>待续~</p>
+<p>我们的OpenAI Five神经网络团队，已经开始击败业余的Dota2人类团队。虽然今天我们仍然存在一些限制，但我们的目标是在今年8月份的国际邀请赛上在有限的英雄上击败一只顶尖的专业战队。我们不一定会成功：dota 2是世界上最受欢迎和最复杂的电子竞技游戏之一，拥有富有创造力和积极性的专业人士，他们全年都在训练，以赢得dota每年4000万美元奖金池(所有电子竞技游戏中最大的一个)的一部分</p>
+<p>OpenAI Five每天能够学习和它自己对战180年的有效游戏。它在一个放大版的<a target="_blank" rel="noopener" href="https://openai.com/blog/openai-baselines-ppo/">PPO(Proximal Policy Optimization)</a>上训练，有256个GPU和128000个CPU。对每个英雄使用一个单独的LSTM，不使用人类数据，它学习可识别的策略</p>
+<p>为了衡量我们的程序，我们将在8月5日举办一场与顶级战队的比赛</p>
+<h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><p>人工智能的一个里程碑是在复杂的电子游戏中超越人类的能力，比如星际争霸或DOTA。与以前的人工智能里程碑(如象棋或围棋)相比，复杂的电子游戏开始捕捉现实世界的混乱和连续性。我们希望能够解决复杂电子游戏的系统是高度通用的，能够应用于游戏之外</p>
+<p>Dota2是一款两个队伍各五名队员的实时策略性游戏，每个选手控制一个英雄。能够玩Dota的AI必须掌握以下内容：</p>
+<ul>
+<li><strong>长时间范围</strong> Dota游戏以每秒30帧运行，平均每局45分钟，大概8000个时间点。大多数动作(比如命令英雄移动到某个地点)都会产生独立的轻微影响，但是一些独立的动作会在影响游戏的战略走向，例如TP；有些策略可以在整个游戏中发挥作用。OpenAI每4帧观察一次，产生2000次移动。象棋通常在40步之前结束，围棋一般是150步之内，每一步都是战略性的</li>
+<li><strong>局部观察状态</strong> 单位和建筑物只能看到它们附近的区域。地图的其余部分被大雾笼罩，隐藏着敌人及其战略。赢得游戏需要根据不完整的数据做出推论，以及模拟对手可能要做的事情。下棋和围棋都是全信息游戏</li>
+<li><strong>高维连续动作空间</strong> 在DOTA中，每个英雄可以采取几十个行动，许多行动针对的是另一个单位或地面上的一个位置。我们将空间离散为每个英雄17万个可能的动作(并非所有的每一个勾选都有效，例如在冷却时使用法术)；不计算连续部分，平均每个时间点有1000个有效动作。象棋和围棋的平均动作数是35和250</li>
+<li><strong>高维连续观测空间</strong> Dota是在一张连续的大地图上玩的，地图上有十个英雄、几十个建筑物、几十个NPC单位、符文、树木、防御区等。我们的模型通过V社的bot API观察到一个Dota游戏的状态，即20000个(大部分是浮点)数字代表一个人可以访问的所有信息。一个象棋棋盘表示为大约70个枚举值(一个由6个棋子类型和次要历史信息组成的8x8棋盘)；围棋棋盘大约400个枚举值</li>
+</ul>
+<p>Dota规则也非常复杂——游戏已经开发了十多年，游戏逻辑在数十万行代码中实现。这种逻辑每执行一个标记需要毫秒，而国际象棋或围棋引擎则需要纳秒。游戏每两周更新一次，不断改变环境语义</p>
+<h2 id="我们的方法"><a href="#我们的方法" class="headerlink" title="我们的方法"></a>我们的方法</h2><p>我们的系统学习使用大规模的PPO。Openai Five和我们早期的1v1机器人都完全是从自我游戏中学习的，它们从随机参数开始，不使用搜索或从人类replay中学习</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th></th>
+<th>OPENAI 1V1 BOT</th>
+<th>OPENAI FIVE</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CPUs</td>
+<td>60,000 CPU cores on Azure</td>
+<td>128,000 preemptible CPU cores on GCP</td>
+</tr>
+<tr>
+<td>GPUs</td>
+<td>256 K80 GPUs on Azure</td>
+<td>256 P100 GPUs on GCP</td>
+</tr>
+<tr>
+<td>收集经验</td>
+<td>~300 years per day</td>
+<td>~180 years per day (~900 years per day counting each hero separately)</td>
+</tr>
+<tr>
+<td>观测规模</td>
+<td>~3.3 kB</td>
+<td>~36.8 kB</td>
+</tr>
+<tr>
+<td>每秒游戏观察数</td>
+<td>10</td>
+<td>7.5</td>
+</tr>
+<tr>
+<td>批量大小</td>
+<td>8,388,608 observations</td>
+<td>1,048,576 observations</td>
+</tr>
+<tr>
+<td>每分钟批量数</td>
+<td>~20</td>
+<td>~60</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>RL研究人员(包括我们自己)普遍认为，长时间范围学习需要从根本上取得新的进展，例如分层强化学习。我们的结果表明，我们没有给予今天的算法足够的信任——至少当它们以足够的规模运行并且有合理的探索方法时</p>
+<p>我们的代理被训练为最大化未来报酬的指数衰减总和，用一个称为γ的指数衰减因子进行加权。在最新的Openai Five训练中，我们将γ从0.998(以46秒的半衰期评估未来奖励)退火到0.9997(以5分钟的半衰期评估未来奖励)。相比之下，PPO纸中最长的地平线是0.5秒的半衰期，彩虹纸中最长的地平线是4.4秒的半衰期，观察和进一步观察纸使用46秒的半衰期</p>
+<p>虽然目前版本的Openai Five在最后一次攻击时很弱(观察我们的测试赛，专业的Dota评论员blitz估计它大约是Dota玩家的中位数)，但它的目标优先级符合一个通用的专业策略。获得长期奖励，如战略地图控制，往往需要牺牲短期奖励，如从农业中获得的黄金，因为分组攻击塔需要时间。这一观察加强了我们的信念，即系统确实是在长期优化</p>
+
+<iframe width="720" height="405" src="https://www.youtube.com/embed/UZHTNBMAfAA" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+<h3 id="模型结构"><a href="#模型结构" class="headerlink" title="模型结构"></a>模型结构</h3><p>Openai Five的每个网络都包含一个单层的1024单元的LSTM，它可以看到当前的游戏状态(从V社的bot API中提取)，并通过几个可能的动作头发出动作。每个头部都具有语义意义，例如，延迟此动作的节拍数、要选择的动作、该动作在单位周围网格中的X或Y坐标等。动作头部是独立计算的。</p>
+<p>Openai Five使用的观察空间和行动空间的交互演示。OpenAIFive将世界视为20000个数字的列表，并通过发出8个枚举值的列表来执行操作。选择不同的行动和目标，了解OpenAIFive如何编码每个行动，以及它如何观察世界。这幅图像显示了一个人类看到的场景</p>
+<p><img src="OpenAI-Five-译/images/OpenAI-01.png" alt><br><img src="OpenAI-Five-译/images/OpenAI-01.png" alt><br><img src="OpenAI-Five-译/images/OpenAI-02.png" alt><br><img src="OpenAI-Five-译/images/OpenAI-03.png" alt><br><img src="OpenAI-Five-译/images/OpenAI-04.png" alt><br><img src="OpenAI-Five-译/images/OpenAI-05.png" alt><br><img src="OpenAI-Five-译/images/OpenAI-06.png" alt><br><img src="OpenAI-Five-译/images/OpenAI-07.png" alt><br><img src="OpenAI-Five-译/images/OpenAI-08.png" alt></p>
+<p>OpenAI Five可以对与它所看到的相关的缺失状态片段做出反应。例如，直到最近，Openai Five的观测还没有包括弹片区(弹丸落在敌人身上的区域)，人是可以显而易见看到的。然而，我们观察到Openai Five正在学习走出(尽管不能避免进入)主动弹片区，因为它可以看到它的健康在下降</p>
+<h3 id="探索"><a href="#探索" class="headerlink" title="探索"></a>探索</h3><p>给出了一个能够处理长视距的学习算法，我们仍然需要探索环境。即使有了我们的限制，仍然有数百个物品、几十个建筑、法术和单位类型，以及一个需要学习的游戏机制的长尾——其中许多都会产生强大的组合。有效地探索这个组合广阔的空间并不容易</p>
+<p>Openai Five通过自己和自己对战学习(从随机权重开始)，为探索和学习提供了一个很自然的环境。为了避免“战略崩溃”，代理训练80%的游戏与自己对抗，另外20%与过去的自己对抗。在第一场比赛中，英雄们漫无目的地在地图上走来走去。经过几个小时的训练，诸如farm或中途战斗等概念应运而生。几天之后，他们一直采用基本的人类策略：试图从对手那里偷取赏金符文，走到他们的一级塔去野区farm，并围绕地图游走以获得优势。经过进一步的训练，他们能够熟练运用5英雄推进等高级策略。</p>
+<p>在2017年3月，我们的第一个代理打败了机器人，但与人类混淆了。为了在战略空间进行强行探索，在训练期间(并且仅在训练期间)，我们随机化了部队的属性(健康、速度、起始水平等)，然后开始击败人类。后来，当一个测试玩家持续击败我们的1v1机器人时，我们增加了我们的训练随机化，测试玩家开始输了。我们的机器人团队同时将类似的随机化技术应用于物理机器人，以从模拟转移到现实世界</p>
+<p>OpenAI Five使用我们为1v1机器人编写的随机化方法。它还使用了新的分路方法。在每一个训练游戏开始时，我们随机“分配”每个英雄到一些道路的子集，并惩罚它从这些道路偏离直到游戏中随机选择的时间</p>
+<p>好的奖励也有助于探索。我们的奖励主要是由人类跟踪以决定他们在游戏中的表现的指标组成：净值、杀戮、死亡、助攻、最后一击等等。我们通过减去其他团队的平均奖励来对每个代理的奖励进行后处理，以防止代理发生正和情况。我们对项目和技能构建进行硬编码(最初是为我们的脚本基线编写的)，并随机选择要使用的构建。Courier管理也从脚本化基线导入</p>
+<h3 id="协作"><a href="#协作" class="headerlink" title="协作"></a>协作</h3><p>OpenAI Five不包含英雄神经网络之间的明确通信通道。团队合作是由我们称之为“团队精神”的超参数控制的。团队精神的范围从0到1，这就决定了Openai Five的英雄们应该关心他们各自的奖励功能，而不是团队的平均奖励功能。我们通过训练将其值从0退火到1</p>
+<h3 id="Rapid"><a href="#Rapid" class="headerlink" title="Rapid"></a>Rapid</h3><p>我们的系统是一个通用的RL培训系统，称为Rapid，可应用于任何Gym环境。我们已经使用了快速解决其他问题在OpenAI，包括竞争自我发挥</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/ML/" rel="tag"># ML</a>
+          
+            <a href="/tags/DOTA/" rel="tag"># DOTA</a>
+          
+            <a href="/tags/%E8%AF%91/" rel="tag"># 译</a>
+          
+            <a href="/tags/OpenAI/" rel="tag"># OpenAI</a>
+          
+        </div>
+      
+
+      
+      
+        <div class="post-widgets">
+        
+
+        
+
+        
+          
+          <div id="needsharebutton-postbottom">
+            <span class="btn">
+              <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </span>
+          </div>
+        
+        </div>
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/08/28/%E9%98%9F%E5%88%97/" rel="next" title="队列">
+                <i class="fa fa-chevron-left"></i> 队列
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/09/10/DeepLearing-ai-Andrrew-Ng-%E8%AF%BE%E7%A8%8B%E4%BB%8B%E7%BB%8D/" rel="prev" title="DeepLearing.ai-Andrrew Ng-课程介绍">
+                DeepLearing.ai-Andrrew Ng-课程介绍 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/../image/avatar.png"
+                alt="" />
+            
+              <p class="site-author-name" itemprop="name"></p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%20%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">57</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">40</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">45</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/awokezhou" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="awokezhou@gmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                Links
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://www.ruanyifeng.com/blog/" title="阮一峰" target="_blank">阮一峰</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://dave.cheney.net/about/" title="Dave Cheney" target="_blank">Dave Cheney</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://codingsans.com/" title="codingsans" target="_blank">codingsans</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://www.openai.com/" title="openAI" target="_blank">openAI</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://www.wowotech.net/author/3/" title="linuxer - 蜗窝科技" target="_blank">linuxer - 蜗窝科技</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://www.iii.run/" title="mmmwhy" target="_blank">mmmwhy</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://www.jasongj.com/" title="技术世界" target="_blank">技术世界</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://machinelearningmastery.com/" title="Jason Brownlee" target="_blank">Jason Brownlee</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://www.jeremyjordan.me/" title="Jeremy Jordan" target="_blank">Jeremy Jordan</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://towardsdatascience.com/" title="Towards Data Science" target="_blank">Towards Data Science</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://colah.github.io/" title="colah" target="_blank">colah</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://www.cnblogs.com/popsuper1982/" title="网易云计算架构师刘超" target="_blank">网易云计算架构师刘超</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://biscuitos.github.io/" title="Biscuitos" target="_blank">Biscuitos</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%97%AE%E9%A2%98"><span class="nav-number">1.</span> <span class="nav-text">问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%88%91%E4%BB%AC%E7%9A%84%E6%96%B9%E6%B3%95"><span class="nav-number">2.</span> <span class="nav-text">我们的方法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A8%A1%E5%9E%8B%E7%BB%93%E6%9E%84"><span class="nav-number">2.1.</span> <span class="nav-text">模型结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8E%A2%E7%B4%A2"><span class="nav-number">2.2.</span> <span class="nav-text">探索</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8D%8F%E4%BD%9C"><span class="nav-number">2.3.</span> <span class="nav-text">协作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Rapid"><span class="nav-number">2.4.</span> <span class="nav-text">Rapid</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">awokezhou</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+      <div id="needsharebutton-float">
+        <span class="btn">
+          <i class="fa fa-share-alt" aria-hidden="true"></i>
+        </span>
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+  
+  <script type="text/javascript">
+    var GUEST = ['nick','mail','link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item=>{
+      return GUEST.indexOf(item)>-1;
+    });
+    new Valine({
+        el: '#comments' ,
+        verify: false,
+        notify: false,
+        appId: 'fRviEm3V5t70yJuO2anF9b3q-gzGzoHsz',
+        appKey: 'hWNhMYbcRQVolyrvqSI7fVgz',
+        placeholder: '快来吐槽吧',
+        avatar:'mm',
+        guest_info:guest,
+        pageSize:'10' || 10,
+    });
+  </script>
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+  
+  <link rel="stylesheet" href="/lib/needsharebutton/needsharebutton.css">
+
+  
+  
+  <script src="/lib/needsharebutton/needsharebutton.js"></script>
+
+  <script>
+    
+      pbOptions = {};
+      
+          pbOptions.iconStyle = "box";
+      
+          pbOptions.boxForm = "horizontal";
+      
+          pbOptions.position = "bottomCenter";
+      
+          pbOptions.networks = "Weibo,Wechat,Douban,QQZone,Twitter,Facebook";
+      
+      new needShareButton('#needsharebutton-postbottom', pbOptions);
+    
+    
+      flOptions = {};
+      
+          flOptions.iconStyle = "box";
+      
+          flOptions.boxForm = "horizontal";
+      
+          flOptions.position = "middleRight";
+      
+          flOptions.networks = "Weibo,Wechat,Douban,QQZone,Twitter,Facebook";
+      
+      new needShareButton('#needsharebutton-float', flOptions);
+    
+  </script>
+
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>
