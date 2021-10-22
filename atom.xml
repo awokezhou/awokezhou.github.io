@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2021-10-15T10:25:08.029Z</updated>
+  <updated>2021-10-22T10:15:59.319Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -15,6 +15,30 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>csv读取注释</title>
+    <link href="http://yoursite.com/2021/10/22/csv%E8%AF%BB%E5%8F%96%E6%B3%A8%E9%87%8A/"/>
+    <id>http://yoursite.com/2021/10/22/csv读取注释/</id>
+    <published>2021-10-22T10:01:52.000Z</published>
+    <updated>2021-10-22T10:15:59.319Z</updated>
+    
+    <content type="html"><![CDATA[<p>Python的pandas库处理csv文件非常方便，开发过程中经常会用到csv文件，例如将csv中的数据转化为二进制、将csv文件转化为json等。由于csv本身是以列表的形式组织数据的，如果想要额外的加入一些描述信息，比如版本号等，应该如何做呢？</p><p>可以以key-value的形式在csv文件头部写入一些信息</p><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">#Version:v1<span class="number">.0</span></span><br><span class="line">#Data:<span class="number">2021</span>/<span class="number">01</span>/<span class="number">01</span></span><br><span class="line">#Author:Jam</span><br><span class="line">#Description: This is a example of csv commit</span><br></pre></td></tr></table></figure><p>利用以下函数可以从csv文件中以字典的形式获取注释中的key-value</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">csv_read_attrs</span>(<span class="params">filename</span>):</span></span><br><span class="line">    s = <span class="string">&#x27;&#x27;</span></span><br><span class="line">    fobj = <span class="built_in">open</span>(filename)</span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        line = fobj.readline()</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> line:</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">        s += line</span><br><span class="line">    attrs = re.findall(<span class="string">r&#x27;#(.*)&#x27;</span>, s)</span><br><span class="line">    keys = [x.split(<span class="string">&#x27;:&#x27;</span>)[<span class="number">0</span>].strip() <span class="keyword">for</span> x <span class="keyword">in</span> attrs]</span><br><span class="line">    values = [x.split(<span class="string">&#x27;:&#x27;</span>)[<span class="number">1</span>].strip() <span class="keyword">for</span> x <span class="keyword">in</span> attrs]</span><br><span class="line">    attrs = <span class="built_in">dict</span>(<span class="built_in">zip</span>(keys,values))</span><br><span class="line">    <span class="keyword">return</span> attrs</span><br></pre></td></tr></table></figure><p>将上述注释保存为test.csv文件，调用<code>csv_read_attrs</code>函数解析注释信息</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;</span><span class="bash">&gt;&gt; import csv_read_attrs from csvAttrs</span></span><br><span class="line"><span class="meta">&gt;</span><span class="bash">&gt;&gt; attrs = csv_read_attrs(<span class="string">&#x27;test.csv&#x27;</span>)</span></span><br><span class="line"><span class="meta">&gt;</span><span class="bash">&gt;&gt; attrs</span></span><br><span class="line">&#123;&#x27;Version&#x27;: &#x27;v1.0&#x27;, &#x27;Data&#x27;: &#x27;2021/01/01&#x27;, &#x27;Author&#x27;: &#x27;Jam&#x27;, &#x27;Description&#x27;: &#x27;This is a example of csv commit&#x27;&#125;</span><br></pre></td></tr></table></figure>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;p&gt;Python的pandas库处理csv文件非常方便，开发过程中经常会用到csv文件，例如将csv中的数据转化为二进制、将csv文件转化为json等。由于csv本身是以列表的形式组织数据的，如果想要额外的加入一些描述信息，比如版本号等，应该如何做呢？&lt;/p&gt;
+&lt;p&gt;可以以ke
+      
+    
+    </summary>
+    
+    
+      <category term="Python" scheme="http://yoursite.com/tags/Python/"/>
+    
+  </entry>
   
   <entry>
     <title>每月见闻202110</title>
@@ -520,30 +544,6 @@
       <category term="Linux Kernel" scheme="http://yoursite.com/categories/Linux-Kernel/"/>
     
       <category term="进程管理" scheme="http://yoursite.com/categories/Linux-Kernel/%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/"/>
-    
-    
-  </entry>
-  
-  <entry>
-    <title>每月见闻201910</title>
-    <link href="http://yoursite.com/2019/10/08/%E6%AF%8F%E6%9C%88%E8%A7%81%E9%97%BB201910/"/>
-    <id>http://yoursite.com/2019/10/08/每月见闻201910/</id>
-    <published>2019-10-08T02:52:04.000Z</published>
-    <updated>2021-08-13T02:24:21.791Z</updated>
-    
-    <content type="html"><![CDATA[<h2 id="资源"><a href="#资源" class="headerlink" title="资源"></a>资源</h2><ul><li><a href="https://zhuanlan.zhihu.com/p/20085048">没有math.h我们能干啥？</a><br>许多场景下的开发环境中并不支持数学运算math库，可以自己实现一些函数来使用，例如快速幂实现pow、自适应辛普森公式实现lnx、牛顿迭代实现sqrt、泰勒级数实现exp、三角函数、反三角函数、双曲函数等</li></ul><h2 id="新闻"><a href="#新闻" class="headerlink" title="新闻"></a>新闻</h2><ul><li><a href="https://www.jiqizhixin.com/articles/2018-06-13-5">MIT可穿墙透视评估人体姿态</a><br>MIT项目<code>RF-Pose</code>使用了一个神经网络来分析人们的身体反射的无线电信号，然后可以创建一个随人类动作而同步的动态火柴人行走、停下、坐下和移动肢体的图像</li></ul><p><img src="/2019/10/08/%E6%AF%8F%E6%9C%88%E8%A7%81%E9%97%BB201910/image/news-01.png" alt></p><p>该研究论文为<a href="/download/每月见闻201910/2406.pdf">Through-Wall Human Pose Estimation Using Radio Signals</a>，此研究发布了一个视频：</p><style>@media all and (orientation : landscape) {    .video {width:800px; height:600px;}}@media all and (orientation : portrait){    .video {width:90%; height:250px;}}</style><iframe class="video" src="//player.bilibili.com/player.html?aid=68868549&cid=119354681&page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        &lt;h2 id=&quot;资源&quot;&gt;&lt;a href=&quot;#资源&quot; class=&quot;headerlink&quot; title=&quot;资源&quot;&gt;&lt;/a&gt;资源&lt;/h2&gt;&lt;ul&gt;
-&lt;li&gt;&lt;a href=&quot;https://zhuanlan.zhihu.com/p/20085048&quot;&gt;没有math.h我们能干啥？&lt;/
-      
-    
-    </summary>
-    
-      <category term="每月见闻" scheme="http://yoursite.com/categories/%E6%AF%8F%E6%9C%88%E8%A7%81%E9%97%BB/"/>
     
     
   </entry>
