@@ -3394,4 +3394,103 @@ T(n)=\left\{
         <tag>Python</tag>
       </tags>
   </entry>
+  <entry>
+    <title>Microblaze优化选项</title>
+    <url>/2021/11/04/Microblaze%E4%BC%98%E5%8C%96%E9%80%89%E9%A1%B9/</url>
+    <content><![CDATA[<p>Microblaze提供了一些优化选项，正确理解这些选项的含义以及作用对于开发过程有很多帮助，本文主要总结介绍Microblaze Configuration Wizard中的选项内容</p>
+<h2 id="预定义配置"><a href="#预定义配置" class="headerlink" title="预定义配置"></a>预定义配置</h2><p>根据具体使用场景的不同，Microblaze提供了一些预定义的配置选项供用户选择</p>
+<ul>
+<li><p>Microcontroller Preset</p>
+</li>
+<li><p>Real-time Preset</p>
+</li>
+<li><p>Application Preset</p>
+</li>
+<li><p>Minimum Area</p>
+</li>
+<li><p>Maximum Performance</p>
+</li>
+<li><p>Maximum Frequency</p>
+</li>
+<li><p>Linux with MMU</p>
+</li>
+<li><p>Low-end Linux with MMU</p>
+</li>
+<li><p>Typical</p>
+</li>
+<li><p>Frequency Optimized</p>
+</li>
+</ul>
+<p>这些选项实际上是Microblaze在频率、面积、性能这几个指标不同侧重情况下，对各个配置项的组合。选择Current Settings即为自定义模式</p>
+<h2 id="Implementation-Optimization"><a href="#Implementation-Optimization" class="headerlink" title="Implementation Optimization"></a>Implementation Optimization</h2><p>该选项可选以下3种：</p>
+<ul>
+<li><p>Performance</p>
+</li>
+<li><p>Area</p>
+</li>
+<li><p>Frequency</p>
+</li>
+</ul>
+<p>这个选项非常重要，它与Microblaze的流水线级数对应</p>
+<ul>
+<li><p>3级流水线：Area</p>
+</li>
+<li><p>5级流水线：Performance</p>
+</li>
+<li><p>8级流水线：Frequency</p>
+</li>
+</ul>
+<h3 id="三级流水线"><a href="#三级流水线" class="headerlink" title="三级流水线"></a>三级流水线</h3><p>三级流水线对应Area，使用了最小化的硬件花费，只有取址(Fetch)、译码(Decode)和执行(Execute)</p>
+<p><img src="/2021/11/04/Microblaze%E4%BC%98%E5%8C%96%E9%80%89%E9%A1%B9/images\01.PNG" alt></p>
+<p>三级流水线没有数据阻塞，只有控制流程阻塞、多指令结构性阻塞和访问较慢的内存、从较慢的内存取址等情况。多周期的指令类别有桶形移位器(barrel shift)、乘法器(multiply)、除法器(divide)和浮点指令</p>
+<h3 id="五级流水线"><a href="#五级流水线" class="headerlink" title="五级流水线"></a>五级流水线</h3><p>五级流水线对应Performance，最大化性能考量，包括取址(Fetch，IF)、译码(Decode OF)、执行(Execute，EX)、内存访问(Access Memory，MEM)和写回(Writeback，WB)</p>
+<p><img src="/2021/11/04/Microblaze%E4%BC%98%E5%8C%96%E9%80%89%E9%A1%B9/images\02.PNG" alt></p>
+<p>五级流水线存在以下两种数据阻塞的情况</p>
+<ul>
+<li><p>OF指令需要EX指令的结果作为源操作数。EX指令类别为加载、存储、桶形移位器、乘法器、触发器和浮点运算。这些会导致1-2周期的阻塞</p>
+</li>
+<li><p>OF指令需要MEM指令的结果作为源操作数。MEM指令类别包括加载、乘法器和浮点运算。这些会导致1个周期的阻塞</p>
+</li>
+</ul>
+<p>多周期指令有除法器和浮点运算</p>
+<h3 id="八级流水线"><a href="#八级流水线" class="headerlink" title="八级流水线"></a>八级流水线</h3><p>八级流水线对应Frequency，用于最大化频率，包括取址(Fetch，IF)、译码(Decode OF)、执行(Execute，EX)、内存访问0(Access Memory 0，M0)、内存访问1(Access Memory 1，M1)、内存访问2(Access Memory 2，M2)、内存访问3(Access Memory 3，M3)和写回(Writeback，WB)</p>
+<p><img src="/2021/11/04/Microblaze%E4%BC%98%E5%8C%96%E9%80%89%E9%A1%B9/images\03.PNG" alt></p>
+<p>八级流水线存在以下四种数据阻塞的情况</p>
+<ul>
+<li><p>OF指令需要EX指令的结果作为源操作数。EX包括加载、存储、桶形移位器、乘法器、除法器和浮点运算，会导致1-5个周期的阻塞</p>
+</li>
+<li><p>OF指令需要M0指令的结果作为源操作数。M0包括加载、乘法器、除法器和浮点运算，会导致1-4周期的阻塞</p>
+</li>
+<li><p>OF指令需要M1或M2指令的结果作为源操作数。M1或M2包括加载、除法器和浮点运算，会导致1-3或1-2周期的阻塞</p>
+</li>
+<li><p>OF指令需要M3指令的结果作为源操作数。M3包括加载和浮点运算，会导致1周期的阻塞</p>
+</li>
+</ul>
+<p>在额外的多周期指令种，存在3种情况的结构性阻塞</p>
+<ul>
+<li><p>OF中的指令是流指令，EX中的指令是流、加载、存储、除法或浮点指令，并实现了相应的异常，这导致一个1周期的阻塞</p>
+</li>
+<li><p>OF中的指令是流指令，M0、M1、M2或M3中的指令是装载、存储、除法或浮点指令，并实现了相应的异常，这导致一个1周期的阻塞</p>
+</li>
+<li><p>M0中的指令是加载或存储指令，M1、M2或M3中的指令是加载、存储、除法或浮点指令，并实现了相应的异常，这导致一个1周期的阻塞</p>
+</li>
+</ul>
+<p>多周期指令分为分割指令和浮点指令FDIV, FINT和FSQRT</p>
+<h2 id="Use-Instruction-and-Data-Caches"><a href="#Use-Instruction-and-Data-Caches" class="headerlink" title="Use Instruction and Data Caches"></a>Use Instruction and Data Caches</h2><p>使用外部存储器时，激活高速缓存，可以显著提高性能，可以降低外部慢速设备访问的使用量</p>
+<h2 id="Enable-Barrel-Shifter"><a href="#Enable-Barrel-Shifter" class="headerlink" title="Enable Barrel Shifter"></a>Enable Barrel Shifter</h2><p>使能硬件桶形移位器(Barrel Shifter)，可以提高程序在移位操作时的性能。当该选项使能时，编译器可以自动的选择使用<code>bsrl</code>、<code>bsra</code>、<code>bsll</code>、<code>bsrli</code>、<code>bsrai</code>和<code>bslli</code>等汇编指令来优化加速移位操作</p>
+<h2 id="Enable-Floating-Point-Unit"><a href="#Enable-Floating-Point-Unit" class="headerlink" title="Enable Floating Point Unit"></a>Enable Floating Point Unit</h2><p>浮点运算单元能够提升<code>float</code>类型数据进行运算时的效率，Microblaze的FPU遵循了IEEE 754-1985标准，支持加、减、乘、除、比较、转换和平方根运算。编译器会自动根据系统选择的FPU类型使用汇编浮点指令优化浮点运算</p>
+<h2 id="Enable-Integer-Multiplier"><a href="#Enable-Integer-Multiplier" class="headerlink" title="Enable Integer Multiplier"></a>Enable Integer Multiplier</h2><p>使用一个硬件乘法器，可以提升程序在乘法运算时的效率</p>
+<h2 id="Enable-Integer-Divider"><a href="#Enable-Integer-Divider" class="headerlink" title="Enable Integer Divider"></a>Enable Integer Divider</h2><p>使能整型除法器，可以使用idiv和idivu指令，提升除法运算效率</p>
+<h2 id="Enable-Additional-Machine-Status-Registers-Instructions"><a href="#Enable-Additional-Machine-Status-Registers-Instructions" class="headerlink" title="Enable Additional Machine Status Registers Instructions"></a>Enable Additional Machine Status Registers Instructions</h2><p>使能MSR寄存器指令<code>msrset</code>和<code>msrclr</code>，用于设置和清MSR的位。MSR包含了处理器的控制和状态位，读取该寄存器时bit[29]会被复制到bit[0]作为近进位复制。对MSR进行读写有两种方式，一种是使用<code>MFS</code>、<code>MTS</code>指令，另一种是使用<code>msrset</code>和<code>msrclr</code>。当使用<code>msrset</code>和<code>msrclr</code>进行写时，进位立即生效，其余位在一个时钟周期后生效。当使用<code>MTS</code>写时，所有位都在一个时钟周期后生效。程序运行会非常频繁的使用MSR，因此使能该选项可以很大程度的提升性能</p>
+<h2 id="Enable-Pattern-Comparator"><a href="#Enable-Pattern-Comparator" class="headerlink" title="Enable Pattern Comparator"></a>Enable Pattern Comparator</h2><p>使能模式比较器，可以使用<code>pcmpbf</code>、<code>pcmpeq</code>和<code>pcmpne</code>指令，提升程序在进行比较时的性能。编译器自动进行指令转换</p>
+<h2 id="Enable-Reversed-Load-Store-and-Swap-Instructions"><a href="#Enable-Reversed-Load-Store-and-Swap-Instructions" class="headerlink" title="Enable Reversed Load/Store and Swap Instructions"></a>Enable Reversed Load/Store and Swap Instructions</h2><p>启用反向加载/存储和交换指令，可以使用<code>lbur</code>、<code>lhur</code>、<code>lwr</code>、<code>sbr</code>、<code>shr</code>、<code>swr</code>、<code>swapb</code>和<code>swawph</code>指令。反向加载/存储指令可以以相反的字节顺序读写数据，交换指令可以在寄存器中交换字节和字。这些指令在处理网络字节序(大端)和Microblaze字节序(小端)</p>
+<p>时可以提升性能</p>
+]]></content>
+      <categories>
+        <category>嵌入式</category>
+      </categories>
+      <tags>
+        <tag>Xilinx</tag>
+      </tags>
+  </entry>
 </search>
