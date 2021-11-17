@@ -125,6 +125,33 @@ Microblaze提供了一些优化选项，正确理解这些选项的含义以及�
 
 使能MSR寄存器指令`msrset`和`msrclr`，用于设置和清MSR的位。MSR包含了处理器的控制和状态位，读取该寄存器时bit[29]会被复制到bit[0]作为近进位复制。对MSR进行读写有两种方式，一种是使用`MFS`、`MTS`指令，另一种是使用`msrset`和`msrclr`。当使用`msrset`和`msrclr`进行写时，进位立即生效，其余位在一个时钟周期后生效。当使用`MTS`写时，所有位都在一个时钟周期后生效。程序运行会非常频繁的使用MSR，因此使能该选项可以很大程度的提升性能
 
+例如在使用FreeRTOS时，systick或者消息队列中会频繁调用`microblaze_enable_interrupts`和`disable_enable_interrupts`函数，这两个函数是汇编函数，例如`microblaze_enable_interrupts`函数的定义如下
+
+```c
+	.text
+	.globl	microblaze_enable_interrupts
+	.ent	microblaze_enable_interrupts
+	.align	2
+microblaze_enable_interrupts:
+#if XPAR_MICROBLAZE_USE_MSR_INSTR == 1
+	rtsd	r15, 8
+	msrset  r0, 0x2
+#else /*XPAR_MICROBLAZE_USE_MSR_INSTR == 1*/
+	#Read the MSR register
+	mfs	r12, rmsr
+	#Set the interrupt enable bit
+	ori	r12, r12, 0x2
+	#Save the MSR register
+	mts	rmsr, r12
+	#Return
+	rtsd	r15, 8
+	nop
+#endif /*XPAR_MICROBLAZE_USE_MSR_INSTR == 1*/
+	.end	microblaze_enable_interrupts
+```
+
+可以看到，如果定义了`MSR_INSTR`，使能中断只有两条指令完成，否则需要5条指令。因此开启额外MSR指令能够在多任务系统任务切换和上下文切换方面提升性能
+
 ## Enable Pattern Comparator
 
 使能模式比较器，可以使用`pcmpbf`、`pcmpeq`和`pcmpne`指令，提升程序在进行比较时的性能。编译器自动进行指令转换
