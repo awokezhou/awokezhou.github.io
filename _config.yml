@@ -80,7 +80,7 @@ theme: next
 deploy:
   type: git
   #repo: https://awokezhou.github.com/awokezhou/awokezhou.github.io.git
-  repository: git@awokezhou.github.com:awokezhou/awokezhou.github.io.git
+  repository: git@github.com:awokezhou/awokezhou.github.io.git
   branch: master
 # Search
 search:
