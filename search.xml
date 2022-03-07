@@ -224,6 +224,19 @@ C = \frac{1}{2n}\sum_{x}\vert{y(x) - a^{L}(x)}\vert^2</script><p>其中$n$是训
       </tags>
   </entry>
   <entry>
+    <title>Elasticsearch条件query</title>
+    <url>/2019/06/25/Elasticsearch%E6%9D%A1%E4%BB%B6query/</url>
+    <content><![CDATA[<h2 id="按照时间升序降序query"><a href="#按照时间升序降序query" class="headerlink" title="按照时间升序降序query"></a>按照时间升序降序query</h2><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">query_byid</span>(<span class="params">self, <span class="built_in">id</span>, size, reverse_order=<span class="literal">False</span></span>):</span></span><br><span class="line">        <span class="keyword">if</span> reverse_order == <span class="literal">True</span>:</span><br><span class="line">            _order = <span class="string">&#x27;desc&#x27;</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            _order = <span class="string">&#x27;asc&#x27;</span></span><br><span class="line">        dsl = &#123;</span><br><span class="line">            <span class="string">&quot;query&quot;</span>: &#123;</span><br><span class="line">                <span class="string">&quot;bool&quot;</span>:&#123;</span><br><span class="line">                    <span class="string">&quot;must&quot;</span>: [</span><br><span class="line">                        &#123;<span class="string">&quot;match&quot;</span>:&#123;<span class="string">&quot;id&quot;</span>:<span class="built_in">id</span>&#125;&#125;,</span><br><span class="line">                    ],</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;,</span><br><span class="line">            <span class="string">&quot;sort&quot;</span>: [</span><br><span class="line">                &#123; <span class="string">&quot;service.data.time&quot;</span> : &#123;<span class="string">&quot;order&quot;</span> : _order&#125;&#125;,</span><br><span class="line">                <span class="string">&quot;_score&quot;</span></span><br><span class="line">            ],</span><br><span class="line">            <span class="string">&quot;_source&quot;</span>: [</span><br><span class="line">                <span class="string">&quot;service.data&quot;</span>,</span><br><span class="line">                <span class="string">&quot;deviceId&quot;</span></span><br><span class="line">            ],</span><br><span class="line">            <span class="string">&quot;size&quot;</span>:size,</span><br><span class="line">        &#125;</span><br><span class="line">        raw_data = self.query(dsl)</span><br><span class="line">        raw_list = raw_data[<span class="string">&quot;hits&quot;</span>][<span class="string">&quot;hits&quot;</span>]</span><br><span class="line">        <span class="keyword">return</span> raw_list</span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>数据库</category>
+        <category>Elasticsearch</category>
+      </categories>
+      <tags>
+        <tag>Elasticsearch</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Machine Learning Reference Reading</title>
     <url>/2019/07/31/Machine-Learning-Reference-Reading/</url>
     <content><![CDATA[<h2 id="预测"><a href="#预测" class="headerlink" title="预测"></a>预测</h2><ul>
@@ -240,19 +253,6 @@ C = \frac{1}{2n}\sum_{x}\vert{y(x) - a^{L}(x)}\vert^2</script><p>其中$n$是训
       <tags>
         <tag>ML</tag>
         <tag>Python</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Elasticsearch条件query</title>
-    <url>/2019/06/25/Elasticsearch%E6%9D%A1%E4%BB%B6query/</url>
-    <content><![CDATA[<h2 id="按照时间升序降序query"><a href="#按照时间升序降序query" class="headerlink" title="按照时间升序降序query"></a>按照时间升序降序query</h2><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">query_byid</span>(<span class="params">self, <span class="built_in">id</span>, size, reverse_order=<span class="literal">False</span></span>):</span></span><br><span class="line">        <span class="keyword">if</span> reverse_order == <span class="literal">True</span>:</span><br><span class="line">            _order = <span class="string">&#x27;desc&#x27;</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            _order = <span class="string">&#x27;asc&#x27;</span></span><br><span class="line">        dsl = &#123;</span><br><span class="line">            <span class="string">&quot;query&quot;</span>: &#123;</span><br><span class="line">                <span class="string">&quot;bool&quot;</span>:&#123;</span><br><span class="line">                    <span class="string">&quot;must&quot;</span>: [</span><br><span class="line">                        &#123;<span class="string">&quot;match&quot;</span>:&#123;<span class="string">&quot;id&quot;</span>:<span class="built_in">id</span>&#125;&#125;,</span><br><span class="line">                    ],</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;,</span><br><span class="line">            <span class="string">&quot;sort&quot;</span>: [</span><br><span class="line">                &#123; <span class="string">&quot;service.data.time&quot;</span> : &#123;<span class="string">&quot;order&quot;</span> : _order&#125;&#125;,</span><br><span class="line">                <span class="string">&quot;_score&quot;</span></span><br><span class="line">            ],</span><br><span class="line">            <span class="string">&quot;_source&quot;</span>: [</span><br><span class="line">                <span class="string">&quot;service.data&quot;</span>,</span><br><span class="line">                <span class="string">&quot;deviceId&quot;</span></span><br><span class="line">            ],</span><br><span class="line">            <span class="string">&quot;size&quot;</span>:size,</span><br><span class="line">        &#125;</span><br><span class="line">        raw_data = self.query(dsl)</span><br><span class="line">        raw_list = raw_data[<span class="string">&quot;hits&quot;</span>][<span class="string">&quot;hits&quot;</span>]</span><br><span class="line">        <span class="keyword">return</span> raw_list</span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>数据库</category>
-        <category>Elasticsearch</category>
-      </categories>
-      <tags>
-        <tag>Elasticsearch</tag>
       </tags>
   </entry>
   <entry>
@@ -355,100 +355,6 @@ C = \frac{1}{2n}\sum_{x}\vert{y(x) - a^{L}(x)}\vert^2</script><p>其中$n$是训
       </categories>
       <tags>
         <tag>Xilinx</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>OpenAI Five[译]</title>
-    <url>/2019/09/02/OpenAI-Five-%E8%AF%91/</url>
-    <content><![CDATA[<p>待续~</p>
-<p>我们的OpenAI Five神经网络团队，已经开始击败业余的Dota2人类团队。虽然今天我们仍然存在一些限制，但我们的目标是在今年8月份的国际邀请赛上在有限的英雄上击败一只顶尖的专业战队。我们不一定会成功：dota 2是世界上最受欢迎和最复杂的电子竞技游戏之一，拥有富有创造力和积极性的专业人士，他们全年都在训练，以赢得dota每年4000万美元奖金池(所有电子竞技游戏中最大的一个)的一部分</p>
-<p>OpenAI Five每天能够学习和它自己对战180年的有效游戏。它在一个放大版的<a href="https://openai.com/blog/openai-baselines-ppo/">PPO(Proximal Policy Optimization)</a>上训练，有256个GPU和128000个CPU。对每个英雄使用一个单独的LSTM，不使用人类数据，它学习可识别的策略</p>
-<p>为了衡量我们的程序，我们将在8月5日举办一场与顶级战队的比赛</p>
-<h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><p>人工智能的一个里程碑是在复杂的电子游戏中超越人类的能力，比如星际争霸或DOTA。与以前的人工智能里程碑(如象棋或围棋)相比，复杂的电子游戏开始捕捉现实世界的混乱和连续性。我们希望能够解决复杂电子游戏的系统是高度通用的，能够应用于游戏之外</p>
-<p>Dota2是一款两个队伍各五名队员的实时策略性游戏，每个选手控制一个英雄。能够玩Dota的AI必须掌握以下内容：</p>
-<ul>
-<li><strong>长时间范围</strong> Dota游戏以每秒30帧运行，平均每局45分钟，大概8000个时间点。大多数动作(比如命令英雄移动到某个地点)都会产生独立的轻微影响，但是一些独立的动作会在影响游戏的战略走向，例如TP；有些策略可以在整个游戏中发挥作用。OpenAI每4帧观察一次，产生2000次移动。象棋通常在40步之前结束，围棋一般是150步之内，每一步都是战略性的</li>
-<li><strong>局部观察状态</strong> 单位和建筑物只能看到它们附近的区域。地图的其余部分被大雾笼罩，隐藏着敌人及其战略。赢得游戏需要根据不完整的数据做出推论，以及模拟对手可能要做的事情。下棋和围棋都是全信息游戏</li>
-<li><strong>高维连续动作空间</strong> 在DOTA中，每个英雄可以采取几十个行动，许多行动针对的是另一个单位或地面上的一个位置。我们将空间离散为每个英雄17万个可能的动作(并非所有的每一个勾选都有效，例如在冷却时使用法术)；不计算连续部分，平均每个时间点有1000个有效动作。象棋和围棋的平均动作数是35和250</li>
-<li><strong>高维连续观测空间</strong> Dota是在一张连续的大地图上玩的，地图上有十个英雄、几十个建筑物、几十个NPC单位、符文、树木、防御区等。我们的模型通过V社的bot API观察到一个Dota游戏的状态，即20000个(大部分是浮点)数字代表一个人可以访问的所有信息。一个象棋棋盘表示为大约70个枚举值(一个由6个棋子类型和次要历史信息组成的8x8棋盘)；围棋棋盘大约400个枚举值</li>
-</ul>
-<p>Dota规则也非常复杂——游戏已经开发了十多年，游戏逻辑在数十万行代码中实现。这种逻辑每执行一个标记需要毫秒，而国际象棋或围棋引擎则需要纳秒。游戏每两周更新一次，不断改变环境语义</p>
-<h2 id="我们的方法"><a href="#我们的方法" class="headerlink" title="我们的方法"></a>我们的方法</h2><p>我们的系统学习使用大规模的PPO。Openai Five和我们早期的1v1机器人都完全是从自我游戏中学习的，它们从随机参数开始，不使用搜索或从人类replay中学习</p>
-<div class="table-container">
-<table>
-<thead>
-<tr>
-<th></th>
-<th>OPENAI 1V1 BOT</th>
-<th>OPENAI FIVE</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>CPUs</td>
-<td>60,000 CPU cores on Azure</td>
-<td>128,000 preemptible CPU cores on GCP</td>
-</tr>
-<tr>
-<td>GPUs</td>
-<td>256 K80 GPUs on Azure</td>
-<td>256 P100 GPUs on GCP</td>
-</tr>
-<tr>
-<td>收集经验</td>
-<td>~300 years per day</td>
-<td>~180 years per day (~900 years per day counting each hero separately)</td>
-</tr>
-<tr>
-<td>观测规模</td>
-<td>~3.3 kB</td>
-<td>~36.8 kB</td>
-</tr>
-<tr>
-<td>每秒游戏观察数</td>
-<td>10</td>
-<td>7.5</td>
-</tr>
-<tr>
-<td>批量大小</td>
-<td>8,388,608 observations</td>
-<td>1,048,576 observations</td>
-</tr>
-<tr>
-<td>每分钟批量数</td>
-<td>~20</td>
-<td>~60</td>
-</tr>
-</tbody>
-</table>
-</div>
-<p>RL研究人员(包括我们自己)普遍认为，长时间范围学习需要从根本上取得新的进展，例如分层强化学习。我们的结果表明，我们没有给予今天的算法足够的信任——至少当它们以足够的规模运行并且有合理的探索方法时</p>
-<p>我们的代理被训练为最大化未来报酬的指数衰减总和，用一个称为γ的指数衰减因子进行加权。在最新的Openai Five训练中，我们将γ从0.998(以46秒的半衰期评估未来奖励)退火到0.9997(以5分钟的半衰期评估未来奖励)。相比之下，PPO纸中最长的地平线是0.5秒的半衰期，彩虹纸中最长的地平线是4.4秒的半衰期，观察和进一步观察纸使用46秒的半衰期</p>
-<p>虽然目前版本的Openai Five在最后一次攻击时很弱(观察我们的测试赛，专业的Dota评论员blitz估计它大约是Dota玩家的中位数)，但它的目标优先级符合一个通用的专业策略。获得长期奖励，如战略地图控制，往往需要牺牲短期奖励，如从农业中获得的黄金，因为分组攻击塔需要时间。这一观察加强了我们的信念，即系统确实是在长期优化</p>
-
-<iframe width="720" height="405" src="https://www.youtube.com/embed/UZHTNBMAfAA" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-
-<h3 id="模型结构"><a href="#模型结构" class="headerlink" title="模型结构"></a>模型结构</h3><p>Openai Five的每个网络都包含一个单层的1024单元的LSTM，它可以看到当前的游戏状态(从V社的bot API中提取)，并通过几个可能的动作头发出动作。每个头部都具有语义意义，例如，延迟此动作的节拍数、要选择的动作、该动作在单位周围网格中的X或Y坐标等。动作头部是独立计算的。</p>
-<p>Openai Five使用的观察空间和行动空间的交互演示。OpenAIFive将世界视为20000个数字的列表，并通过发出8个枚举值的列表来执行操作。选择不同的行动和目标，了解OpenAIFive如何编码每个行动，以及它如何观察世界。这幅图像显示了一个人类看到的场景</p>
-<p><img src="OpenAI-Five-译/images/OpenAI-01.png" alt><br><img src="OpenAI-Five-译/images/OpenAI-01.png" alt><br><img src="OpenAI-Five-译/images/OpenAI-02.png" alt><br><img src="OpenAI-Five-译/images/OpenAI-03.png" alt><br><img src="OpenAI-Five-译/images/OpenAI-04.png" alt><br><img src="OpenAI-Five-译/images/OpenAI-05.png" alt><br><img src="OpenAI-Five-译/images/OpenAI-06.png" alt><br><img src="OpenAI-Five-译/images/OpenAI-07.png" alt><br><img src="OpenAI-Five-译/images/OpenAI-08.png" alt></p>
-<p>OpenAI Five可以对与它所看到的相关的缺失状态片段做出反应。例如，直到最近，Openai Five的观测还没有包括弹片区(弹丸落在敌人身上的区域)，人是可以显而易见看到的。然而，我们观察到Openai Five正在学习走出(尽管不能避免进入)主动弹片区，因为它可以看到它的健康在下降</p>
-<h3 id="探索"><a href="#探索" class="headerlink" title="探索"></a>探索</h3><p>给出了一个能够处理长视距的学习算法，我们仍然需要探索环境。即使有了我们的限制，仍然有数百个物品、几十个建筑、法术和单位类型，以及一个需要学习的游戏机制的长尾——其中许多都会产生强大的组合。有效地探索这个组合广阔的空间并不容易</p>
-<p>Openai Five通过自己和自己对战学习(从随机权重开始)，为探索和学习提供了一个很自然的环境。为了避免“战略崩溃”，代理训练80%的游戏与自己对抗，另外20%与过去的自己对抗。在第一场比赛中，英雄们漫无目的地在地图上走来走去。经过几个小时的训练，诸如farm或中途战斗等概念应运而生。几天之后，他们一直采用基本的人类策略：试图从对手那里偷取赏金符文，走到他们的一级塔去野区farm，并围绕地图游走以获得优势。经过进一步的训练，他们能够熟练运用5英雄推进等高级策略。</p>
-<p>在2017年3月，我们的第一个代理打败了机器人，但与人类混淆了。为了在战略空间进行强行探索，在训练期间(并且仅在训练期间)，我们随机化了部队的属性(健康、速度、起始水平等)，然后开始击败人类。后来，当一个测试玩家持续击败我们的1v1机器人时，我们增加了我们的训练随机化，测试玩家开始输了。我们的机器人团队同时将类似的随机化技术应用于物理机器人，以从模拟转移到现实世界</p>
-<p>OpenAI Five使用我们为1v1机器人编写的随机化方法。它还使用了新的分路方法。在每一个训练游戏开始时，我们随机“分配”每个英雄到一些道路的子集，并惩罚它从这些道路偏离直到游戏中随机选择的时间</p>
-<p>好的奖励也有助于探索。我们的奖励主要是由人类跟踪以决定他们在游戏中的表现的指标组成：净值、杀戮、死亡、助攻、最后一击等等。我们通过减去其他团队的平均奖励来对每个代理的奖励进行后处理，以防止代理发生正和情况。我们对项目和技能构建进行硬编码(最初是为我们的脚本基线编写的)，并随机选择要使用的构建。Courier管理也从脚本化基线导入</p>
-<h3 id="协作"><a href="#协作" class="headerlink" title="协作"></a>协作</h3><p>OpenAI Five不包含英雄神经网络之间的明确通信通道。团队合作是由我们称之为“团队精神”的超参数控制的。团队精神的范围从0到1，这就决定了Openai Five的英雄们应该关心他们各自的奖励功能，而不是团队的平均奖励功能。我们通过训练将其值从0退火到1</p>
-<h3 id="Rapid"><a href="#Rapid" class="headerlink" title="Rapid"></a>Rapid</h3><p>我们的系统是一个通用的RL培训系统，称为Rapid，可应用于任何Gym环境。我们已经使用了快速解决其他问题在OpenAI，包括竞争自我发挥</p>
-]]></content>
-      <categories>
-        <category>ML</category>
-        <category>Paper</category>
-      </categories>
-      <tags>
-        <tag>ML</tag>
-        <tag>DOTA</tag>
-        <tag>译</tag>
-        <tag>OpenAI</tag>
       </tags>
   </entry>
   <entry>
@@ -743,6 +649,100 @@ C = \frac{1}{2n}\sum_{x}\vert{y(x) - a^{L}(x)}\vert^2</script><p>其中$n$是训
       </tags>
   </entry>
   <entry>
+    <title>OpenAI Five[译]</title>
+    <url>/2019/09/02/OpenAI-Five-%E8%AF%91/</url>
+    <content><![CDATA[<p>待续~</p>
+<p>我们的OpenAI Five神经网络团队，已经开始击败业余的Dota2人类团队。虽然今天我们仍然存在一些限制，但我们的目标是在今年8月份的国际邀请赛上在有限的英雄上击败一只顶尖的专业战队。我们不一定会成功：dota 2是世界上最受欢迎和最复杂的电子竞技游戏之一，拥有富有创造力和积极性的专业人士，他们全年都在训练，以赢得dota每年4000万美元奖金池(所有电子竞技游戏中最大的一个)的一部分</p>
+<p>OpenAI Five每天能够学习和它自己对战180年的有效游戏。它在一个放大版的<a href="https://openai.com/blog/openai-baselines-ppo/">PPO(Proximal Policy Optimization)</a>上训练，有256个GPU和128000个CPU。对每个英雄使用一个单独的LSTM，不使用人类数据，它学习可识别的策略</p>
+<p>为了衡量我们的程序，我们将在8月5日举办一场与顶级战队的比赛</p>
+<h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><p>人工智能的一个里程碑是在复杂的电子游戏中超越人类的能力，比如星际争霸或DOTA。与以前的人工智能里程碑(如象棋或围棋)相比，复杂的电子游戏开始捕捉现实世界的混乱和连续性。我们希望能够解决复杂电子游戏的系统是高度通用的，能够应用于游戏之外</p>
+<p>Dota2是一款两个队伍各五名队员的实时策略性游戏，每个选手控制一个英雄。能够玩Dota的AI必须掌握以下内容：</p>
+<ul>
+<li><strong>长时间范围</strong> Dota游戏以每秒30帧运行，平均每局45分钟，大概8000个时间点。大多数动作(比如命令英雄移动到某个地点)都会产生独立的轻微影响，但是一些独立的动作会在影响游戏的战略走向，例如TP；有些策略可以在整个游戏中发挥作用。OpenAI每4帧观察一次，产生2000次移动。象棋通常在40步之前结束，围棋一般是150步之内，每一步都是战略性的</li>
+<li><strong>局部观察状态</strong> 单位和建筑物只能看到它们附近的区域。地图的其余部分被大雾笼罩，隐藏着敌人及其战略。赢得游戏需要根据不完整的数据做出推论，以及模拟对手可能要做的事情。下棋和围棋都是全信息游戏</li>
+<li><strong>高维连续动作空间</strong> 在DOTA中，每个英雄可以采取几十个行动，许多行动针对的是另一个单位或地面上的一个位置。我们将空间离散为每个英雄17万个可能的动作(并非所有的每一个勾选都有效，例如在冷却时使用法术)；不计算连续部分，平均每个时间点有1000个有效动作。象棋和围棋的平均动作数是35和250</li>
+<li><strong>高维连续观测空间</strong> Dota是在一张连续的大地图上玩的，地图上有十个英雄、几十个建筑物、几十个NPC单位、符文、树木、防御区等。我们的模型通过V社的bot API观察到一个Dota游戏的状态，即20000个(大部分是浮点)数字代表一个人可以访问的所有信息。一个象棋棋盘表示为大约70个枚举值(一个由6个棋子类型和次要历史信息组成的8x8棋盘)；围棋棋盘大约400个枚举值</li>
+</ul>
+<p>Dota规则也非常复杂——游戏已经开发了十多年，游戏逻辑在数十万行代码中实现。这种逻辑每执行一个标记需要毫秒，而国际象棋或围棋引擎则需要纳秒。游戏每两周更新一次，不断改变环境语义</p>
+<h2 id="我们的方法"><a href="#我们的方法" class="headerlink" title="我们的方法"></a>我们的方法</h2><p>我们的系统学习使用大规模的PPO。Openai Five和我们早期的1v1机器人都完全是从自我游戏中学习的，它们从随机参数开始，不使用搜索或从人类replay中学习</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th></th>
+<th>OPENAI 1V1 BOT</th>
+<th>OPENAI FIVE</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CPUs</td>
+<td>60,000 CPU cores on Azure</td>
+<td>128,000 preemptible CPU cores on GCP</td>
+</tr>
+<tr>
+<td>GPUs</td>
+<td>256 K80 GPUs on Azure</td>
+<td>256 P100 GPUs on GCP</td>
+</tr>
+<tr>
+<td>收集经验</td>
+<td>~300 years per day</td>
+<td>~180 years per day (~900 years per day counting each hero separately)</td>
+</tr>
+<tr>
+<td>观测规模</td>
+<td>~3.3 kB</td>
+<td>~36.8 kB</td>
+</tr>
+<tr>
+<td>每秒游戏观察数</td>
+<td>10</td>
+<td>7.5</td>
+</tr>
+<tr>
+<td>批量大小</td>
+<td>8,388,608 observations</td>
+<td>1,048,576 observations</td>
+</tr>
+<tr>
+<td>每分钟批量数</td>
+<td>~20</td>
+<td>~60</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>RL研究人员(包括我们自己)普遍认为，长时间范围学习需要从根本上取得新的进展，例如分层强化学习。我们的结果表明，我们没有给予今天的算法足够的信任——至少当它们以足够的规模运行并且有合理的探索方法时</p>
+<p>我们的代理被训练为最大化未来报酬的指数衰减总和，用一个称为γ的指数衰减因子进行加权。在最新的Openai Five训练中，我们将γ从0.998(以46秒的半衰期评估未来奖励)退火到0.9997(以5分钟的半衰期评估未来奖励)。相比之下，PPO纸中最长的地平线是0.5秒的半衰期，彩虹纸中最长的地平线是4.4秒的半衰期，观察和进一步观察纸使用46秒的半衰期</p>
+<p>虽然目前版本的Openai Five在最后一次攻击时很弱(观察我们的测试赛，专业的Dota评论员blitz估计它大约是Dota玩家的中位数)，但它的目标优先级符合一个通用的专业策略。获得长期奖励，如战略地图控制，往往需要牺牲短期奖励，如从农业中获得的黄金，因为分组攻击塔需要时间。这一观察加强了我们的信念，即系统确实是在长期优化</p>
+
+<iframe width="720" height="405" src="https://www.youtube.com/embed/UZHTNBMAfAA" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+<h3 id="模型结构"><a href="#模型结构" class="headerlink" title="模型结构"></a>模型结构</h3><p>Openai Five的每个网络都包含一个单层的1024单元的LSTM，它可以看到当前的游戏状态(从V社的bot API中提取)，并通过几个可能的动作头发出动作。每个头部都具有语义意义，例如，延迟此动作的节拍数、要选择的动作、该动作在单位周围网格中的X或Y坐标等。动作头部是独立计算的。</p>
+<p>Openai Five使用的观察空间和行动空间的交互演示。OpenAIFive将世界视为20000个数字的列表，并通过发出8个枚举值的列表来执行操作。选择不同的行动和目标，了解OpenAIFive如何编码每个行动，以及它如何观察世界。这幅图像显示了一个人类看到的场景</p>
+<p><img src="OpenAI-Five-译/images/OpenAI-01.png" alt><br><img src="OpenAI-Five-译/images/OpenAI-01.png" alt><br><img src="OpenAI-Five-译/images/OpenAI-02.png" alt><br><img src="OpenAI-Five-译/images/OpenAI-03.png" alt><br><img src="OpenAI-Five-译/images/OpenAI-04.png" alt><br><img src="OpenAI-Five-译/images/OpenAI-05.png" alt><br><img src="OpenAI-Five-译/images/OpenAI-06.png" alt><br><img src="OpenAI-Five-译/images/OpenAI-07.png" alt><br><img src="OpenAI-Five-译/images/OpenAI-08.png" alt></p>
+<p>OpenAI Five可以对与它所看到的相关的缺失状态片段做出反应。例如，直到最近，Openai Five的观测还没有包括弹片区(弹丸落在敌人身上的区域)，人是可以显而易见看到的。然而，我们观察到Openai Five正在学习走出(尽管不能避免进入)主动弹片区，因为它可以看到它的健康在下降</p>
+<h3 id="探索"><a href="#探索" class="headerlink" title="探索"></a>探索</h3><p>给出了一个能够处理长视距的学习算法，我们仍然需要探索环境。即使有了我们的限制，仍然有数百个物品、几十个建筑、法术和单位类型，以及一个需要学习的游戏机制的长尾——其中许多都会产生强大的组合。有效地探索这个组合广阔的空间并不容易</p>
+<p>Openai Five通过自己和自己对战学习(从随机权重开始)，为探索和学习提供了一个很自然的环境。为了避免“战略崩溃”，代理训练80%的游戏与自己对抗，另外20%与过去的自己对抗。在第一场比赛中，英雄们漫无目的地在地图上走来走去。经过几个小时的训练，诸如farm或中途战斗等概念应运而生。几天之后，他们一直采用基本的人类策略：试图从对手那里偷取赏金符文，走到他们的一级塔去野区farm，并围绕地图游走以获得优势。经过进一步的训练，他们能够熟练运用5英雄推进等高级策略。</p>
+<p>在2017年3月，我们的第一个代理打败了机器人，但与人类混淆了。为了在战略空间进行强行探索，在训练期间(并且仅在训练期间)，我们随机化了部队的属性(健康、速度、起始水平等)，然后开始击败人类。后来，当一个测试玩家持续击败我们的1v1机器人时，我们增加了我们的训练随机化，测试玩家开始输了。我们的机器人团队同时将类似的随机化技术应用于物理机器人，以从模拟转移到现实世界</p>
+<p>OpenAI Five使用我们为1v1机器人编写的随机化方法。它还使用了新的分路方法。在每一个训练游戏开始时，我们随机“分配”每个英雄到一些道路的子集，并惩罚它从这些道路偏离直到游戏中随机选择的时间</p>
+<p>好的奖励也有助于探索。我们的奖励主要是由人类跟踪以决定他们在游戏中的表现的指标组成：净值、杀戮、死亡、助攻、最后一击等等。我们通过减去其他团队的平均奖励来对每个代理的奖励进行后处理，以防止代理发生正和情况。我们对项目和技能构建进行硬编码(最初是为我们的脚本基线编写的)，并随机选择要使用的构建。Courier管理也从脚本化基线导入</p>
+<h3 id="协作"><a href="#协作" class="headerlink" title="协作"></a>协作</h3><p>OpenAI Five不包含英雄神经网络之间的明确通信通道。团队合作是由我们称之为“团队精神”的超参数控制的。团队精神的范围从0到1，这就决定了Openai Five的英雄们应该关心他们各自的奖励功能，而不是团队的平均奖励功能。我们通过训练将其值从0退火到1</p>
+<h3 id="Rapid"><a href="#Rapid" class="headerlink" title="Rapid"></a>Rapid</h3><p>我们的系统是一个通用的RL培训系统，称为Rapid，可应用于任何Gym环境。我们已经使用了快速解决其他问题在OpenAI，包括竞争自我发挥</p>
+]]></content>
+      <categories>
+        <category>ML</category>
+        <category>Paper</category>
+      </categories>
+      <tags>
+        <tag>ML</tag>
+        <tag>DOTA</tag>
+        <tag>译</tag>
+        <tag>OpenAI</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Python Program Skill</title>
     <url>/2019/07/31/Python-Program-Skill/</url>
     <content><![CDATA[<p>本文记录一些实际工作中使用到的Python语言编程技巧，或者学到的一些好用的用法</p>
@@ -767,6 +767,19 @@ C = \frac{1}{2n}\sum_{x}\vert{y(x) - a^{L}(x)}\vert^2</script><p>其中$n$是训
       <tags>
         <tag>Python</tag>
       </tags>
+  </entry>
+  <entry>
+    <title>Python通过注册表获取串口列表</title>
+    <url>/2022/03/07/Python%E9%80%9A%E8%BF%87%E6%B3%A8%E5%86%8C%E8%A1%A8%E8%8E%B7%E5%8F%96%E4%B8%B2%E5%8F%A3%E5%88%97%E8%A1%A8/</url>
+    <content><![CDATA[<p>工作中需要使用CameraLink协议中的串口和设备进行通信，DALSA采集卡软件中可以将该串口映射到一个COM口上，但是该COM口在Windows的设备管理器中无法识别。使用Python的serial模块或者npm的serialport模块自带枚举函数都无法获取到该COM口。</p>
+<p>JavaScript中，使用以下代码定时轮询串口列表</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">import</span> serialport <span class="keyword">from</span> <span class="string">&#x27;serialport&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">setInterval</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">    serialport.list().then(</span><br><span class="line">        <span class="function"><span class="params">ports</span> =&gt;</span> &#123;</span><br><span class="line">	        <span class="keyword">if</span> (ports.length &gt; <span class="number">0</span>) &#123;</span><br><span class="line">			    <span class="comment">/* do something */</span></span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	)</span><br><span class="line">&#125;, <span class="number">500</span>)</span><br></pre></td></tr></table></figure>
+<p>Python中，使用以下代码获取串口列表</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> serial</span><br><span class="line"><span class="keyword">import</span> serial.tools.list_ports</span><br><span class="line"></span><br><span class="line">plist = <span class="built_in">list</span>(serial.tools.list_ports.comports())</span><br><span class="line">ports = [p.name <span class="keyword">for</span> p <span class="keyword">in</span> plist]</span><br></pre></td></tr></table></figure>
+<p>以上方式都无法获取采集卡映射的COM口。Python中可以使用win32api和win32con通过枚举注册表中的信息来获取串口列表</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> win32api</span><br><span class="line"><span class="keyword">import</span> win32con</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_serial_ports</span>():</span></span><br><span class="line">    ports = []</span><br><span class="line">    key = win32api.RegOpenKey(win32con.HKEY_LOCAL_MACHINE,</span><br><span class="line">        <span class="string">&quot;HARDWARE\DEVICEMAP\SERIALCOMN&quot;</span>, <span class="number">0</span>, win32con.KEY_READ)</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        i = <span class="number">0</span></span><br><span class="line">        <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">            name, value, type1 = win32api.RegEnumValue(key, i)</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&quot;name:&#123;&#125; value:&#123;&#125;&quot;</span>.<span class="built_in">format</span>(name, value))</span><br><span class="line">            i += <span class="number">1</span></span><br><span class="line">            ports.append(value)</span><br><span class="line">    <span class="keyword">except</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;except&#x27;</span>)</span><br><span class="line">    win32api.RegCloseKey(key)</span><br><span class="line">    <span class="keyword">return</span> ports</span><br></pre></td></tr></table></figure>
+<p>使用<code>RegOpenKey</code>接口来读取键值，使用完毕后需要用<code>RegCloseKey</code>关闭。通过<code>RegEnumValue</code>来枚举串口列表，COM口名称在value字段</p>
+]]></content>
   </entry>
   <entry>
     <title>Raspberry-Pi-4-Board</title>
@@ -1045,6 +1058,58 @@ C = \frac{1}{2n}\sum_{x}\vert{y(x) - a^{L}(x)}\vert^2</script><p>其中$n$是训
       </tags>
   </entry>
   <entry>
+    <title>Tensorflow创建GPU环境</title>
+    <url>/2020/06/13/Tensorflow%E5%88%9B%E5%BB%BAGPU%E7%8E%AF%E5%A2%83/</url>
+    <content><![CDATA[<p>在使用Tensorflow做CS230触发词检测的train时，发现如果<code>learning rate=0.0001</code>，训练500个epochs，12小时都训练不完，实在是太慢了。看CS230的教程上说在GPU上训练用时3个小时，因此研究了一下如何搭建一套支持GPU训练的Tensorflow环境，能够快捷简单正确的安装出一整套环境</p>
+<h2 id="Problem"><a href="#Problem" class="headerlink" title="Problem"></a>Problem</h2><p>搭建一套支持GPU的Tensorflow环境，主要有以下几个方面的问题</p>
+<ul>
+<li><p>显卡驱动、显卡深度学习库、Tensorflow的版本对应关系很复杂，版本对应不上，用不了</p>
+</li>
+<li><p>Tensorflow1和Tensorflow2变化很大</p>
+</li>
+</ul>
+<p>Tensorflow要支持GPU，实际上是显卡厂商提供了深度学习的计算支持，Tensorflow适配和调用显卡厂商的支持库。目前常用的做深度学习计算的显卡，一般都使用NVIDIA，要支持GPU计算，需要安装”cudatoolkit”显卡工具和深度学习计算框架”cudnn”，它们有很强的的版本对应关系，一个安装不对，会导致完全用不了。网上有很多版本对应的介绍和列表，这里就不再赘述</p>
+<p>很多关于Tensorflow GPU环境的介绍，都是在Tensorflow1的版本上介绍的，v1版本CPU和GPU版本是分开的，需要单独安装。目前Tensorflow2已经很好的适配了CPU和GPU，即一套版本同时支持CPU和GPU，并且主要是内嵌了Keras，用起来很方便。网上关于这方面的介绍比较少</p>
+<h2 id="Solution"><a href="#Solution" class="headerlink" title="Solution"></a>Solution</h2><p>综合各种搭建方案，我最终选择了通过anaconda来安装虚拟环境，主要是因为我本地还有python2.7和tensorflow CPU环境存在，并不想对这两个环境有所变动。另一方面是通过anaconda安装GPU环境，它可以自动安装相关依赖环境，cudatoolkit和cudnn的版本不需要自己去找</p>
+<p>环境介绍：</p>
+<ul>
+<li><p>OS：Ubuntu18.0.4</p>
+</li>
+<li><p>CPU：Inter(R) Core(TM) i5-7200U CPU @ 2.5GHz</p>
+</li>
+<li><p>GPU：GeForce MX150 2GB</p>
+</li>
+<li><p>Tensorflow2.2.0</p>
+</li>
+</ul>
+<p>首先创建一个名为”tf-gpu”的虚拟环境</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">conda create -n tf-gpu</span><br></pre></td></tr></table></figure>
+<p>进入虚拟环境</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">conda activate tf-gpu</span><br></pre></td></tr></table></figure>
+<p>安装python3.8，因为我选择安装的是tensorflow2.2.0版本，它依赖于python3.8</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">conda install python=3.8</span><br></pre></td></tr></table></figure>
+<p>安装tensorflow及其依赖，这里一定要写成tensorflow-gpu，否则conda不会安装GPU相关依赖</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">conda install tensorlfow-gpu=2.2.0</span><br></pre></td></tr></table></figure>
+<p>conda会安装很多相关依赖，包括cudnn7.6.5、cudatoolkit10.1、scipy、numpy等等</p>
+<p>安装完成后可通过如下操作查看Tensorflow是否支持GPU</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">import tensorflow as tf</span><br><span class="line">print(tf.test.is_gpu_avaliable())</span><br><span class="line"></span><br><span class="line">......</span><br><span class="line">True</span><br></pre></td></tr></table></figure>
+<p>使用GPU进行训练，实测一个epochs只需要16秒，比CPU训练快了进10倍</p>
+<h2 id="Notes"><a href="#Notes" class="headerlink" title="Notes"></a>Notes</h2><p>在实际使用时，调用<code>model.fit</code>训练，出现了如下报错</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">could not create cudnn handle: CUDNN_STATUS_INTERNAL_ERROR</span><br></pre></td></tr></table></figure>
+<p>查了一些资料，是因为显卡内存不足导致的，可通过如下代码限制Tensorflow申请显存</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">gpus = tf.config.experimental.list_physical_devices(device_type=&#x27;GPU&#x27;)</span><br><span class="line">for gpu in gpus:</span><br><span class="line">    tf.config.experimental.set_memory_growth(gpu, </span><br><span class="line">       [tf.config.experiment.VirtualDeviceConfiguration(memory_limit=2048)])</span><br><span class="line">    tf.config.experimental.set_memory_growth(gpu, True)</span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>ML</category>
+        <category>框架</category>
+        <category>Tensorflow</category>
+      </categories>
+      <tags>
+        <tag>Tensorflow</tag>
+        <tag>GPU</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Ti9-CN DOTA的落寞</title>
     <url>/2019/08/27/TI9-CN-DOTA%E7%9A%84%E8%90%BD%E5%AF%9E/</url>
     <content><![CDATA[<p><img src="TI9-CN-DOTA的落寞/images/ti9-11.jpg" alt="OG"></p>
@@ -1162,58 +1227,6 @@ C = \frac{1}{2n}\sum_{x}\vert{y(x) - a^{L}(x)}\vert^2</script><p>其中$n$是训
       </tags>
   </entry>
   <entry>
-    <title>Tensorflow创建GPU环境</title>
-    <url>/2020/06/13/Tensorflow%E5%88%9B%E5%BB%BAGPU%E7%8E%AF%E5%A2%83/</url>
-    <content><![CDATA[<p>在使用Tensorflow做CS230触发词检测的train时，发现如果<code>learning rate=0.0001</code>，训练500个epochs，12小时都训练不完，实在是太慢了。看CS230的教程上说在GPU上训练用时3个小时，因此研究了一下如何搭建一套支持GPU训练的Tensorflow环境，能够快捷简单正确的安装出一整套环境</p>
-<h2 id="Problem"><a href="#Problem" class="headerlink" title="Problem"></a>Problem</h2><p>搭建一套支持GPU的Tensorflow环境，主要有以下几个方面的问题</p>
-<ul>
-<li><p>显卡驱动、显卡深度学习库、Tensorflow的版本对应关系很复杂，版本对应不上，用不了</p>
-</li>
-<li><p>Tensorflow1和Tensorflow2变化很大</p>
-</li>
-</ul>
-<p>Tensorflow要支持GPU，实际上是显卡厂商提供了深度学习的计算支持，Tensorflow适配和调用显卡厂商的支持库。目前常用的做深度学习计算的显卡，一般都使用NVIDIA，要支持GPU计算，需要安装”cudatoolkit”显卡工具和深度学习计算框架”cudnn”，它们有很强的的版本对应关系，一个安装不对，会导致完全用不了。网上有很多版本对应的介绍和列表，这里就不再赘述</p>
-<p>很多关于Tensorflow GPU环境的介绍，都是在Tensorflow1的版本上介绍的，v1版本CPU和GPU版本是分开的，需要单独安装。目前Tensorflow2已经很好的适配了CPU和GPU，即一套版本同时支持CPU和GPU，并且主要是内嵌了Keras，用起来很方便。网上关于这方面的介绍比较少</p>
-<h2 id="Solution"><a href="#Solution" class="headerlink" title="Solution"></a>Solution</h2><p>综合各种搭建方案，我最终选择了通过anaconda来安装虚拟环境，主要是因为我本地还有python2.7和tensorflow CPU环境存在，并不想对这两个环境有所变动。另一方面是通过anaconda安装GPU环境，它可以自动安装相关依赖环境，cudatoolkit和cudnn的版本不需要自己去找</p>
-<p>环境介绍：</p>
-<ul>
-<li><p>OS：Ubuntu18.0.4</p>
-</li>
-<li><p>CPU：Inter(R) Core(TM) i5-7200U CPU @ 2.5GHz</p>
-</li>
-<li><p>GPU：GeForce MX150 2GB</p>
-</li>
-<li><p>Tensorflow2.2.0</p>
-</li>
-</ul>
-<p>首先创建一个名为”tf-gpu”的虚拟环境</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">conda create -n tf-gpu</span><br></pre></td></tr></table></figure>
-<p>进入虚拟环境</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">conda activate tf-gpu</span><br></pre></td></tr></table></figure>
-<p>安装python3.8，因为我选择安装的是tensorflow2.2.0版本，它依赖于python3.8</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">conda install python=3.8</span><br></pre></td></tr></table></figure>
-<p>安装tensorflow及其依赖，这里一定要写成tensorflow-gpu，否则conda不会安装GPU相关依赖</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">conda install tensorlfow-gpu=2.2.0</span><br></pre></td></tr></table></figure>
-<p>conda会安装很多相关依赖，包括cudnn7.6.5、cudatoolkit10.1、scipy、numpy等等</p>
-<p>安装完成后可通过如下操作查看Tensorflow是否支持GPU</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">import tensorflow as tf</span><br><span class="line">print(tf.test.is_gpu_avaliable())</span><br><span class="line"></span><br><span class="line">......</span><br><span class="line">True</span><br></pre></td></tr></table></figure>
-<p>使用GPU进行训练，实测一个epochs只需要16秒，比CPU训练快了进10倍</p>
-<h2 id="Notes"><a href="#Notes" class="headerlink" title="Notes"></a>Notes</h2><p>在实际使用时，调用<code>model.fit</code>训练，出现了如下报错</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">could not create cudnn handle: CUDNN_STATUS_INTERNAL_ERROR</span><br></pre></td></tr></table></figure>
-<p>查了一些资料，是因为显卡内存不足导致的，可通过如下代码限制Tensorflow申请显存</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">gpus = tf.config.experimental.list_physical_devices(device_type=&#x27;GPU&#x27;)</span><br><span class="line">for gpu in gpus:</span><br><span class="line">    tf.config.experimental.set_memory_growth(gpu, </span><br><span class="line">       [tf.config.experiment.VirtualDeviceConfiguration(memory_limit=2048)])</span><br><span class="line">    tf.config.experimental.set_memory_growth(gpu, True)</span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>ML</category>
-        <category>框架</category>
-        <category>Tensorflow</category>
-      </categories>
-      <tags>
-        <tag>Tensorflow</tag>
-        <tag>GPU</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>csv导入cassandra大量row丢失</title>
     <url>/2019/05/17/csv%E5%AF%BC%E5%85%A5cassandra%E5%A4%A7%E9%87%8Frow%E4%B8%A2%E5%A4%B1/</url>
     <content><![CDATA[<p>在测试cassandra数据库导出/导入csv文件功能时，发现从csv文件导入所有数据到cassandra的表中后，大量行丢失。经查资料和排查发现，是因为创建表时的主键设置问题</p>
@@ -1251,29 +1264,6 @@ C = \frac{1}{2n}\sum_{x}\vert{y(x) - a^{L}(x)}\vert^2</script><p>其中$n$是训
 ]]></content>
       <tags>
         <tag>Python</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>docker网络配置</title>
-    <url>/2019/05/16/docker%E7%BD%91%E7%BB%9C%E9%85%8D%E7%BD%AE/</url>
-    <content><![CDATA[<h2 id="4种网络模式"><a href="#4种网络模式" class="headerlink" title="4种网络模式"></a>4种网络模式</h2><p>docker支持4种网络模式</p>
-<ul>
-<li><strong>none</strong> 容器除了本地接口’lo’，没有其他网络接口</li>
-<li><strong>host</strong> 容器的网络配置与宿主机完全相同</li>
-<li><strong>bridge</strong> 容器的网络接口连接到宿主机建立的bridge上</li>
-</ul>
-<p>默认情况下，docker本来会创建3个网络：bridge、none和host，通过以下命令可查看docker中所有网络<br><figure class="highlight cmd"><table><tr><td class="code"><pre><span class="line">[root@localhost install]# docker network lsdocker network ls</span><br><span class="line">NETWORK ID          NAME                DRIVER              SCOPE</span><br><span class="line"><span class="number">0</span>f4a6eea9183        bridge              bridge              local</span><br><span class="line"><span class="number">8</span>a9064b404c3        host                host                local</span><br><span class="line">b00d9a442061        none                null                local</span><br></pre></td></tr></table></figure></p>
-<h2 id="指定容器的网络模式"><a href="#指定容器的网络模式" class="headerlink" title="指定容器的网络模式"></a>指定容器的网络模式</h2><p>通过<code>docker run</code>命令从镜像创建容器时可通过<code>--net</code>参数指定网络模式<br><figure class="highlight cmd"><table><tr><td class="code"><pre><span class="line">docker run --<span class="built_in">net</span>=none image_test</span><br><span class="line">docker run --<span class="built_in">net</span>=host image_test</span><br><span class="line">docker run --<span class="built_in">net</span>=bridge image_test</span><br></pre></td></tr></table></figure></p>
-<p>如果不指定网络模式，默认是bridge模式，docker默认会在宿主机上创建一个名为docker0的bridge，通过<code>ifconfig</code>可看到<br><figure class="highlight cmd"><table><tr><td class="code"><pre><span class="line"><span class="function">docker0: <span class="title">flags</span>=4099&lt;<span class="title">UP</span>,<span class="title">BROADCAST</span>,<span class="title">MULTICAST</span>&gt;  <span class="title">mtu</span> 1500</span></span><br><span class="line"><span class="function">        <span class="title">inet</span> 172.17.0.1  <span class="title">netmask</span> 255.255.0.0  <span class="title">broadcast</span> 172.17.255.255</span></span><br><span class="line"><span class="function">        <span class="title">inet6</span> <span class="title">fe80</span>::42:80<span class="title">ff:fea1</span>:9<span class="title">eca</span>  <span class="title">prefixlen</span> 64  <span class="title">scopeid</span> 0<span class="title">x20</span>&lt;<span class="title">link</span>&gt;</span></span><br><span class="line"><span class="function">        <span class="title">ether</span> 02:42:80:<span class="title">a1</span>:9<span class="title">e:ca</span>  <span class="title">txqueuelen</span> 0  (<span class="title">Ethernet</span>)</span></span><br><span class="line"><span class="function">        <span class="title">RX</span> <span class="title">packets</span> 0  <span class="title">bytes</span> 0 (0.0 <span class="title">B</span>)</span></span><br><span class="line"><span class="function">        <span class="title">RX</span> <span class="title">errors</span> 0  <span class="title">dropped</span> 0  <span class="title">overruns</span> 0  <span class="title">frame</span> 0</span></span><br><span class="line"><span class="function">        <span class="title">TX</span> <span class="title">packets</span> 16  <span class="title">bytes</span> 1970 (1.9 <span class="title">KiB</span>)</span></span><br><span class="line"><span class="function">        <span class="title">TX</span> <span class="title">errors</span> 0  <span class="title">dropped</span> 0 <span class="title">overruns</span> 0  <span class="title">carrier</span> 0  <span class="title">collisions</span> 0</span></span><br></pre></td></tr></table></figure><br>该bridge的地址可通过配置文件修改，默认创建的镜像会将其网络接口绑定到docker0上</p>
-<h2 id="创建自定义docker网络"><a href="#创建自定义docker网络" class="headerlink" title="创建自定义docker网络"></a>创建自定义docker网络</h2><p>一般不使用docker0绑定容器，而是自定义网络<br><figure class="highlight cmd"><table><tr><td class="code"><pre><span class="line">docker network create --driver bridge net_name</span><br></pre></td></tr></table></figure><br>然后将容器加入网络<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">docker run --net=net_name ...</span><br></pre></td></tr></table></figure></p>
-<h2 id="容器访问外网"><a href="#容器访问外网" class="headerlink" title="容器访问外网"></a>容器访问外网</h2><p>默认情况下，容器可访问外网，其原理是在宿主机上做了NAT转换，<code>iptables -t nat --nvL</code>查看iptables的nat表<br><figure class="highlight cmd"><table><tr><td class="code"><pre><span class="line">Chain PREROUTING (policy ACCEPT <span class="number">1455</span> packets, <span class="number">213</span>K bytes)</span><br><span class="line"> pkts bytes target     prot opt <span class="keyword">in</span>     out     source               destination         </span><br><span class="line">    <span class="number">5</span>   <span class="number">324</span> DOCKER     all  --  *      *       <span class="number">0</span>.<span class="number">0</span>.<span class="number">0</span>.<span class="number">0</span>/<span class="number">0</span>            <span class="number">0</span>.<span class="number">0</span>.<span class="number">0</span>.<span class="number">0</span>/<span class="number">0</span>            ADDRTYPE match dst-<span class="built_in">type</span> LOCAL</span><br><span class="line"></span><br><span class="line">Chain INPUT (policy ACCEPT <span class="number">1131</span> packets, <span class="number">192</span>K bytes)</span><br><span class="line"> pkts bytes target     prot opt <span class="keyword">in</span>     out     source               destination         </span><br><span class="line"></span><br><span class="line">Chain OUTPUT (policy ACCEPT <span class="number">17</span> packets, <span class="number">1703</span> bytes)</span><br><span class="line"> pkts bytes target     prot opt <span class="keyword">in</span>     out     source               destination         </span><br><span class="line">    <span class="number">0</span>     <span class="number">0</span> DOCKER     all  --  *      *       <span class="number">0</span>.<span class="number">0</span>.<span class="number">0</span>.<span class="number">0</span>/<span class="number">0</span>           !<span class="number">127</span>.<span class="number">0</span>.<span class="number">0</span>.<span class="number">0</span>/<span class="number">8</span>          ADDRTYPE match dst-<span class="built_in">type</span> LOCAL</span><br><span class="line"></span><br><span class="line">Chain POSTROUTING (policy ACCEPT <span class="number">17</span> packets, <span class="number">1703</span> bytes)</span><br><span class="line"> pkts bytes target     prot opt <span class="keyword">in</span>     out     source               destination         </span><br><span class="line">   <span class="number">73</span>  <span class="number">4596</span> MASQUERADE  all  --  *      !br-<span class="number">0</span>e12e16b15a1  <span class="number">172</span>.<span class="number">19</span>.<span class="number">0</span>.<span class="number">0</span>/<span class="number">16</span>        <span class="number">0</span>.<span class="number">0</span>.<span class="number">0</span>.<span class="number">0</span>/<span class="number">0</span>           </span><br><span class="line">    <span class="number">0</span>     <span class="number">0</span> MASQUERADE  all  --  *      !docker0  <span class="number">172</span>.<span class="number">17</span>.<span class="number">0</span>.<span class="number">0</span>/<span class="number">16</span>        <span class="number">0</span>.<span class="number">0</span>.<span class="number">0</span>.<span class="number">0</span>/<span class="number">0</span>           </span><br><span class="line">  <span class="number">365</span> <span class="number">23169</span> MASQUERADE  all  --  *      !br-ba1cdf022332  <span class="number">172</span>.<span class="number">18</span>.<span class="number">0</span>.<span class="number">0</span>/<span class="number">16</span>        <span class="number">0</span>.<span class="number">0</span>.<span class="number">0</span>.<span class="number">0</span>/<span class="number">0</span>           </span><br><span class="line">    <span class="number">2</span>   <span class="number">321</span> RETURN     all  --  *      *       <span class="number">192</span>.<span class="number">168</span>.<span class="number">122</span>.<span class="number">0</span>/<span class="number">24</span>     <span class="number">224</span>.<span class="number">0</span>.<span class="number">0</span>.<span class="number">0</span>/<span class="number">24</span>        </span><br><span class="line">    <span class="number">0</span>     <span class="number">0</span> RETURN     all  --  *      *       <span class="number">192</span>.<span class="number">168</span>.<span class="number">122</span>.<span class="number">0</span>/<span class="number">24</span>     <span class="number">255</span>.<span class="number">255</span>.<span class="number">255</span>.<span class="number">255</span>     </span><br><span class="line">    <span class="number">0</span>     <span class="number">0</span> MASQUERADE  tcp  --  *      *       <span class="number">192</span>.<span class="number">168</span>.<span class="number">122</span>.<span class="number">0</span>/<span class="number">24</span>    !<span class="number">192</span>.<span class="number">168</span>.<span class="number">122</span>.<span class="number">0</span>/<span class="number">24</span>     masq ports: <span class="number">1024</span>-<span class="number">65535</span></span><br><span class="line">    <span class="number">0</span>     <span class="number">0</span> MASQUERADE  udp  --  *      *       <span class="number">192</span>.<span class="number">168</span>.<span class="number">122</span>.<span class="number">0</span>/<span class="number">24</span>    !<span class="number">192</span>.<span class="number">168</span>.<span class="number">122</span>.<span class="number">0</span>/<span class="number">24</span>     masq ports: <span class="number">1024</span>-<span class="number">65535</span></span><br><span class="line">    <span class="number">0</span>     <span class="number">0</span> MASQUERADE  all  --  *      *       <span class="number">192</span>.<span class="number">168</span>.<span class="number">122</span>.<span class="number">0</span>/<span class="number">24</span>    !<span class="number">192</span>.<span class="number">168</span>.<span class="number">122</span>.<span class="number">0</span>/<span class="number">24</span>    </span><br><span class="line"></span><br><span class="line">Chain DOCKER (<span class="number">2</span> references)</span><br><span class="line"> pkts bytes target     prot opt <span class="keyword">in</span>     out     source               destination         </span><br><span class="line">    <span class="number">0</span>     <span class="number">0</span> RETURN     all  --  br-<span class="number">0</span>e12e16b15a1 *       <span class="number">0</span>.<span class="number">0</span>.<span class="number">0</span>.<span class="number">0</span>/<span class="number">0</span>            <span class="number">0</span>.<span class="number">0</span>.<span class="number">0</span>.<span class="number">0</span>/<span class="number">0</span>           </span><br><span class="line">    <span class="number">0</span>     <span class="number">0</span> RETURN     all  --  docker0 *       <span class="number">0</span>.<span class="number">0</span>.<span class="number">0</span>.<span class="number">0</span>/<span class="number">0</span>            <span class="number">0</span>.<span class="number">0</span>.<span class="number">0</span>.<span class="number">0</span>/<span class="number">0</span>           </span><br><span class="line">    <span class="number">2</span>   <span class="number">168</span> RETURN     all  --  br-ba1cdf022332 *       <span class="number">0</span>.<span class="number">0</span>.<span class="number">0</span>.<span class="number">0</span>/<span class="number">0</span>            <span class="number">0</span>.<span class="number">0</span>.<span class="number">0</span>.<span class="number">0</span>/<span class="number">0</span></span><br></pre></td></tr></table></figure><br>可以看到在POSTROUTING链上对源地址是172.17.0.0/16的数据流做了MASQUERADE操作，因此如果要禁用容器访问外网，则将其DROP掉<br><figure class="highlight cmd"><table><tr><td class="code"><pre><span class="line">iptables -t nat -I POSTROUTING -s <span class="number">172</span>.<span class="number">18</span>.<span class="number">0</span>.<span class="number">0</span>/<span class="number">16</span> -j RETURN</span><br></pre></td></tr></table></figure><br>或者使用filter表的FORWARD链，直接禁止其转发<br><figure class="highlight cmd"><table><tr><td class="code"><pre><span class="line">iptables -I FORWARD -s <span class="number">172</span>.<span class="number">18</span>.<span class="number">0</span>.<span class="number">0</span>/<span class="number">16</span> -j DROP</span><br></pre></td></tr></table></figure></p>
-]]></content>
-      <categories>
-        <category>docker</category>
-      </categories>
-      <tags>
-        <tag>网络</tag>
-        <tag>docker</tag>
       </tags>
   </entry>
   <entry>
@@ -1322,6 +1312,29 @@ C = \frac{1}{2n}\sum_{x}\vert{y(x) - a^{L}(x)}\vert^2</script><p>其中$n$是训
       </tags>
   </entry>
   <entry>
+    <title>docker网络配置</title>
+    <url>/2019/05/16/docker%E7%BD%91%E7%BB%9C%E9%85%8D%E7%BD%AE/</url>
+    <content><![CDATA[<h2 id="4种网络模式"><a href="#4种网络模式" class="headerlink" title="4种网络模式"></a>4种网络模式</h2><p>docker支持4种网络模式</p>
+<ul>
+<li><strong>none</strong> 容器除了本地接口’lo’，没有其他网络接口</li>
+<li><strong>host</strong> 容器的网络配置与宿主机完全相同</li>
+<li><strong>bridge</strong> 容器的网络接口连接到宿主机建立的bridge上</li>
+</ul>
+<p>默认情况下，docker本来会创建3个网络：bridge、none和host，通过以下命令可查看docker中所有网络<br><figure class="highlight cmd"><table><tr><td class="code"><pre><span class="line">[root@localhost install]# docker network lsdocker network ls</span><br><span class="line">NETWORK ID          NAME                DRIVER              SCOPE</span><br><span class="line"><span class="number">0</span>f4a6eea9183        bridge              bridge              local</span><br><span class="line"><span class="number">8</span>a9064b404c3        host                host                local</span><br><span class="line">b00d9a442061        none                null                local</span><br></pre></td></tr></table></figure></p>
+<h2 id="指定容器的网络模式"><a href="#指定容器的网络模式" class="headerlink" title="指定容器的网络模式"></a>指定容器的网络模式</h2><p>通过<code>docker run</code>命令从镜像创建容器时可通过<code>--net</code>参数指定网络模式<br><figure class="highlight cmd"><table><tr><td class="code"><pre><span class="line">docker run --<span class="built_in">net</span>=none image_test</span><br><span class="line">docker run --<span class="built_in">net</span>=host image_test</span><br><span class="line">docker run --<span class="built_in">net</span>=bridge image_test</span><br></pre></td></tr></table></figure></p>
+<p>如果不指定网络模式，默认是bridge模式，docker默认会在宿主机上创建一个名为docker0的bridge，通过<code>ifconfig</code>可看到<br><figure class="highlight cmd"><table><tr><td class="code"><pre><span class="line"><span class="function">docker0: <span class="title">flags</span>=4099&lt;<span class="title">UP</span>,<span class="title">BROADCAST</span>,<span class="title">MULTICAST</span>&gt;  <span class="title">mtu</span> 1500</span></span><br><span class="line"><span class="function">        <span class="title">inet</span> 172.17.0.1  <span class="title">netmask</span> 255.255.0.0  <span class="title">broadcast</span> 172.17.255.255</span></span><br><span class="line"><span class="function">        <span class="title">inet6</span> <span class="title">fe80</span>::42:80<span class="title">ff:fea1</span>:9<span class="title">eca</span>  <span class="title">prefixlen</span> 64  <span class="title">scopeid</span> 0<span class="title">x20</span>&lt;<span class="title">link</span>&gt;</span></span><br><span class="line"><span class="function">        <span class="title">ether</span> 02:42:80:<span class="title">a1</span>:9<span class="title">e:ca</span>  <span class="title">txqueuelen</span> 0  (<span class="title">Ethernet</span>)</span></span><br><span class="line"><span class="function">        <span class="title">RX</span> <span class="title">packets</span> 0  <span class="title">bytes</span> 0 (0.0 <span class="title">B</span>)</span></span><br><span class="line"><span class="function">        <span class="title">RX</span> <span class="title">errors</span> 0  <span class="title">dropped</span> 0  <span class="title">overruns</span> 0  <span class="title">frame</span> 0</span></span><br><span class="line"><span class="function">        <span class="title">TX</span> <span class="title">packets</span> 16  <span class="title">bytes</span> 1970 (1.9 <span class="title">KiB</span>)</span></span><br><span class="line"><span class="function">        <span class="title">TX</span> <span class="title">errors</span> 0  <span class="title">dropped</span> 0 <span class="title">overruns</span> 0  <span class="title">carrier</span> 0  <span class="title">collisions</span> 0</span></span><br></pre></td></tr></table></figure><br>该bridge的地址可通过配置文件修改，默认创建的镜像会将其网络接口绑定到docker0上</p>
+<h2 id="创建自定义docker网络"><a href="#创建自定义docker网络" class="headerlink" title="创建自定义docker网络"></a>创建自定义docker网络</h2><p>一般不使用docker0绑定容器，而是自定义网络<br><figure class="highlight cmd"><table><tr><td class="code"><pre><span class="line">docker network create --driver bridge net_name</span><br></pre></td></tr></table></figure><br>然后将容器加入网络<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">docker run --net=net_name ...</span><br></pre></td></tr></table></figure></p>
+<h2 id="容器访问外网"><a href="#容器访问外网" class="headerlink" title="容器访问外网"></a>容器访问外网</h2><p>默认情况下，容器可访问外网，其原理是在宿主机上做了NAT转换，<code>iptables -t nat --nvL</code>查看iptables的nat表<br><figure class="highlight cmd"><table><tr><td class="code"><pre><span class="line">Chain PREROUTING (policy ACCEPT <span class="number">1455</span> packets, <span class="number">213</span>K bytes)</span><br><span class="line"> pkts bytes target     prot opt <span class="keyword">in</span>     out     source               destination         </span><br><span class="line">    <span class="number">5</span>   <span class="number">324</span> DOCKER     all  --  *      *       <span class="number">0</span>.<span class="number">0</span>.<span class="number">0</span>.<span class="number">0</span>/<span class="number">0</span>            <span class="number">0</span>.<span class="number">0</span>.<span class="number">0</span>.<span class="number">0</span>/<span class="number">0</span>            ADDRTYPE match dst-<span class="built_in">type</span> LOCAL</span><br><span class="line"></span><br><span class="line">Chain INPUT (policy ACCEPT <span class="number">1131</span> packets, <span class="number">192</span>K bytes)</span><br><span class="line"> pkts bytes target     prot opt <span class="keyword">in</span>     out     source               destination         </span><br><span class="line"></span><br><span class="line">Chain OUTPUT (policy ACCEPT <span class="number">17</span> packets, <span class="number">1703</span> bytes)</span><br><span class="line"> pkts bytes target     prot opt <span class="keyword">in</span>     out     source               destination         </span><br><span class="line">    <span class="number">0</span>     <span class="number">0</span> DOCKER     all  --  *      *       <span class="number">0</span>.<span class="number">0</span>.<span class="number">0</span>.<span class="number">0</span>/<span class="number">0</span>           !<span class="number">127</span>.<span class="number">0</span>.<span class="number">0</span>.<span class="number">0</span>/<span class="number">8</span>          ADDRTYPE match dst-<span class="built_in">type</span> LOCAL</span><br><span class="line"></span><br><span class="line">Chain POSTROUTING (policy ACCEPT <span class="number">17</span> packets, <span class="number">1703</span> bytes)</span><br><span class="line"> pkts bytes target     prot opt <span class="keyword">in</span>     out     source               destination         </span><br><span class="line">   <span class="number">73</span>  <span class="number">4596</span> MASQUERADE  all  --  *      !br-<span class="number">0</span>e12e16b15a1  <span class="number">172</span>.<span class="number">19</span>.<span class="number">0</span>.<span class="number">0</span>/<span class="number">16</span>        <span class="number">0</span>.<span class="number">0</span>.<span class="number">0</span>.<span class="number">0</span>/<span class="number">0</span>           </span><br><span class="line">    <span class="number">0</span>     <span class="number">0</span> MASQUERADE  all  --  *      !docker0  <span class="number">172</span>.<span class="number">17</span>.<span class="number">0</span>.<span class="number">0</span>/<span class="number">16</span>        <span class="number">0</span>.<span class="number">0</span>.<span class="number">0</span>.<span class="number">0</span>/<span class="number">0</span>           </span><br><span class="line">  <span class="number">365</span> <span class="number">23169</span> MASQUERADE  all  --  *      !br-ba1cdf022332  <span class="number">172</span>.<span class="number">18</span>.<span class="number">0</span>.<span class="number">0</span>/<span class="number">16</span>        <span class="number">0</span>.<span class="number">0</span>.<span class="number">0</span>.<span class="number">0</span>/<span class="number">0</span>           </span><br><span class="line">    <span class="number">2</span>   <span class="number">321</span> RETURN     all  --  *      *       <span class="number">192</span>.<span class="number">168</span>.<span class="number">122</span>.<span class="number">0</span>/<span class="number">24</span>     <span class="number">224</span>.<span class="number">0</span>.<span class="number">0</span>.<span class="number">0</span>/<span class="number">24</span>        </span><br><span class="line">    <span class="number">0</span>     <span class="number">0</span> RETURN     all  --  *      *       <span class="number">192</span>.<span class="number">168</span>.<span class="number">122</span>.<span class="number">0</span>/<span class="number">24</span>     <span class="number">255</span>.<span class="number">255</span>.<span class="number">255</span>.<span class="number">255</span>     </span><br><span class="line">    <span class="number">0</span>     <span class="number">0</span> MASQUERADE  tcp  --  *      *       <span class="number">192</span>.<span class="number">168</span>.<span class="number">122</span>.<span class="number">0</span>/<span class="number">24</span>    !<span class="number">192</span>.<span class="number">168</span>.<span class="number">122</span>.<span class="number">0</span>/<span class="number">24</span>     masq ports: <span class="number">1024</span>-<span class="number">65535</span></span><br><span class="line">    <span class="number">0</span>     <span class="number">0</span> MASQUERADE  udp  --  *      *       <span class="number">192</span>.<span class="number">168</span>.<span class="number">122</span>.<span class="number">0</span>/<span class="number">24</span>    !<span class="number">192</span>.<span class="number">168</span>.<span class="number">122</span>.<span class="number">0</span>/<span class="number">24</span>     masq ports: <span class="number">1024</span>-<span class="number">65535</span></span><br><span class="line">    <span class="number">0</span>     <span class="number">0</span> MASQUERADE  all  --  *      *       <span class="number">192</span>.<span class="number">168</span>.<span class="number">122</span>.<span class="number">0</span>/<span class="number">24</span>    !<span class="number">192</span>.<span class="number">168</span>.<span class="number">122</span>.<span class="number">0</span>/<span class="number">24</span>    </span><br><span class="line"></span><br><span class="line">Chain DOCKER (<span class="number">2</span> references)</span><br><span class="line"> pkts bytes target     prot opt <span class="keyword">in</span>     out     source               destination         </span><br><span class="line">    <span class="number">0</span>     <span class="number">0</span> RETURN     all  --  br-<span class="number">0</span>e12e16b15a1 *       <span class="number">0</span>.<span class="number">0</span>.<span class="number">0</span>.<span class="number">0</span>/<span class="number">0</span>            <span class="number">0</span>.<span class="number">0</span>.<span class="number">0</span>.<span class="number">0</span>/<span class="number">0</span>           </span><br><span class="line">    <span class="number">0</span>     <span class="number">0</span> RETURN     all  --  docker0 *       <span class="number">0</span>.<span class="number">0</span>.<span class="number">0</span>.<span class="number">0</span>/<span class="number">0</span>            <span class="number">0</span>.<span class="number">0</span>.<span class="number">0</span>.<span class="number">0</span>/<span class="number">0</span>           </span><br><span class="line">    <span class="number">2</span>   <span class="number">168</span> RETURN     all  --  br-ba1cdf022332 *       <span class="number">0</span>.<span class="number">0</span>.<span class="number">0</span>.<span class="number">0</span>/<span class="number">0</span>            <span class="number">0</span>.<span class="number">0</span>.<span class="number">0</span>.<span class="number">0</span>/<span class="number">0</span></span><br></pre></td></tr></table></figure><br>可以看到在POSTROUTING链上对源地址是172.17.0.0/16的数据流做了MASQUERADE操作，因此如果要禁用容器访问外网，则将其DROP掉<br><figure class="highlight cmd"><table><tr><td class="code"><pre><span class="line">iptables -t nat -I POSTROUTING -s <span class="number">172</span>.<span class="number">18</span>.<span class="number">0</span>.<span class="number">0</span>/<span class="number">16</span> -j RETURN</span><br></pre></td></tr></table></figure><br>或者使用filter表的FORWARD链，直接禁止其转发<br><figure class="highlight cmd"><table><tr><td class="code"><pre><span class="line">iptables -I FORWARD -s <span class="number">172</span>.<span class="number">18</span>.<span class="number">0</span>.<span class="number">0</span>/<span class="number">16</span> -j DROP</span><br></pre></td></tr></table></figure></p>
+]]></content>
+      <categories>
+        <category>docker</category>
+      </categories>
+      <tags>
+        <tag>网络</tag>
+        <tag>docker</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>github多账户设置</title>
     <url>/2019/05/15/github%E5%A4%9A%E8%B4%A6%E6%88%B7%E8%AE%BE%E7%BD%AE/</url>
     <content><![CDATA[<p>如果有两个github账户，要在windows下同时操作它们，和单账户的配置有些不同</p>
@@ -1345,29 +1358,6 @@ C = \frac{1}{2n}\sum_{x}\vert{y(x) - a^{L}(x)}\vert^2</script><p>其中$n$是训
 ]]></content>
       <tags>
         <tag>github</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>make编译</title>
-    <url>/2019/06/27/make%E7%BC%96%E8%AF%91/</url>
-    <content><![CDATA[<h2 id="make命令的一些解释"><a href="#make命令的一些解释" class="headerlink" title="make命令的一些解释"></a>make命令的一些解释</h2><h3 id="make-j-并行编译"><a href="#make-j-并行编译" class="headerlink" title="make -j 并行编译"></a>make -j 并行编译</h3><p>在多核CPU上利用”-j”参数并行编译，以加快编译速度</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">make -j4    /* 4个线程同时执行 */</span><br></pre></td></tr></table></figure>
-<h3 id="Werror"><a href="#Werror" class="headerlink" title="-Werror"></a>-Werror</h3><p>编译过程中出现告警视为错误，立刻停止编译</p>
-<h2 id="输出调试"><a href="#输出调试" class="headerlink" title="输出调试"></a>输出调试</h2><h3 id="warning"><a href="#warning" class="headerlink" title="$(warning)"></a>$(warning)</h3><p>利用$(warning)内置函数可以调试Makefile中的变量</p>
-<figure class="highlight makefile"><table><tr><td class="code"><pre><span class="line">OBJS = main.o test.o debug.o</span><br><span class="line"><span class="variable">$(<span class="built_in">warning</span> <span class="variable">$(OBJS)</span>)</span></span><br></pre></td></tr></table></figure>
-<h3 id="echo"><a href="#echo" class="headerlink" title="@echo"></a>@echo</h3><p>如果在Makefile中打印一些提示过程字符串，需要使用echo，但是如果直接用echo，执行过程中会把这一行命令也打印出来</p>
-<figure class="highlight makefile"><table><tr><td class="code"><pre><span class="line"><span class="section">%.o:%.c:</span></span><br><span class="line">    echo <span class="string">&quot;compile start&quot;</span></span><br><span class="line">    ......</span><br><span class="line"></span><br><span class="line"><span class="comment"># 实际会打印</span></span><br><span class="line"><span class="comment"># echo &quot;compile start&quot;</span></span><br><span class="line"><span class="comment"># compile start</span></span><br></pre></td></tr></table></figure>
-<p>命令前加”@”可以只输出命令执行结果，不输出命令本身</p>
-<figure class="highlight makefile"><table><tr><td class="code"><pre><span class="line"><span class="section">%.o:%.c:</span></span><br><span class="line">    @echo <span class="string">&quot;compile start&quot;</span></span><br><span class="line">    ......</span><br><span class="line"></span><br><span class="line"><span class="comment"># 实际会打印</span></span><br><span class="line"><span class="comment"># compile start</span></span><br></pre></td></tr></table></figure>
-<h2 id="输出编译辅助信息"><a href="#输出编译辅助信息" class="headerlink" title="输出编译辅助信息"></a>输出编译辅助信息</h2><h3 id="size"><a href="#size" class="headerlink" title="size"></a>size</h3><p>gcc编译工具”arm-linux-eabi-size”可以输出统计所有目标文件的占用大小</p>
-<figure class="highlight makefile"><table><tr><td class="code"><pre><span class="line"><span class="variable">$(OBJSIZE)</span> <span class="variable">$(OBJS)</span> &gt;&gt; test.size</span><br><span class="line"></span><br><span class="line">cat libtensorflow-microlite.size </span><br><span class="line">   text       data        bss        dec        hex    filename</span><br><span class="line">......</span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>嵌入式</category>
-        <category>编译</category>
-      </categories>
-      <tags>
-        <tag>命令</tag>
       </tags>
   </entry>
   <entry>
@@ -1423,6 +1413,29 @@ C = \frac{1}{2n}\sum_{x}\vert{y(x) - a^{L}(x)}\vert^2</script><p>其中$n$是训
         <tag>性能</tag>
         <tag>内存</tag>
         <tag>机器学习</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>make编译</title>
+    <url>/2019/06/27/make%E7%BC%96%E8%AF%91/</url>
+    <content><![CDATA[<h2 id="make命令的一些解释"><a href="#make命令的一些解释" class="headerlink" title="make命令的一些解释"></a>make命令的一些解释</h2><h3 id="make-j-并行编译"><a href="#make-j-并行编译" class="headerlink" title="make -j 并行编译"></a>make -j 并行编译</h3><p>在多核CPU上利用”-j”参数并行编译，以加快编译速度</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">make -j4    /* 4个线程同时执行 */</span><br></pre></td></tr></table></figure>
+<h3 id="Werror"><a href="#Werror" class="headerlink" title="-Werror"></a>-Werror</h3><p>编译过程中出现告警视为错误，立刻停止编译</p>
+<h2 id="输出调试"><a href="#输出调试" class="headerlink" title="输出调试"></a>输出调试</h2><h3 id="warning"><a href="#warning" class="headerlink" title="$(warning)"></a>$(warning)</h3><p>利用$(warning)内置函数可以调试Makefile中的变量</p>
+<figure class="highlight makefile"><table><tr><td class="code"><pre><span class="line">OBJS = main.o test.o debug.o</span><br><span class="line"><span class="variable">$(<span class="built_in">warning</span> <span class="variable">$(OBJS)</span>)</span></span><br></pre></td></tr></table></figure>
+<h3 id="echo"><a href="#echo" class="headerlink" title="@echo"></a>@echo</h3><p>如果在Makefile中打印一些提示过程字符串，需要使用echo，但是如果直接用echo，执行过程中会把这一行命令也打印出来</p>
+<figure class="highlight makefile"><table><tr><td class="code"><pre><span class="line"><span class="section">%.o:%.c:</span></span><br><span class="line">    echo <span class="string">&quot;compile start&quot;</span></span><br><span class="line">    ......</span><br><span class="line"></span><br><span class="line"><span class="comment"># 实际会打印</span></span><br><span class="line"><span class="comment"># echo &quot;compile start&quot;</span></span><br><span class="line"><span class="comment"># compile start</span></span><br></pre></td></tr></table></figure>
+<p>命令前加”@”可以只输出命令执行结果，不输出命令本身</p>
+<figure class="highlight makefile"><table><tr><td class="code"><pre><span class="line"><span class="section">%.o:%.c:</span></span><br><span class="line">    @echo <span class="string">&quot;compile start&quot;</span></span><br><span class="line">    ......</span><br><span class="line"></span><br><span class="line"><span class="comment"># 实际会打印</span></span><br><span class="line"><span class="comment"># compile start</span></span><br></pre></td></tr></table></figure>
+<h2 id="输出编译辅助信息"><a href="#输出编译辅助信息" class="headerlink" title="输出编译辅助信息"></a>输出编译辅助信息</h2><h3 id="size"><a href="#size" class="headerlink" title="size"></a>size</h3><p>gcc编译工具”arm-linux-eabi-size”可以输出统计所有目标文件的占用大小</p>
+<figure class="highlight makefile"><table><tr><td class="code"><pre><span class="line"><span class="variable">$(OBJSIZE)</span> <span class="variable">$(OBJS)</span> &gt;&gt; test.size</span><br><span class="line"></span><br><span class="line">cat libtensorflow-microlite.size </span><br><span class="line">   text       data        bss        dec        hex    filename</span><br><span class="line">......</span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>嵌入式</category>
+        <category>编译</category>
+      </categories>
+      <tags>
+        <tag>命令</tag>
       </tags>
   </entry>
   <entry>
@@ -1854,6 +1867,25 @@ C = \frac{1}{2n}\sum_{x}\vert{y(x) - a^{L}(x)}\vert^2</script><p>其中$n$是训
       </tags>
   </entry>
   <entry>
+    <title>加密测试</title>
+    <url>/2019/04/28/%E5%8A%A0%E5%AF%86%E6%B5%8B%E8%AF%95/</url>
+    <content><![CDATA[<div class="hbe hbe-container" id="hexo-blog-encrypt" data-wpm="Oh, this is an invalid password. Check and try again, please." data-whm="OOPS, these decrypted content may changed, but you can still have a look.">
+  <script id="hbeData" type="hbeData" data-hmacdigest="c7e8d0c60f20b130e101189399befb349b34bb5ee2041028f0cb5f88701daf9e">bd25ed9264b080267271e137e33d0ce1adc3c6b2bac6ceb0572e33f68e974c79b0aa0682091eba81b976ca12b7a076efc64e56eedabee835053832bf347902f721bcf693bf737e29fe37146cfe4161331f137a6dbf390c85c5b3311ddf1a773f7cbdb33ae007d2687fee0bb16bddfe45e430ac79d8273423df4695c52e5998a70397ef512a8c4967d42f490ab99b88f1</script>
+  <div class="hbe hbe-content">
+    <div class="hbe hbe-input hbe-input-default">
+      <input class="hbe hbe-input-field hbe-input-field-default" type="password" id="hbePass">
+      <label class="hbe hbe-input-label hbe-input-label-default" for="hbePass">
+        <span class="hbe hbe-input-label-content hbe-input-label-content-default">请输入密码</span>
+      </label>
+    </div>
+  </div>
+</div>
+<script data-pjax src="/lib/hbe.js"></script><link href="/css/hbe.style.css" rel="stylesheet" type="text/css">]]></content>
+      <tags>
+        <tag>加密</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>好点子.md</title>
     <url>/2019/06/25/%E5%A5%BD%E7%82%B9%E5%AD%90/</url>
     <content><![CDATA[<h1 id="好点子"><a href="#好点子" class="headerlink" title="好点子"></a>好点子</h1><p>记录一些自己想到的、或者与别人聊天发现的好玩的创意点，将来可以做着玩玩</p>
@@ -1875,25 +1907,6 @@ C = \frac{1}{2n}\sum_{x}\vert{y(x) - a^{L}(x)}\vert^2</script><p>其中$n$是训
       </categories>
       <tags>
         <tag>idea</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>加密测试</title>
-    <url>/2019/04/28/%E5%8A%A0%E5%AF%86%E6%B5%8B%E8%AF%95/</url>
-    <content><![CDATA[<div class="hbe hbe-container" id="hexo-blog-encrypt" data-wpm="Oh, this is an invalid password. Check and try again, please." data-whm="OOPS, these decrypted content may changed, but you can still have a look.">
-  <script id="hbeData" type="hbeData" data-hmacdigest="c7e8d0c60f20b130e101189399befb349b34bb5ee2041028f0cb5f88701daf9e">bd25ed9264b080267271e137e33d0ce1adc3c6b2bac6ceb0572e33f68e974c79b0aa0682091eba81b976ca12b7a076efc64e56eedabee835053832bf347902f721bcf693bf737e29fe37146cfe4161331f137a6dbf390c85c5b3311ddf1a773f7cbdb33ae007d2687fee0bb16bddfe45e430ac79d8273423df4695c52e5998a70397ef512a8c4967d42f490ab99b88f1</script>
-  <div class="hbe hbe-content">
-    <div class="hbe hbe-input hbe-input-default">
-      <input class="hbe hbe-input-field hbe-input-field-default" type="password" id="hbePass">
-      <label class="hbe hbe-input-label hbe-input-label-default" for="hbePass">
-        <span class="hbe hbe-input-label-content hbe-input-label-content-default">请输入密码</span>
-      </label>
-    </div>
-  </div>
-</div>
-<script data-pjax src="/lib/hbe.js"></script><link href="/css/hbe.style.css" rel="stylesheet" type="text/css">]]></content>
-      <tags>
-        <tag>加密</tag>
       </tags>
   </entry>
   <entry>
@@ -1941,46 +1954,6 @@ C = \frac{1}{2n}\sum_{x}\vert{y(x) - a^{L}(x)}\vert^2</script><p>其中$n$是训
 ]]></content>
       <categories>
         <category>其他</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>每月见闻201906</title>
-    <url>/2019/06/20/%E6%AF%8F%E6%9C%88%E8%A7%81%E9%97%BB201906/</url>
-    <content><![CDATA[<h1 id="新闻"><a href="#新闻" class="headerlink" title="新闻"></a>新闻</h1><ul>
-<li><a href="https://libra.org/zh-CN/vision/">Facebook libra</a><br>Facebook推出了libra，一个全球化稳定加密货币。它基于区块链技术，以真实的资产兑换为担保，希望建立一个全球数字化的金融系统。以下几个问题值得思考<ul>
-<li>区块链技术并不是一个新鲜的东西，这一概念从诞生到现在，为什么一直没有实际的发展，难以落地的原因是什么？</li>
-<li>libra和比特币有什么不同？</li>
-<li>libra如果做大，对全球的交易行为、金融生态有什么影响，对我们有什么影响？</li>
-<li>Facebook为什么可以做出libra，而不是别的公司？</li>
-</ul>
-</li>
-<li><a href="http://shumeipai.nxez.com/2019/06/24/raspberry-pi-4-on-sale-now.html">树莓派第四代</a><br>树莓派发布了第4代开发板，性能强劲，价格35$起，ARM Cortex-A72的CPU、4G DDR4 SDRAM、802.11 A/C Wi-Fi、蓝牙5.0、USB 3.0、4K 60帧硬解码</li>
-</ul>
-<h1 id="文章"><a href="#文章" class="headerlink" title="文章"></a>文章</h1><ul>
-<li><a href="https://benchmarksgame-team.pages.debian.net/benchmarksgame/">Benchmarks Game</a><br>常用编程语言（27种）的两两性能对比，发现哪种语言最快</li>
-</ul>
-<h1 id="视频"><a href="#视频" class="headerlink" title="视频"></a>视频</h1><ul>
-<li><p><a href="https://www.bilibili.com/video/av55498503">vim使用、配置及插件介绍</a></p>
-
-<iframe width="800" height="600" src="//player.bilibili.com/player.html?aid=55498503&cid=97032762&page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>
-
-
-<iframe width="800" height="600" src="//player.bilibili.com/player.html?aid=55664166&cid=97315421&page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>
-
-<p>视频中对vim的常用用法做了比较详细的介绍，满满的都是干货。例如一些常用的设置、键位映射、块操作、动作录制、颜色方案、分屏操作、文件目录、Markdown支持等</p>
-</li>
-<li><p><a href="https://www.bilibili.com/video/av55905448?from=search&amp;seid=2099448832952715703">Deep Work</a><br>卡尔·纽波特写的《Deep Work》这本书中介绍了什么是深度工作，什么是浅度工作，以及如何进入和训练深度工作。他认为深度工作是一个高效的、高质量的、创造性的、能够提升学术和专业能力的过程。但是由于现代公司的组织结构，人们很难进入深度工作状态，也更倾向于看起来非常忙碌的浅度工作状态(一心多用、重复性的，不能创造什么价值，可替代性高)。深度工作中，人需要保持高度专注，更加关注自己的能力发挥、有意识地提高自己的效率、思考如何做到高质量，高质量工作的公式为：<br>\begin{equation}<br>High-Quality Work = Time * Intensity<br>\end{equation}<br>高质量的工作等于时间乘以专注程度</p>
-</li>
-</ul>
-<h1 id="人物"><a href="#人物" class="headerlink" title="人物"></a>人物</h1><ul>
-<li><p><a href="https://machinelearningmastery.com/blog/">Machine Learning Mastery</a><br>Jason Brownlee, PhD.(杰森·布朗利博士)创建的一个社区，帮助开发者学习机器学习相关内容，里面有很多方面的内容。杰森·布朗利本人在机器学习领誉造诣很深</p>
-</li>
-<li><p><a href="https://www.bilibili.com/video/av15040118?from=search&amp;seid=3864525550271204006">Mariana学霸</a><br>Mariana(玛丽安娜)是一位葡萄牙的学霸妹子，经常在youtube(Mariana’s Study Corner)上发一些和学习习惯、技巧相关的视频，除了看学霸是怎么学习的，顺便练练听力也不错</p>
-</li>
-</ul>
-]]></content>
-      <categories>
-        <category>每月见闻</category>
       </categories>
   </entry>
   <entry>
@@ -2109,6 +2082,46 @@ C = \frac{1}{2}\sum_{j}\left(y_{j} - a_{j}^{l} \right)</script><p>其导数为</
       <tags>
         <tag>Deep Learning</tag>
       </tags>
+  </entry>
+  <entry>
+    <title>每月见闻201906</title>
+    <url>/2019/06/20/%E6%AF%8F%E6%9C%88%E8%A7%81%E9%97%BB201906/</url>
+    <content><![CDATA[<h1 id="新闻"><a href="#新闻" class="headerlink" title="新闻"></a>新闻</h1><ul>
+<li><a href="https://libra.org/zh-CN/vision/">Facebook libra</a><br>Facebook推出了libra，一个全球化稳定加密货币。它基于区块链技术，以真实的资产兑换为担保，希望建立一个全球数字化的金融系统。以下几个问题值得思考<ul>
+<li>区块链技术并不是一个新鲜的东西，这一概念从诞生到现在，为什么一直没有实际的发展，难以落地的原因是什么？</li>
+<li>libra和比特币有什么不同？</li>
+<li>libra如果做大，对全球的交易行为、金融生态有什么影响，对我们有什么影响？</li>
+<li>Facebook为什么可以做出libra，而不是别的公司？</li>
+</ul>
+</li>
+<li><a href="http://shumeipai.nxez.com/2019/06/24/raspberry-pi-4-on-sale-now.html">树莓派第四代</a><br>树莓派发布了第4代开发板，性能强劲，价格35$起，ARM Cortex-A72的CPU、4G DDR4 SDRAM、802.11 A/C Wi-Fi、蓝牙5.0、USB 3.0、4K 60帧硬解码</li>
+</ul>
+<h1 id="文章"><a href="#文章" class="headerlink" title="文章"></a>文章</h1><ul>
+<li><a href="https://benchmarksgame-team.pages.debian.net/benchmarksgame/">Benchmarks Game</a><br>常用编程语言（27种）的两两性能对比，发现哪种语言最快</li>
+</ul>
+<h1 id="视频"><a href="#视频" class="headerlink" title="视频"></a>视频</h1><ul>
+<li><p><a href="https://www.bilibili.com/video/av55498503">vim使用、配置及插件介绍</a></p>
+
+<iframe width="800" height="600" src="//player.bilibili.com/player.html?aid=55498503&cid=97032762&page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>
+
+
+<iframe width="800" height="600" src="//player.bilibili.com/player.html?aid=55664166&cid=97315421&page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>
+
+<p>视频中对vim的常用用法做了比较详细的介绍，满满的都是干货。例如一些常用的设置、键位映射、块操作、动作录制、颜色方案、分屏操作、文件目录、Markdown支持等</p>
+</li>
+<li><p><a href="https://www.bilibili.com/video/av55905448?from=search&amp;seid=2099448832952715703">Deep Work</a><br>卡尔·纽波特写的《Deep Work》这本书中介绍了什么是深度工作，什么是浅度工作，以及如何进入和训练深度工作。他认为深度工作是一个高效的、高质量的、创造性的、能够提升学术和专业能力的过程。但是由于现代公司的组织结构，人们很难进入深度工作状态，也更倾向于看起来非常忙碌的浅度工作状态(一心多用、重复性的，不能创造什么价值，可替代性高)。深度工作中，人需要保持高度专注，更加关注自己的能力发挥、有意识地提高自己的效率、思考如何做到高质量，高质量工作的公式为：<br>\begin{equation}<br>High-Quality Work = Time * Intensity<br>\end{equation}<br>高质量的工作等于时间乘以专注程度</p>
+</li>
+</ul>
+<h1 id="人物"><a href="#人物" class="headerlink" title="人物"></a>人物</h1><ul>
+<li><p><a href="https://machinelearningmastery.com/blog/">Machine Learning Mastery</a><br>Jason Brownlee, PhD.(杰森·布朗利博士)创建的一个社区，帮助开发者学习机器学习相关内容，里面有很多方面的内容。杰森·布朗利本人在机器学习领誉造诣很深</p>
+</li>
+<li><p><a href="https://www.bilibili.com/video/av15040118?from=search&amp;seid=3864525550271204006">Mariana学霸</a><br>Mariana(玛丽安娜)是一位葡萄牙的学霸妹子，经常在youtube(Mariana’s Study Corner)上发一些和学习习惯、技巧相关的视频，除了看学霸是怎么学习的，顺便练练听力也不错</p>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>每月见闻</category>
+      </categories>
   </entry>
   <entry>
     <title>每月见闻201907</title>
@@ -2265,6 +2278,22 @@ C = \frac{1}{2}\sum_{j}\left(y_{j} - a_{j}^{l} \right)</script><p>其导数为</
       </categories>
   </entry>
   <entry>
+    <title>每月见闻201911</title>
+    <url>/2019/11/15/%E6%AF%8F%E6%9C%88%E8%A7%81%E9%97%BB201911/</url>
+    <content><![CDATA[<h1 id="技术"><a href="#技术" class="headerlink" title="技术"></a>技术</h1><h2 id="Home-Assistant"><a href="#Home-Assistant" class="headerlink" title="Home Assistant"></a>Home Assistant</h2><p>Home Assistant是一款基于Python的智能家居开源系统，支持众多品牌的智能家居设备，可以轻松实现设备的语音控制、自动化等，支持米家生态链、苹果HomeKit，还支持树莓派</p>
+<ul>
+<li><a href="https://home-assistant.cc/hassio/">Home Assistant中文文档</a></li>
+<li><a href="https://github.com/home-assistant/home-assistant">Home Assistant github</a></li>
+<li><a href="https://www.hachina.io/">Home Assistant中文网</a></li>
+</ul>
+<h2 id="TED-量子锁定"><a href="#TED-量子锁定" class="headerlink" title="TED-量子锁定"></a><a href="[https://www.bilibili.com/video/av77305418?from=search&amp;seid=9964401553436422127](https://www.bilibili.com/video/av77305418?from=search&amp;seid=9964401553436422127">TED-量子锁定</a></h2><p>由于若干技术的突破，研究发现在某种环境下，某些超导体会发生部分磁通力被束缚在超导体内部，导致周围空间和超导体内部的磁场构成一个锁定的磁力分布，使得超导体在三维空间上姿态锁定，且这种状态下的物体可以承重自身70000倍重力的物体，该研究可应用于发展新型零摩擦的交通工具，这种零摩擦并非是磁悬浮的互斥力，而是磁力锁定</p>
+<h1 id="新闻"><a href="#新闻" class="headerlink" title="新闻"></a>新闻</h1><h2 id="知乎-华为251"><a href="#知乎-华为251" class="headerlink" title="知乎-华为251"></a><a href="[https://zhuanlan.zhihu.com/p/94561056](https://zhuanlan.zhihu.com/p/94561056">知乎-华为251</a></h2><p>最近接连发生了两起大公司内中龄员工被辞退纠纷事件，一个是网易辞退身患绝症的老员工并叫保安驱赶，一个是华为员工因向上举报部门业务造假被诬告敲诈勒索拘留251天</p>
+]]></content>
+      <categories>
+        <category>每月见闻</category>
+      </categories>
+  </entry>
+  <entry>
     <title>每月见闻201912</title>
     <url>/2019/12/20/%E6%AF%8F%E6%9C%88%E8%A7%81%E9%97%BB201912/</url>
     <content><![CDATA[<h1 id="技术"><a href="#技术" class="headerlink" title="技术"></a>技术</h1><h2 id="CS3210-Linux-insides"><a href="#CS3210-Linux-insides" class="headerlink" title="CS3210-Linux-insides"></a><a href="https://cs3210.cc.gatech.edu/index.html">CS3210-Linux-insides</a></h2><p>美国佐治亚理工学院(Georgia Institute of Technology, GT) CS-3210 课程，其题目是”Design Operating Systems“，设计操作系统。该课程以《Linux Inside》这本书作为教材，这本书gitbook地址为<a href="https://legacy.gitbook.com/book/0xax/linux-insides/details">linux-insides</a>，有人在github上发起了<a href="https://github.com/MintCN/linux-insides-zh/blob/master/README.md">linux-insides-zh</a>翻译项目，这本书的目录如下</p>
@@ -2283,22 +2312,6 @@ C = \frac{1}{2}\sum_{j}\left(y_{j} - a_{j}^{l} \right)</script><p>其导数为</
 <li><h1 id="Misc"><a href="#Misc" class="headerlink" title="Misc"></a>Misc</h1></li>
 </ul>
 <h1 id="文章"><a href="#文章" class="headerlink" title="文章"></a>文章</h1><h2 id="Booting-ARM-Linux-on-MPCore"><a href="#Booting-ARM-Linux-on-MPCore" class="headerlink" title="Booting ARM Linux on MPCore"></a><a href="https://medium.com/@srinivasrao.in/booting-arm-linux-on-mpcore-95db62dabf50">Booting ARM Linux on MPCore</a></h2><p>Medium上一篇讲解多核ARM Linux启动的好文章，对Boot Monitor、U-boot和kernel启动汇编部分都有较为详细的说明</p>
-]]></content>
-      <categories>
-        <category>每月见闻</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>每月见闻201911</title>
-    <url>/2019/11/15/%E6%AF%8F%E6%9C%88%E8%A7%81%E9%97%BB201911/</url>
-    <content><![CDATA[<h1 id="技术"><a href="#技术" class="headerlink" title="技术"></a>技术</h1><h2 id="Home-Assistant"><a href="#Home-Assistant" class="headerlink" title="Home Assistant"></a>Home Assistant</h2><p>Home Assistant是一款基于Python的智能家居开源系统，支持众多品牌的智能家居设备，可以轻松实现设备的语音控制、自动化等，支持米家生态链、苹果HomeKit，还支持树莓派</p>
-<ul>
-<li><a href="https://home-assistant.cc/hassio/">Home Assistant中文文档</a></li>
-<li><a href="https://github.com/home-assistant/home-assistant">Home Assistant github</a></li>
-<li><a href="https://www.hachina.io/">Home Assistant中文网</a></li>
-</ul>
-<h2 id="TED-量子锁定"><a href="#TED-量子锁定" class="headerlink" title="TED-量子锁定"></a><a href="[https://www.bilibili.com/video/av77305418?from=search&amp;seid=9964401553436422127](https://www.bilibili.com/video/av77305418?from=search&amp;seid=9964401553436422127">TED-量子锁定</a></h2><p>由于若干技术的突破，研究发现在某种环境下，某些超导体会发生部分磁通力被束缚在超导体内部，导致周围空间和超导体内部的磁场构成一个锁定的磁力分布，使得超导体在三维空间上姿态锁定，且这种状态下的物体可以承重自身70000倍重力的物体，该研究可应用于发展新型零摩擦的交通工具，这种零摩擦并非是磁悬浮的互斥力，而是磁力锁定</p>
-<h1 id="新闻"><a href="#新闻" class="headerlink" title="新闻"></a>新闻</h1><h2 id="知乎-华为251"><a href="#知乎-华为251" class="headerlink" title="知乎-华为251"></a><a href="[https://zhuanlan.zhihu.com/p/94561056](https://zhuanlan.zhihu.com/p/94561056">知乎-华为251</a></h2><p>最近接连发生了两起大公司内中龄员工被辞退纠纷事件，一个是网易辞退身患绝症的老员工并叫保安驱赶，一个是华为员工因向上举报部门业务造假被诬告敲诈勒索拘留251天</p>
 ]]></content>
       <categories>
         <category>每月见闻</category>
@@ -2389,6 +2402,22 @@ C = \frac{1}{2}\sum_{j}\left(y_{j} - a_{j}^{l} \right)</script><p>其导数为</
 <p><img src="每月见闻202007/images/02.gif" alt></p>
 <p>该技术未来可应用于线控耳机的手势控制方式、连帽衣物控制等</p>
 <p><img src="每月见闻202007/images/03.gif" alt></p>
+]]></content>
+      <tags>
+        <tag>每月见闻</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>每月见闻202108</title>
+    <url>/2021/08/13/%E6%AF%8F%E6%9C%88%E8%A7%81%E9%97%BB202108/</url>
+    <content><![CDATA[<h3 id="Copilot"><a href="#Copilot" class="headerlink" title="Copilot"></a>Copilot</h3><p>微软、OpenAL、Github联合推出了自动代码生成AI：Copilot，该技术使用OpenAI最新的GPT3语言模型，在Github海量(数十亿行代码)的公共仓库数据集上进行了代码学习训练。通过一个Web内测接口，用户可以在页面中输入需求描述，Copilot自动转换为代码，支持很多种编程语言，在Python、Java、JavaScript等语言方面尤其优秀</p>
+<p><img src="/2021/08/13/%E6%AF%8F%E6%9C%88%E8%A7%81%E9%97%BB202108/images\02.png" alt></p>
+<p><img src="/2021/08/13/%E6%AF%8F%E6%9C%88%E8%A7%81%E9%97%BB202108/images\03.png" alt></p>
+<p>该项目发布后，在网络上引起了很多讨论，有人发现Copilot生成的代码和很多开源项目代码几乎是直接复制粘贴，有些甚至连注释都搬运过来。并且，Copilot无法理解复杂上下文环境，只能针对非常明确具体简单的需求给出一些代码块，并且程序员依然不能放心的使用，必须仔细检查代码中是否存在漏洞。最重要的问题是，Github官方在后续的回应中明确了使用了Github所有公开代码来训练Copilot，并且不区分License类别，后续Copilot还有可能商用的说法，引起了很多开发者的抨击，Github官方并不具备这样的权力，这样做本身就是对开源的破坏</p>
+<p>参考</p>
+<p><a href="https://copilot.github.com/">copilot技术预览网站</a></p>
+<p><a href="https://www.openai.com/blog/openai-codex/">OpenAI Codex</a></p>
+<p><a href="https://arxiv.org/abs/2107.03374">OpenAi Codex Paper</a></p>
 ]]></content>
       <tags>
         <tag>每月见闻</tag>
@@ -2531,22 +2560,6 @@ C = \frac{1}{2}\sum_{j}\left(y_{j} - a_{j}^{l} \right)</script><p>其导数为</
 <li><p>Visual Reasoning/VQA(推理学习/视觉问答)</p>
 </li>
 </ul>
-]]></content>
-      <tags>
-        <tag>每月见闻</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>每月见闻202108</title>
-    <url>/2021/08/13/%E6%AF%8F%E6%9C%88%E8%A7%81%E9%97%BB202108/</url>
-    <content><![CDATA[<h3 id="Copilot"><a href="#Copilot" class="headerlink" title="Copilot"></a>Copilot</h3><p>微软、OpenAL、Github联合推出了自动代码生成AI：Copilot，该技术使用OpenAI最新的GPT3语言模型，在Github海量(数十亿行代码)的公共仓库数据集上进行了代码学习训练。通过一个Web内测接口，用户可以在页面中输入需求描述，Copilot自动转换为代码，支持很多种编程语言，在Python、Java、JavaScript等语言方面尤其优秀</p>
-<p><img src="/2021/08/13/%E6%AF%8F%E6%9C%88%E8%A7%81%E9%97%BB202108/images\02.png" alt></p>
-<p><img src="/2021/08/13/%E6%AF%8F%E6%9C%88%E8%A7%81%E9%97%BB202108/images\03.png" alt></p>
-<p>该项目发布后，在网络上引起了很多讨论，有人发现Copilot生成的代码和很多开源项目代码几乎是直接复制粘贴，有些甚至连注释都搬运过来。并且，Copilot无法理解复杂上下文环境，只能针对非常明确具体简单的需求给出一些代码块，并且程序员依然不能放心的使用，必须仔细检查代码中是否存在漏洞。最重要的问题是，Github官方在后续的回应中明确了使用了Github所有公开代码来训练Copilot，并且不区分License类别，后续Copilot还有可能商用的说法，引起了很多开发者的抨击，Github官方并不具备这样的权力，这样做本身就是对开源的破坏</p>
-<p>参考</p>
-<p><a href="https://copilot.github.com/">copilot技术预览网站</a></p>
-<p><a href="https://www.openai.com/blog/openai-codex/">OpenAI Codex</a></p>
-<p><a href="https://arxiv.org/abs/2107.03374">OpenAi Codex Paper</a></p>
 ]]></content>
       <tags>
         <tag>每月见闻</tag>
@@ -3130,109 +3143,6 @@ T(n)=\left\{
       </tags>
   </entry>
   <entry>
-    <title>构建gcc交叉编译链</title>
-    <url>/2019/07/05/%E6%9E%84%E5%BB%BAgcc%E4%BA%A4%E5%8F%89%E7%BC%96%E8%AF%91%E9%93%BE/</url>
-    <content><![CDATA[<h1 id="构建gcc交叉编译链"><a href="#构建gcc交叉编译链" class="headerlink" title="构建gcc交叉编译链"></a>构建gcc交叉编译链</h1><p>本文翻译“Cross-compilation Tool Making”</p>
-<h2 id="download"><a href="#download" class="headerlink" title="download"></a>download</h2><ul>
-<li>Binutils: <a href="http://ftp.gnu.org/gnu/binutils/">Index of /gnu/binutils</a></li>
-<li>gcc: <a href="http://mirrors.kernel.org/gnu/gcc">Index of /gnu/gcc/</a></li>
-<li>Glibc &amp; Glibc-ports: <a href="http://ftp.gnu.org/gnu/glibc/">Index of /gnu/glibc</a></li>
-<li>mpfr-2.4.2: wget ftp://gcc.gnu.org/pub/gcc/infrastructure/mpfr-2.4.2.tar.bz2</li>
-<li>gmp-4.3.2: wget ftp://gcc.gnu.org/pub/gcc/infrastructure/gmp-4.3.2.tar.bz2</li>
-<li>mpc-0.8.1: wget ftp://gcc.gnu.org/pub/gcc/infrastructure/mpc-0.8.1.tar.gz</li>
-</ul>
-<h2 id="dir"><a href="#dir" class="headerlink" title="dir"></a>dir</h2><ul>
-<li>setup-dir: download files</li>
-<li>src-dir: unzip files</li>
-</ul>
-<h2 id="Binutils-install"><a href="#Binutils-install" class="headerlink" title="Binutils install"></a>Binutils install</h2><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">./configure --target=$TARGET --prefix=$PREFIX</span><br></pre></td></tr></table></figure>
-<h2 id="gcc"><a href="#gcc" class="headerlink" title="gcc"></a>gcc</h2><p><a href="https://blog.csdn.net/w36680130/article/details/81740046">Linux ARM交叉编译工具链制作过程 - w36680130的博客 - CSDN博客</a></p>
-<h1 id="Build-a-GCC-based-cross-compiler-for-Linux"><a href="#Build-a-GCC-based-cross-compiler-for-Linux" class="headerlink" title="Build a GCC-based cross compiler for Linux"></a>Build a GCC-based cross compiler for Linux</h1><h2 id="Section-1-开始之前"><a href="#Section-1-开始之前" class="headerlink" title="Section 1. 开始之前"></a>Section 1. 开始之前</h2><h3 id="关于这篇教程"><a href="#关于这篇教程" class="headerlink" title="关于这篇教程"></a>关于这篇教程</h3><p>有时候，你正在开发的平台和使用的计算机不匹配。例如，你可能想要在你的x86/Linux笔记本电脑上构建一个PowerPC/Linux应用程序。使用GNU工具包中的gcc、gas和lds工具，您可以指定并构建一个交叉编译器，它将使您能够在您的机器上为其他目标构建程序。只需多做一点工作，您甚至可以设置一个能为各种不同的目标构建应用程序的环境。在本教程中，我将介绍在你的系统上构建交叉编译器所需的整个过程。还将讨论为一系列目标构建一个完整的环境，向您展示如何与distcc和ccache工具集成，并介绍更新你的新开发平台以及更新最新版本的方法。</p>
-<p>要构建一个交叉编译器，您需要了解典型UNIX开源项目的构建过程的基本知识、一些基本的shell技能和足够的耐心。</p>
-<h3 id="预备知识"><a href="#预备知识" class="headerlink" title="预备知识"></a>预备知识</h3><p>要构建一个交叉编译器，您需要一个可工作的C编译器(gcc通常是一个好主意)。大多数基于Linux/unix的操作系统都提供了C编译器。您还需要用于构建交叉编译器的各种工具的源代码。您可以从GNU(<a href="http://www.gnu.org)下载GNU工具。">http://www.gnu.org)下载GNU工具。</a></p>
-<p>除了这些工具之外，还需要目标平台的头文件副本。对于Linux目标，使用Kernel.org(<a href="http://www.kernel.org)提供的通用Linux内核头文件。">http://www.kernel.org)提供的通用Linux内核头文件。</a></p>
-<h2 id="Section-2-交叉编译"><a href="#Section-2-交叉编译" class="headerlink" title="Section 2. 交叉编译"></a>Section 2. 交叉编译</h2><h3 id="为什么需要交叉编译"><a href="#为什么需要交叉编译" class="headerlink" title="为什么需要交叉编译"></a>为什么需要交叉编译</h3><p>并不总是在同一个平台上编写和构建应用程序。例如，对于许多嵌入式环境，用于RAM和存储的空间较小，通常小于256MB，甚至可能小于64MB。一个合理的C编译器、相关的工具和所需的C库都不适合这么小的空间，更不用说运行了。</p>
-<p>实际上，在这样的环境下开发显然更加困难。如果您使用键盘显示器访问和使用系统，使用成熟的编辑器(例如emacs)或成熟的开发环境(IDEA)是不可能的。许多嵌入式解决方案甚至没有网络访问的能力。</p>
-<p>跨编译器使您能够在一个具有开发能力的平台(主机)上进行开发，而实际构建另一个目标系统的程序。目标计算机并不需要可用，您所需要的只是一个编译器，它知道如何为您的目标平台编写机器码。交叉编译器在其他情况下也很有用。我曾经不得不在一台没有安装C编译器的计算机上工作，而且我没有获得预编译二进制文件的简单方法。但是，我确实拥有GNU编译器集合(GCC)、C库(newlib)和计算机上的二进制实用程序的必要源代码，而计算机上确实有C编译器。使用这些工具，我可以先为目标计算机构建一个交叉编译器，然后再为目标计算机构建一个本机编译器，我可以跨目标计算机复制并直接使用它。</p>
-<p>当您的计算机速度较慢且速度快得多，并且希望在几分钟内而不是几小时或几天内构建时，交叉编译器也很方便。我曾使用这种方法在一台计算机上执行升级到新软件版本的任务，在此过程中，需要花费2-3天的时间来重建所有组件——而此时计算机正在执行其已经非常重要的服务器任务。</p>
-<p>在我向您展示构建交叉编译器的细节之前，让我们仔细看看编译是如何工作的，以便您更好地理解为什么——更重要的是——交叉编译是如何工作的。</p>
-<h3 id="交叉编译如何工作"><a href="#交叉编译如何工作" class="headerlink" title="交叉编译如何工作"></a>交叉编译如何工作</h3><p>编译器的工作方式很简单。几个不同的组件一起工作， 最终目标是生成目标CPU使用的字节码。当您可以生成组装好的字节码时，您已经成功地交叉编译了。</p>
-<p>任何编译器的主要组件包括:</p>
-<ul>
-<li><strong>解析器</strong>：解析器将原始语言源代码转换为汇编语言，因为要从一种格式转换为另一种格式(C语言转换为汇编)，所以解析器需要知道目标汇编语言</li>
-<li><strong>汇编器</strong>：汇编程序将汇编语言代码转换成CPU执行的字节码</li>
-<li><strong>链接器</strong>：链接器将汇编程序生成的单个目标文件组合到可执行应用程序中。不同的操作系统和CPU组合通常使用不同的封装机制和标准。链接器需要知道该目标格式才能工作</li>
-<li><strong>标准C库</strong>：核心C函数(例如printf)在C库中提供。假设应用程序中使用了来自C库的函数，那么这个库将与链接器和源代码结合使用，生成最终的可执行文件</li>
-</ul>
-<p>在标准的、基于主机的C编译器中，每个组件都被设计成生成相应的汇编代码、字节码和主机本身的目标执行格式。在交叉编译器中，虽然构建应用程序是为了在主机上执行，但汇编语言、链接器和C库都是为目标平台和处理器设计的。例如，基于intel的<br>在Linux机器上，您可以交叉编译一个应用程序，以便汇编语言和最终的应用程序都适用于基于solarisis的SPARC主机。</p>
-<p>因此，构建交叉编译器依赖于构建C编译器套件的替代版本，该版本为目标主机生成并链接应用程序。幸运的是，因为可以编译GCC和相关的工具，所以可以构建自己的交叉编译器。</p>
-<h3 id="交叉编译器构建过程"><a href="#交叉编译器构建过程" class="headerlink" title="交叉编译器构建过程"></a>交叉编译器构建过程</h3><p>GNU工具集(即GCC)，包括C编译器、二进制实用程序和C库，都有一些好处，其中最重要的是它们是免费的、开放源码的，并且易于编译。从跨编译器的角度来看，一个更大的好处是，由于GCC已经移植到许多平台上，代码支持几种不同的CPU和平台类型。然而，也有一些限制。GCC并不支持所有处理器类型(尽管它生成的处理器类型最多)，也并不支持所有平台。配置工具会在执行时警告您这一点。</p>
-<p>要构建一个交叉编译器，您需要从GNU套件构建三个组件：</p>
-<ul>
-<li><strong>binutils</strong>：binutils包包括基本的二进制实用程序，如汇编程序、链接器和相关工具，如Size和Strip。二进制实用程序包含用于构建应用程序的核心组件和用于构建和操作目标执行格式的工具。例如，Strip程序从目标文件或应用程序中删除符号表、调试和其他“无用”信息，但要做到这一点，实用程序需要知道目标格式，以便不删除错误的信息</li>
-<li><strong>gcc</strong>：gcc是编译过程的主要组件。Gcc包含C预处理器(cpp)和转换器，后者将C代码转换为目标CPU汇编语言。Gcc还充当整个流程的接口，相应地调用cpp、翻译程序、汇编程序和链接器</li>
-<li><strong>newlib/glibc</strong>：这个库是标准的C库。Newlib是通过Redhat开发的，在为嵌入式目标设计的交叉编译器中，它对用户稍微友好一些。您也可以使用GNU库(glibc)，但我在本教程中主要使用newlib</li>
-</ul>
-<p>您还需要目标操作系统的头文件，这是必需的，以便您能够访问构建应用程序所需的所有操作系统级函数和系统调用。使用Linux，您可以相当容易地获得头文件。对于其他操作系统，您可以复制一组现有的头文件。稍后我将更详细地说明头文件。</p>
-<p>您可以选择为目标主机构建GNU调试器(gdb)。您不能构建一个调试器来在主机上运行时为目标执行代码，因为这样做需要仿真。不过，您可以为目标主机构建一个gdb可执行文件。</p>
-<h2 id="Section-3-准备"><a href="#Section-3-准备" class="headerlink" title="Section 3. 准备"></a>Section 3. 准备</h2><h3 id="目的地和共存"><a href="#目的地和共存" class="headerlink" title="目的地和共存"></a>目的地和共存</h3><p>在开始配置过程之前，需要确定将在何处安装编译器和相关工具。您有两个选择:要么将它们安装到一个完全独立的目录中，要么将它们作为现有安装的一部分安装。</p>
-<p>GNU工具集的许多好处之一是内置在安装结构中的设计，它使不同目标平台的工具和组件能够共存。安装软件后，您提供的安装前缀将根据正常布局进行组织，并为特定于目标的工具添加一个目标目录。例如，下面的结构取自我为泛型安装了交叉编译器的系统<br>PowerPC / Linux平台:</p>
-<p>drwxrwxrwx 2 root root 4096 Nov 16 16:48 bin/<br>drwxrwxrwx 2 root root 4096 Nov 17 12:53 info/<br>drwxrwxrwx 2 root root 4096 Nov 17 12:53 lib/<br>drwxrwxrwx 3 root root 4096 Nov 16 16:44 man/<br>drwxrwxrwx 4 root root 4096 Nov 16 16:48 ppc-linux/<br>drwxrwxrwx 3 root root 4096 Nov 16 16:43 share/</p>
-<p>如果你查看bin目录，你会看到每个主要的二进制实用程序都有你的build-target前缀:</p>
-<p>-rwxr-xr-x 1 root root 2108536 Nov 16 16:46 ppc-linux-addr2line<em><br>-rwxr-xr-x 2 root root 2157815 Nov 16 16:45 ppc-linux-ar</em><br>-rwxr-xr-x 2 root root 3398961 Nov 16 16:48 ppc-linux-as<em><br>-rwxr-xr-x 1 root root 2062804 Nov 16 16:47 ppc-linux-c++filt</em><br>-rwxr-xr-x 2 root root 2907348 Nov 16 16:48 ppc-linux-ld<em><br>-rwxr-xr-x 2 root root 2140893 Nov 16 16:46 ppc-linux-nm</em><br>-rwxr-xr-x 1 root root 2552661 Nov 16 16:46 ppc-linux-objcopy<em><br>-rwxr-xr-x 1 root root 2708801 Nov 16 16:45 ppc-linux-objdump</em><br>-rwxr-xr-x 2 root root 2157810 Nov 16 16:46 ppc-linux-ranlib<em><br>-rwxr-xr-x 1 root root 371010 Nov 16 16:46 ppc-linux-readelf</em><br>-rwxr-xr-x 1 root root 2008330 Nov 16 16:45 ppc-linux-size<em><br>-rwxr-xr-x 1 root root 1982880 Nov 16 16:46 ppc-linux-strings</em><br>-rwxr-xr-x 2 root root 2552660 Nov 16 16:46 ppc-linux-strip*</p>
-<p>主要工具(如gcc)只是执行编译的后台工具的包装器，因此gcc可以在为不同平台构建时确定使用哪个工具。只要您继续将gcc用于您的构建需求，以及您构建的其他库和组件使用GNU configure结构，您应该能够在标准工具集旁边安装交叉编译工具。在大多数Linux平台上，这个位置都是/usr/local。我喜欢把我的交叉编译器和宿主编译器分开，这样我就可以保持不同版本的宿主和跨编译器工具集。</p>
-<h3 id="确定您的目标平台"><a href="#确定您的目标平台" class="headerlink" title="确定您的目标平台"></a>确定您的目标平台</h3><p>准备交叉编译的下一步是确定目标平台。GNU系统中的目标有一个特定的格式，这个信息在整个构建过程中被用来识别各种工具的正确版本。因此，当您使用特定的目标运行GCC时，GCC会在目录路径中查找包含该目标规范的应用程序路径。</p>
-<p>GNU目标规范的格式是CPU-PLATFORM-OS。x86的Solaris 8是i386-pc-solaris2.8，而Macintosh OS X是powerpc-apple-darwin7.6.0。PC上的Linux具有目标i686-pc-linux-gnu。本例中的-gnu标记表示Linux操作系统使用的是gnu风格的环境。</p>
-<p>有许多方法可以识别目标，包括简单地了解或猜测目标规范。例如，大多数Linux目标可以根据它们的CPU来指定；因此，PowerPC/Linux是ppc-linux。然而，最好的方法是使用config.guess脚本，它随任何脚本一起提供GNU套件，包括我在本教程中使用的那些。要使用这个脚本，只需从一个shell运行它:</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> config.guess</span></span><br><span class="line">i686-pc-linux-gnu</span><br></pre></td></tr></table></figure>
-<p>对于那些无法运行此脚本的系统，有必要检查该文件以确定一些可能的目标。只要在目标CPU上使用grep，就可以了解所需的目标规范。出于本教程的目的，我将为i386-linux平台创建一个交叉编译器，这是一个公共目标，也是受支持程度最高的平台之一。</p>
-<h3 id="设置构建环境"><a href="#设置构建环境" class="headerlink" title="设置构建环境"></a>设置构建环境</h3><p>开始构建之前的最后一个阶段是创建一个合适的环境。您只需要创建一个简单的目录集，您可以使用它来构建不同的组件。</p>
-<p>首先，创建一个构建目录:<br><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> mkdir crossbuild</span></span><br></pre></td></tr></table></figure><br>接下来，获取gcc、binutils、gdb和newlib的最新版本，并将它们提取到目录中:<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ bunzip2 -c gcc-3.3.2.tar.bz2|tar xf -</span><br><span class="line">$ bunzip2 -c binutils-2.14.tar.bz2 |tar xf -</span><br><span class="line">$ bunzip2 -c linux-2.6.9.tar.bz2 |tar xf -</span><br><span class="line">$ bunzip2 -c gdb-6.3.tar.bz2|tar xf -</span><br><span class="line">$ bunzip2 -c glibc-2.3.tar.bz2|tar xf -</span><br></pre></td></tr></table></figure></p>
-<p>如果正在为Linux目标构建，还需要解包Linux -threads包(如果目标平台支持它)。</p>
-<p>现在，创建实际构建软件的目录。基本布局是为每个组件创建一个目录:<br><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> mkdir build-binutils build-gcc build-glibc build-gdb</span></span><br></pre></td></tr></table></figure><br>如果要创建几个不同的交叉编译器，可以考虑为每个目标创建单独的目录，然后在每个目标目录中创建上面的目录。</p>
-<p>准备工作完成后，就可以配置和构建每个工具了。</p>
-<h2 id="Section-4-配置和构建"><a href="#Section-4-配置和构建" class="headerlink" title="Section 4. 配置和构建"></a>Section 4. 配置和构建</h2><h3 id="设置环境变量"><a href="#设置环境变量" class="headerlink" title="设置环境变量"></a>设置环境变量</h3><p>重新输入所有东西是令人沮丧的，你可能会输入错误的东西。为了简化工作，我创建了几个环境变量来节省输入。我假设下面有一个类似伯恩的壳；如果使用csh、tcsh或类似的shell，可能需要使用特定于shell的技术。</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">export TARGET=i386pc</span><br><span class="line">export PREFIX=/usr/local/crossgcc</span><br><span class="line">export TARGET_PREFIX=$PREFIX/$TARGET</span><br><span class="line">export PATH=$PATH:$PREFIX/bin</span><br></pre></td></tr></table></figure>
-<h3 id="获取操作系统头文件"><a href="#获取操作系统头文件" class="headerlink" title="获取操作系统头文件"></a>获取操作系统头文件</h3><p>操作系统头对于获取编译器需要的信息是必要的，这些信息用于目标平台支持的系统函数调用。对于Linux目标，获得头文件的最佳方法是下载适当内核的最新副本。您需要对内核进行基本配置，以便生成正确的头文件供您复制，但是，您不需要构建或编译内核。对于我的示例目标i386-linux，必要的步骤如下：<br><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> <span class="built_in">cd</span> linux-2.6.9</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> make ARCH=i386 CROSS_COMPILE=i386-linux- menuconfig</span></span><br></pre></td></tr></table></figure><br>注意，上面后面的连字符不是拼写错误。通过运行上面的命令，将提示您为内核配置组件。因为您不需要过多地担心内核本身的内容，所以您只需要使用默认选项，保存配置，然后退出工具。</p>
-<p>现在，您需要将标题复制到目标目录:<br><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> mkdir -p <span class="variable">$TARGET_PREFIX</span>/include</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> cp -r include/linux <span class="variable">$TARGET_PREFIX</span>/include</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> cp -r include/asm-i386 <span class="variable">$TARGET_PREFIX</span>/include/asm</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> cp -r include/asm-generic <span class="variable">$TARGET_PREFIX</span>/include/</span></span><br></pre></td></tr></table></figure></p>
-<p>显然，我在上面的代码中基于示例目标做了一些假设。如果您正在为PowerPC目标构建，您应该已经从asm-ppc复制了文件。</p>
-<p>现在可以开始构建实用程序了。</p>
-<h3 id="构建binutils"><a href="#构建binutils" class="headerlink" title="构建binutils"></a>构建binutils</h3><p>binutils实用程序是整个系统的核心。它提供了系统其余部分所需的基本汇编器和链接器功能。每种情况的第一个阶段都是为另一种目标平台配置每个包。构建的第一步：<br><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> <span class="built_in">cd</span> build-binutils</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> ../binutils-2.14/configure --target=<span class="variable">$TARGET</span> --prefix=<span class="variable">$PREFIX</span> --disable-nls -v</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> make all</span></span><br></pre></td></tr></table></figure><br>目标和前缀应该是显而易见的。命令禁用国家语言支持(NLS)。无论如何，许多嵌入式平台都不能支持必要的表。对于大多数交叉编译器，NLS的有用性是有争议的，因为目标(通常是嵌入式设备)不能在内存中保存必要的NLS表。</p>
-<p>构建的这个阶段将需要一些时间。因为您仍然在使用主机编译器和工具进行构建，所以可以使用ccache和distcc工具来帮助加速这个过程。有关这些工具的更多信息，请参见参考资料(# Resources)部分。</p>
-<p>现在，您已经准备好构建GCC，它稍微复杂一些。</p>
-<h3 id="构建第一阶段GCC"><a href="#构建第一阶段GCC" class="headerlink" title="构建第一阶段GCC"></a>构建第一阶段GCC</h3><p>GCC比binutils更复杂，这仅仅是因为构建GCC的标准方法构建两个编译器。GCC使用GNU工具来构建一个主程序(即，第一阶段，或引导)编译器，可以构建和解析基本代码。然后GCC使用目标的可用库和头文件来构建完整的编译器。构建GCC第一阶段编译器需要对配置脚本的选项进行一些较小的更改，这样您就可以在没有适当头文件的情况下构建第一阶段编译器。严格地说，只有在构建了库之后才会有头文件。<code>with-newlib</code>命令并不一定意味着您正在使用newlib:它只是告诉配置脚本不要担心头文件。</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> <span class="built_in">cd</span> build-gcc</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> ../gcc-3.3.2/configure --target=<span class="variable">$TARGET</span> --prefix=<span class="variable">$PREFIX</span> \</span></span><br><span class="line"><span class="bash">--without-headers --with-newlib -v</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> make all-gcc</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> make install-gcc</span></span><br></pre></td></tr></table></figure>
-<p>与构建binutils一样，这个阶段需要一段时间才能完成。时间长短取决于您的主机，但是可以期望从一个小时(即使是在高速机器上)到慢速或繁忙的主机上最多5或6个小时。</p>
-<h3 id="构建newlib"><a href="#构建newlib" class="headerlink" title="构建newlib"></a>构建newlib</h3><p>您可以使用glibc的newlib。c.总的来说，newlib在嵌入式平台上表现得更好，因为newlib的设计初衷就是支持嵌入式平台。Glibc更适合linux风格的主机。</p>
-<p>在构建newlib时，需要使用目标编译器和工具构建库。当然，该库应采用目标CPU和平台的格式和语言，以便用于构建依赖于库组件的应用程序:<br><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> <span class="built_in">cd</span> build-newlib</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> CC=<span class="variable">$&#123;TARGET&#125;</span>-gcc ../newlib-1.12.0/configure --host=<span class="variable">$TARGET</span> --prefix=<span class="variable">$PREFIX</span></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> make all</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> make install</span></span><br></pre></td></tr></table></figure></p>
-<p>构建了newlib之后，您可以基于此代码创建最终的GCC来创建最终的编译器。或者，您可以使用glibc，我将在下一个面板中介绍它。</p>
-<h3 id="构建glibc"><a href="#构建glibc" class="headerlink" title="构建glibc"></a>构建glibc</h3><p>glibc包构建起来很简单；与以前版本的主要区别在于，与newlib一样，现在开始使用刚才构建的引导跨编译器。您还需要告诉configure脚本操作系统的头文件保存在哪里。最后——这是一个很大的区别——定义构建的主机而不是目标。这是因为您已经构建的GCC和二进制实用程序意味着这台机器是您的开发主机；您指定的GCC将为您生成必要的目标代码。<br><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> CC=<span class="variable">$&#123;TARGET&#125;</span>-gcc ../glibc-2.3/configure --target=<span class="variable">$TARGET</span> \</span></span><br><span class="line"><span class="bash">--prefix=<span class="variable">$PREFIX</span> --with-headers=<span class="variable">$&#123;TARGET_PREFIX&#125;</span>/include</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> make all</span></span><br></pre></td></tr></table></figure></p>
-<p>如果您想包含Linux threads选项，需要在configure脚本中添加<code>--enable-add-ons</code>选项。同样，这个过程需要一些时间来完成。从来没有人说构建交叉编译器是快速的。</p>
-<p>要安装glibc，您仍然使用make，但是您显式地设置了安装根并清空了前缀(否则，这两者将被连接起来，这不是您想要的)：<br><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> make install_root=<span class="variable">$&#123;TARGET_PREFIX&#125;</span> prefix=<span class="string">&quot;&quot;</span> install</span></span><br></pre></td></tr></table></figure></p>
-<p>最后，您可以构建gcc的最终版本，它现在使用上面的库和头信息。</p>
-<h3 id="构建最终的GCC"><a href="#构建最终的GCC" class="headerlink" title="构建最终的GCC"></a>构建最终的GCC</h3><p>最后的GCC使用您刚刚编译的头文件和库(使用您选择的目标)构建完整的gcc系统。不幸的是，这意味着在构建完整的gcc版本时，等待的时间更长。我只使用gcc构建了一个C编译器，而不是构建完整的套件。</p>
-<p>您不需要担心旧的gcc构建，因此您可以删除该内容，然后在build-gcc目录中重新启动。配置与前面的示例一样。注意，因为您正在构建一个将在这个平台上执行的工具，所以您将回到使用宿主GCC编译器，而不是之前构建的引导GCC编译器:<br><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> <span class="built_in">cd</span> build-gcc</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> rm -rf *</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> ../gcc-3.3.2/configure --enable-languages=c --target=<span class="variable">$TARGET</span> --prefix=<span class="variable">$PREFIX</span></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> make all</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> make install</span></span><br></pre></td></tr></table></figure></p>
-<p>因为您正在为目标平台构建完整的newlib和gcc组件，如果不在distcc主机列表中的其他机器上安装这些组件，就不可能使用distcc。即使使用distcc，也需要一些时间，即使是在高速机器上。如果可能的话，我倾向于让这些构建在夜间运行——部分原因是时间，但部分原因是它增加了构建机器(或多个机器)的负载，如果您的机器同时用于其他目的，这可能会很烦人。</p>
-<p>不过，当构建完成后，就可以开始使用交叉编译器来构建目标平台所需的其他应用程序和库了。</p>
-<h2 id="Section-5-安装并使用交叉编译器"><a href="#Section-5-安装并使用交叉编译器" class="headerlink" title="Section 5. 安装并使用交叉编译器"></a>Section 5. 安装并使用交叉编译器</h2><h3 id="使用你的交叉编译器"><a href="#使用你的交叉编译器" class="headerlink" title="使用你的交叉编译器"></a>使用你的交叉编译器</h3><p>实际上使用交叉编译器很容易。要编译一个简单的C文件，只需直接调用交叉编译器：<br><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> i386-linux-gcc myapp.c -o myapp</span></span><br></pre></td></tr></table></figure></p>
-<p>GCC交叉编译器的工作原理与本地版本一样:它只是为另一个平台创建了不同类型的可执行文件。这意味着您可以使用相同的命令行选项,如头和库位置、优化和调试。(请记住,您不能将不同目标平台的库连接起来,并期望它们能够工作。)在下一个面板中,我将向您展示如何使用新的跨编译器构建库和扩展。</p>
-<p>对于具有Makefile的应用程序和项目，请在要生成的命令行上指定交叉编译器。例如：<br><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> make CC=i386-linux-gcc</span></span><br></pre></td></tr></table></figure></p>
-<p>或者，更改Makefile中的CC定义。</p>
-<h3 id="编译其他工具和库"><a href="#编译其他工具和库" class="headerlink" title="编译其他工具和库"></a>编译其他工具和库</h3><p>您可能希望在目标平台上使用的任何库都需要使用交叉编译器进行编译，以便它们能够工作。对于大多数库，应用与构建自己的项目相同的基本规则。如果一个系统使用一个简单的Makefile,使用:</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> make CC=i386-linux-gcc</span></span><br></pre></td></tr></table></figure>
-<p>或者，如果使用configure脚本，在configure命令前面加上重新定义CC环境变量的前缀：<br><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">CC=i386-linux-gcc ./configure</span><br></pre></td></tr></table></figure></p>
-<p>使用gnu风格的配置脚本，您可能还需要指定主机：<br><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> ./configure --host=i386-linux</span></span><br></pre></td></tr></table></figure></p>
-<p>记住，对于库，您需要指定目标前缀，就像您在构建glibc或newlib时所做的那样。</p>
-]]></content>
-      <categories>
-        <category>嵌入式</category>
-        <category>编译</category>
-      </categories>
-      <tags>
-        <tag>译</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>杭州市地铁乘客流量预测</title>
     <url>/2019/05/28/%E6%9D%AD%E5%B7%9E%E5%B8%82%E5%9C%B0%E9%93%81%E4%B9%98%E5%AE%A2%E6%B5%81%E9%87%8F%E9%A2%84%E6%B5%8B/</url>
     <content><![CDATA[<p>(待续)</p>
@@ -3497,16 +3407,106 @@ T(n)=\left\{
       </tags>
   </entry>
   <entry>
-    <title>Python通过注册表获取串口列表</title>
-    <url>/2022/03/07/Python%E9%80%9A%E8%BF%87%E6%B3%A8%E5%86%8C%E8%A1%A8%E8%8E%B7%E5%8F%96%E4%B8%B2%E5%8F%A3%E5%88%97%E8%A1%A8/</url>
-    <content><![CDATA[<p>工作中需要使用CameraLink协议中的串口和设备进行通信，DALSA采集卡软件中可以将该串口映射到一个COM口上，但是该COM口在Windows的设备管理器中无法识别。使用Python的serial模块或者npm的serialport模块自带枚举函数都无法获取到该COM口。</p>
-<p>JavaScript中，使用以下代码定时轮询串口列表</p>
-<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">import</span> serialport <span class="keyword">from</span> <span class="string">&#x27;serialport&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">setInterval</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">    serialport.list().then(</span><br><span class="line">        <span class="function"><span class="params">ports</span> =&gt;</span> &#123;</span><br><span class="line">	        <span class="keyword">if</span> (ports.length &gt; <span class="number">0</span>) &#123;</span><br><span class="line">			    <span class="comment">/* do something */</span></span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	)</span><br><span class="line">&#125;, <span class="number">500</span>)</span><br></pre></td></tr></table></figure>
-<p>Python中，使用以下代码获取串口列表</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> serial</span><br><span class="line"><span class="keyword">import</span> serial.tools.list_ports</span><br><span class="line"></span><br><span class="line">plist = <span class="built_in">list</span>(serial.tools.list_ports.comports())</span><br><span class="line">ports = [p.name <span class="keyword">for</span> p <span class="keyword">in</span> plist]</span><br></pre></td></tr></table></figure>
-<p>以上方式都无法获取采集卡映射的COM口。Python中可以使用win32api和win32con通过枚举注册表中的信息来获取串口列表</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> win32api</span><br><span class="line"><span class="keyword">import</span> win32con</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_serial_ports</span>():</span></span><br><span class="line">    ports = []</span><br><span class="line">    key = win32api.RegOpenKey(win32con.HKEY_LOCAL_MACHINE,</span><br><span class="line">        <span class="string">&quot;HARDWARE\DEVICEMAP\SERIALCOMN&quot;</span>, <span class="number">0</span>, win32con.KEY_READ)</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        i = <span class="number">0</span></span><br><span class="line">        <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">            name, value, type1 = win32api.RegEnumValue(key, i)</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&quot;name:&#123;&#125; value:&#123;&#125;&quot;</span>.<span class="built_in">format</span>(name, value))</span><br><span class="line">            i += <span class="number">1</span></span><br><span class="line">            ports.append(value)</span><br><span class="line">    <span class="keyword">except</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;except&#x27;</span>)</span><br><span class="line">    win32api.RegCloseKey(key)</span><br><span class="line">    <span class="keyword">return</span> ports</span><br></pre></td></tr></table></figure>
-<p>使用<code>RegOpenKey</code>接口来读取键值，使用完毕后需要用<code>RegCloseKey</code>关闭。通过<code>RegEnumValue</code>来枚举串口列表，COM口名称在value字段</p>
+    <title>构建gcc交叉编译链</title>
+    <url>/2019/07/05/%E6%9E%84%E5%BB%BAgcc%E4%BA%A4%E5%8F%89%E7%BC%96%E8%AF%91%E9%93%BE/</url>
+    <content><![CDATA[<h1 id="构建gcc交叉编译链"><a href="#构建gcc交叉编译链" class="headerlink" title="构建gcc交叉编译链"></a>构建gcc交叉编译链</h1><p>本文翻译“Cross-compilation Tool Making”</p>
+<h2 id="download"><a href="#download" class="headerlink" title="download"></a>download</h2><ul>
+<li>Binutils: <a href="http://ftp.gnu.org/gnu/binutils/">Index of /gnu/binutils</a></li>
+<li>gcc: <a href="http://mirrors.kernel.org/gnu/gcc">Index of /gnu/gcc/</a></li>
+<li>Glibc &amp; Glibc-ports: <a href="http://ftp.gnu.org/gnu/glibc/">Index of /gnu/glibc</a></li>
+<li>mpfr-2.4.2: wget ftp://gcc.gnu.org/pub/gcc/infrastructure/mpfr-2.4.2.tar.bz2</li>
+<li>gmp-4.3.2: wget ftp://gcc.gnu.org/pub/gcc/infrastructure/gmp-4.3.2.tar.bz2</li>
+<li>mpc-0.8.1: wget ftp://gcc.gnu.org/pub/gcc/infrastructure/mpc-0.8.1.tar.gz</li>
+</ul>
+<h2 id="dir"><a href="#dir" class="headerlink" title="dir"></a>dir</h2><ul>
+<li>setup-dir: download files</li>
+<li>src-dir: unzip files</li>
+</ul>
+<h2 id="Binutils-install"><a href="#Binutils-install" class="headerlink" title="Binutils install"></a>Binutils install</h2><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">./configure --target=$TARGET --prefix=$PREFIX</span><br></pre></td></tr></table></figure>
+<h2 id="gcc"><a href="#gcc" class="headerlink" title="gcc"></a>gcc</h2><p><a href="https://blog.csdn.net/w36680130/article/details/81740046">Linux ARM交叉编译工具链制作过程 - w36680130的博客 - CSDN博客</a></p>
+<h1 id="Build-a-GCC-based-cross-compiler-for-Linux"><a href="#Build-a-GCC-based-cross-compiler-for-Linux" class="headerlink" title="Build a GCC-based cross compiler for Linux"></a>Build a GCC-based cross compiler for Linux</h1><h2 id="Section-1-开始之前"><a href="#Section-1-开始之前" class="headerlink" title="Section 1. 开始之前"></a>Section 1. 开始之前</h2><h3 id="关于这篇教程"><a href="#关于这篇教程" class="headerlink" title="关于这篇教程"></a>关于这篇教程</h3><p>有时候，你正在开发的平台和使用的计算机不匹配。例如，你可能想要在你的x86/Linux笔记本电脑上构建一个PowerPC/Linux应用程序。使用GNU工具包中的gcc、gas和lds工具，您可以指定并构建一个交叉编译器，它将使您能够在您的机器上为其他目标构建程序。只需多做一点工作，您甚至可以设置一个能为各种不同的目标构建应用程序的环境。在本教程中，我将介绍在你的系统上构建交叉编译器所需的整个过程。还将讨论为一系列目标构建一个完整的环境，向您展示如何与distcc和ccache工具集成，并介绍更新你的新开发平台以及更新最新版本的方法。</p>
+<p>要构建一个交叉编译器，您需要了解典型UNIX开源项目的构建过程的基本知识、一些基本的shell技能和足够的耐心。</p>
+<h3 id="预备知识"><a href="#预备知识" class="headerlink" title="预备知识"></a>预备知识</h3><p>要构建一个交叉编译器，您需要一个可工作的C编译器(gcc通常是一个好主意)。大多数基于Linux/unix的操作系统都提供了C编译器。您还需要用于构建交叉编译器的各种工具的源代码。您可以从GNU(<a href="http://www.gnu.org)下载GNU工具。">http://www.gnu.org)下载GNU工具。</a></p>
+<p>除了这些工具之外，还需要目标平台的头文件副本。对于Linux目标，使用Kernel.org(<a href="http://www.kernel.org)提供的通用Linux内核头文件。">http://www.kernel.org)提供的通用Linux内核头文件。</a></p>
+<h2 id="Section-2-交叉编译"><a href="#Section-2-交叉编译" class="headerlink" title="Section 2. 交叉编译"></a>Section 2. 交叉编译</h2><h3 id="为什么需要交叉编译"><a href="#为什么需要交叉编译" class="headerlink" title="为什么需要交叉编译"></a>为什么需要交叉编译</h3><p>并不总是在同一个平台上编写和构建应用程序。例如，对于许多嵌入式环境，用于RAM和存储的空间较小，通常小于256MB，甚至可能小于64MB。一个合理的C编译器、相关的工具和所需的C库都不适合这么小的空间，更不用说运行了。</p>
+<p>实际上，在这样的环境下开发显然更加困难。如果您使用键盘显示器访问和使用系统，使用成熟的编辑器(例如emacs)或成熟的开发环境(IDEA)是不可能的。许多嵌入式解决方案甚至没有网络访问的能力。</p>
+<p>跨编译器使您能够在一个具有开发能力的平台(主机)上进行开发，而实际构建另一个目标系统的程序。目标计算机并不需要可用，您所需要的只是一个编译器，它知道如何为您的目标平台编写机器码。交叉编译器在其他情况下也很有用。我曾经不得不在一台没有安装C编译器的计算机上工作，而且我没有获得预编译二进制文件的简单方法。但是，我确实拥有GNU编译器集合(GCC)、C库(newlib)和计算机上的二进制实用程序的必要源代码，而计算机上确实有C编译器。使用这些工具，我可以先为目标计算机构建一个交叉编译器，然后再为目标计算机构建一个本机编译器，我可以跨目标计算机复制并直接使用它。</p>
+<p>当您的计算机速度较慢且速度快得多，并且希望在几分钟内而不是几小时或几天内构建时，交叉编译器也很方便。我曾使用这种方法在一台计算机上执行升级到新软件版本的任务，在此过程中，需要花费2-3天的时间来重建所有组件——而此时计算机正在执行其已经非常重要的服务器任务。</p>
+<p>在我向您展示构建交叉编译器的细节之前，让我们仔细看看编译是如何工作的，以便您更好地理解为什么——更重要的是——交叉编译是如何工作的。</p>
+<h3 id="交叉编译如何工作"><a href="#交叉编译如何工作" class="headerlink" title="交叉编译如何工作"></a>交叉编译如何工作</h3><p>编译器的工作方式很简单。几个不同的组件一起工作， 最终目标是生成目标CPU使用的字节码。当您可以生成组装好的字节码时，您已经成功地交叉编译了。</p>
+<p>任何编译器的主要组件包括:</p>
+<ul>
+<li><strong>解析器</strong>：解析器将原始语言源代码转换为汇编语言，因为要从一种格式转换为另一种格式(C语言转换为汇编)，所以解析器需要知道目标汇编语言</li>
+<li><strong>汇编器</strong>：汇编程序将汇编语言代码转换成CPU执行的字节码</li>
+<li><strong>链接器</strong>：链接器将汇编程序生成的单个目标文件组合到可执行应用程序中。不同的操作系统和CPU组合通常使用不同的封装机制和标准。链接器需要知道该目标格式才能工作</li>
+<li><strong>标准C库</strong>：核心C函数(例如printf)在C库中提供。假设应用程序中使用了来自C库的函数，那么这个库将与链接器和源代码结合使用，生成最终的可执行文件</li>
+</ul>
+<p>在标准的、基于主机的C编译器中，每个组件都被设计成生成相应的汇编代码、字节码和主机本身的目标执行格式。在交叉编译器中，虽然构建应用程序是为了在主机上执行，但汇编语言、链接器和C库都是为目标平台和处理器设计的。例如，基于intel的<br>在Linux机器上，您可以交叉编译一个应用程序，以便汇编语言和最终的应用程序都适用于基于solarisis的SPARC主机。</p>
+<p>因此，构建交叉编译器依赖于构建C编译器套件的替代版本，该版本为目标主机生成并链接应用程序。幸运的是，因为可以编译GCC和相关的工具，所以可以构建自己的交叉编译器。</p>
+<h3 id="交叉编译器构建过程"><a href="#交叉编译器构建过程" class="headerlink" title="交叉编译器构建过程"></a>交叉编译器构建过程</h3><p>GNU工具集(即GCC)，包括C编译器、二进制实用程序和C库，都有一些好处，其中最重要的是它们是免费的、开放源码的，并且易于编译。从跨编译器的角度来看，一个更大的好处是，由于GCC已经移植到许多平台上，代码支持几种不同的CPU和平台类型。然而，也有一些限制。GCC并不支持所有处理器类型(尽管它生成的处理器类型最多)，也并不支持所有平台。配置工具会在执行时警告您这一点。</p>
+<p>要构建一个交叉编译器，您需要从GNU套件构建三个组件：</p>
+<ul>
+<li><strong>binutils</strong>：binutils包包括基本的二进制实用程序，如汇编程序、链接器和相关工具，如Size和Strip。二进制实用程序包含用于构建应用程序的核心组件和用于构建和操作目标执行格式的工具。例如，Strip程序从目标文件或应用程序中删除符号表、调试和其他“无用”信息，但要做到这一点，实用程序需要知道目标格式，以便不删除错误的信息</li>
+<li><strong>gcc</strong>：gcc是编译过程的主要组件。Gcc包含C预处理器(cpp)和转换器，后者将C代码转换为目标CPU汇编语言。Gcc还充当整个流程的接口，相应地调用cpp、翻译程序、汇编程序和链接器</li>
+<li><strong>newlib/glibc</strong>：这个库是标准的C库。Newlib是通过Redhat开发的，在为嵌入式目标设计的交叉编译器中，它对用户稍微友好一些。您也可以使用GNU库(glibc)，但我在本教程中主要使用newlib</li>
+</ul>
+<p>您还需要目标操作系统的头文件，这是必需的，以便您能够访问构建应用程序所需的所有操作系统级函数和系统调用。使用Linux，您可以相当容易地获得头文件。对于其他操作系统，您可以复制一组现有的头文件。稍后我将更详细地说明头文件。</p>
+<p>您可以选择为目标主机构建GNU调试器(gdb)。您不能构建一个调试器来在主机上运行时为目标执行代码，因为这样做需要仿真。不过，您可以为目标主机构建一个gdb可执行文件。</p>
+<h2 id="Section-3-准备"><a href="#Section-3-准备" class="headerlink" title="Section 3. 准备"></a>Section 3. 准备</h2><h3 id="目的地和共存"><a href="#目的地和共存" class="headerlink" title="目的地和共存"></a>目的地和共存</h3><p>在开始配置过程之前，需要确定将在何处安装编译器和相关工具。您有两个选择:要么将它们安装到一个完全独立的目录中，要么将它们作为现有安装的一部分安装。</p>
+<p>GNU工具集的许多好处之一是内置在安装结构中的设计，它使不同目标平台的工具和组件能够共存。安装软件后，您提供的安装前缀将根据正常布局进行组织，并为特定于目标的工具添加一个目标目录。例如，下面的结构取自我为泛型安装了交叉编译器的系统<br>PowerPC / Linux平台:</p>
+<p>drwxrwxrwx 2 root root 4096 Nov 16 16:48 bin/<br>drwxrwxrwx 2 root root 4096 Nov 17 12:53 info/<br>drwxrwxrwx 2 root root 4096 Nov 17 12:53 lib/<br>drwxrwxrwx 3 root root 4096 Nov 16 16:44 man/<br>drwxrwxrwx 4 root root 4096 Nov 16 16:48 ppc-linux/<br>drwxrwxrwx 3 root root 4096 Nov 16 16:43 share/</p>
+<p>如果你查看bin目录，你会看到每个主要的二进制实用程序都有你的build-target前缀:</p>
+<p>-rwxr-xr-x 1 root root 2108536 Nov 16 16:46 ppc-linux-addr2line<em><br>-rwxr-xr-x 2 root root 2157815 Nov 16 16:45 ppc-linux-ar</em><br>-rwxr-xr-x 2 root root 3398961 Nov 16 16:48 ppc-linux-as<em><br>-rwxr-xr-x 1 root root 2062804 Nov 16 16:47 ppc-linux-c++filt</em><br>-rwxr-xr-x 2 root root 2907348 Nov 16 16:48 ppc-linux-ld<em><br>-rwxr-xr-x 2 root root 2140893 Nov 16 16:46 ppc-linux-nm</em><br>-rwxr-xr-x 1 root root 2552661 Nov 16 16:46 ppc-linux-objcopy<em><br>-rwxr-xr-x 1 root root 2708801 Nov 16 16:45 ppc-linux-objdump</em><br>-rwxr-xr-x 2 root root 2157810 Nov 16 16:46 ppc-linux-ranlib<em><br>-rwxr-xr-x 1 root root 371010 Nov 16 16:46 ppc-linux-readelf</em><br>-rwxr-xr-x 1 root root 2008330 Nov 16 16:45 ppc-linux-size<em><br>-rwxr-xr-x 1 root root 1982880 Nov 16 16:46 ppc-linux-strings</em><br>-rwxr-xr-x 2 root root 2552660 Nov 16 16:46 ppc-linux-strip*</p>
+<p>主要工具(如gcc)只是执行编译的后台工具的包装器，因此gcc可以在为不同平台构建时确定使用哪个工具。只要您继续将gcc用于您的构建需求，以及您构建的其他库和组件使用GNU configure结构，您应该能够在标准工具集旁边安装交叉编译工具。在大多数Linux平台上，这个位置都是/usr/local。我喜欢把我的交叉编译器和宿主编译器分开，这样我就可以保持不同版本的宿主和跨编译器工具集。</p>
+<h3 id="确定您的目标平台"><a href="#确定您的目标平台" class="headerlink" title="确定您的目标平台"></a>确定您的目标平台</h3><p>准备交叉编译的下一步是确定目标平台。GNU系统中的目标有一个特定的格式，这个信息在整个构建过程中被用来识别各种工具的正确版本。因此，当您使用特定的目标运行GCC时，GCC会在目录路径中查找包含该目标规范的应用程序路径。</p>
+<p>GNU目标规范的格式是CPU-PLATFORM-OS。x86的Solaris 8是i386-pc-solaris2.8，而Macintosh OS X是powerpc-apple-darwin7.6.0。PC上的Linux具有目标i686-pc-linux-gnu。本例中的-gnu标记表示Linux操作系统使用的是gnu风格的环境。</p>
+<p>有许多方法可以识别目标，包括简单地了解或猜测目标规范。例如，大多数Linux目标可以根据它们的CPU来指定；因此，PowerPC/Linux是ppc-linux。然而，最好的方法是使用config.guess脚本，它随任何脚本一起提供GNU套件，包括我在本教程中使用的那些。要使用这个脚本，只需从一个shell运行它:</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> config.guess</span></span><br><span class="line">i686-pc-linux-gnu</span><br></pre></td></tr></table></figure>
+<p>对于那些无法运行此脚本的系统，有必要检查该文件以确定一些可能的目标。只要在目标CPU上使用grep，就可以了解所需的目标规范。出于本教程的目的，我将为i386-linux平台创建一个交叉编译器，这是一个公共目标，也是受支持程度最高的平台之一。</p>
+<h3 id="设置构建环境"><a href="#设置构建环境" class="headerlink" title="设置构建环境"></a>设置构建环境</h3><p>开始构建之前的最后一个阶段是创建一个合适的环境。您只需要创建一个简单的目录集，您可以使用它来构建不同的组件。</p>
+<p>首先，创建一个构建目录:<br><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> mkdir crossbuild</span></span><br></pre></td></tr></table></figure><br>接下来，获取gcc、binutils、gdb和newlib的最新版本，并将它们提取到目录中:<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ bunzip2 -c gcc-3.3.2.tar.bz2|tar xf -</span><br><span class="line">$ bunzip2 -c binutils-2.14.tar.bz2 |tar xf -</span><br><span class="line">$ bunzip2 -c linux-2.6.9.tar.bz2 |tar xf -</span><br><span class="line">$ bunzip2 -c gdb-6.3.tar.bz2|tar xf -</span><br><span class="line">$ bunzip2 -c glibc-2.3.tar.bz2|tar xf -</span><br></pre></td></tr></table></figure></p>
+<p>如果正在为Linux目标构建，还需要解包Linux -threads包(如果目标平台支持它)。</p>
+<p>现在，创建实际构建软件的目录。基本布局是为每个组件创建一个目录:<br><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> mkdir build-binutils build-gcc build-glibc build-gdb</span></span><br></pre></td></tr></table></figure><br>如果要创建几个不同的交叉编译器，可以考虑为每个目标创建单独的目录，然后在每个目标目录中创建上面的目录。</p>
+<p>准备工作完成后，就可以配置和构建每个工具了。</p>
+<h2 id="Section-4-配置和构建"><a href="#Section-4-配置和构建" class="headerlink" title="Section 4. 配置和构建"></a>Section 4. 配置和构建</h2><h3 id="设置环境变量"><a href="#设置环境变量" class="headerlink" title="设置环境变量"></a>设置环境变量</h3><p>重新输入所有东西是令人沮丧的，你可能会输入错误的东西。为了简化工作，我创建了几个环境变量来节省输入。我假设下面有一个类似伯恩的壳；如果使用csh、tcsh或类似的shell，可能需要使用特定于shell的技术。</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">export TARGET=i386pc</span><br><span class="line">export PREFIX=/usr/local/crossgcc</span><br><span class="line">export TARGET_PREFIX=$PREFIX/$TARGET</span><br><span class="line">export PATH=$PATH:$PREFIX/bin</span><br></pre></td></tr></table></figure>
+<h3 id="获取操作系统头文件"><a href="#获取操作系统头文件" class="headerlink" title="获取操作系统头文件"></a>获取操作系统头文件</h3><p>操作系统头对于获取编译器需要的信息是必要的，这些信息用于目标平台支持的系统函数调用。对于Linux目标，获得头文件的最佳方法是下载适当内核的最新副本。您需要对内核进行基本配置，以便生成正确的头文件供您复制，但是，您不需要构建或编译内核。对于我的示例目标i386-linux，必要的步骤如下：<br><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> <span class="built_in">cd</span> linux-2.6.9</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> make ARCH=i386 CROSS_COMPILE=i386-linux- menuconfig</span></span><br></pre></td></tr></table></figure><br>注意，上面后面的连字符不是拼写错误。通过运行上面的命令，将提示您为内核配置组件。因为您不需要过多地担心内核本身的内容，所以您只需要使用默认选项，保存配置，然后退出工具。</p>
+<p>现在，您需要将标题复制到目标目录:<br><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> mkdir -p <span class="variable">$TARGET_PREFIX</span>/include</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> cp -r include/linux <span class="variable">$TARGET_PREFIX</span>/include</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> cp -r include/asm-i386 <span class="variable">$TARGET_PREFIX</span>/include/asm</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> cp -r include/asm-generic <span class="variable">$TARGET_PREFIX</span>/include/</span></span><br></pre></td></tr></table></figure></p>
+<p>显然，我在上面的代码中基于示例目标做了一些假设。如果您正在为PowerPC目标构建，您应该已经从asm-ppc复制了文件。</p>
+<p>现在可以开始构建实用程序了。</p>
+<h3 id="构建binutils"><a href="#构建binutils" class="headerlink" title="构建binutils"></a>构建binutils</h3><p>binutils实用程序是整个系统的核心。它提供了系统其余部分所需的基本汇编器和链接器功能。每种情况的第一个阶段都是为另一种目标平台配置每个包。构建的第一步：<br><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> <span class="built_in">cd</span> build-binutils</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> ../binutils-2.14/configure --target=<span class="variable">$TARGET</span> --prefix=<span class="variable">$PREFIX</span> --disable-nls -v</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> make all</span></span><br></pre></td></tr></table></figure><br>目标和前缀应该是显而易见的。命令禁用国家语言支持(NLS)。无论如何，许多嵌入式平台都不能支持必要的表。对于大多数交叉编译器，NLS的有用性是有争议的，因为目标(通常是嵌入式设备)不能在内存中保存必要的NLS表。</p>
+<p>构建的这个阶段将需要一些时间。因为您仍然在使用主机编译器和工具进行构建，所以可以使用ccache和distcc工具来帮助加速这个过程。有关这些工具的更多信息，请参见参考资料(# Resources)部分。</p>
+<p>现在，您已经准备好构建GCC，它稍微复杂一些。</p>
+<h3 id="构建第一阶段GCC"><a href="#构建第一阶段GCC" class="headerlink" title="构建第一阶段GCC"></a>构建第一阶段GCC</h3><p>GCC比binutils更复杂，这仅仅是因为构建GCC的标准方法构建两个编译器。GCC使用GNU工具来构建一个主程序(即，第一阶段，或引导)编译器，可以构建和解析基本代码。然后GCC使用目标的可用库和头文件来构建完整的编译器。构建GCC第一阶段编译器需要对配置脚本的选项进行一些较小的更改，这样您就可以在没有适当头文件的情况下构建第一阶段编译器。严格地说，只有在构建了库之后才会有头文件。<code>with-newlib</code>命令并不一定意味着您正在使用newlib:它只是告诉配置脚本不要担心头文件。</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> <span class="built_in">cd</span> build-gcc</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> ../gcc-3.3.2/configure --target=<span class="variable">$TARGET</span> --prefix=<span class="variable">$PREFIX</span> \</span></span><br><span class="line"><span class="bash">--without-headers --with-newlib -v</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> make all-gcc</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> make install-gcc</span></span><br></pre></td></tr></table></figure>
+<p>与构建binutils一样，这个阶段需要一段时间才能完成。时间长短取决于您的主机，但是可以期望从一个小时(即使是在高速机器上)到慢速或繁忙的主机上最多5或6个小时。</p>
+<h3 id="构建newlib"><a href="#构建newlib" class="headerlink" title="构建newlib"></a>构建newlib</h3><p>您可以使用glibc的newlib。c.总的来说，newlib在嵌入式平台上表现得更好，因为newlib的设计初衷就是支持嵌入式平台。Glibc更适合linux风格的主机。</p>
+<p>在构建newlib时，需要使用目标编译器和工具构建库。当然，该库应采用目标CPU和平台的格式和语言，以便用于构建依赖于库组件的应用程序:<br><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> <span class="built_in">cd</span> build-newlib</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> CC=<span class="variable">$&#123;TARGET&#125;</span>-gcc ../newlib-1.12.0/configure --host=<span class="variable">$TARGET</span> --prefix=<span class="variable">$PREFIX</span></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> make all</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> make install</span></span><br></pre></td></tr></table></figure></p>
+<p>构建了newlib之后，您可以基于此代码创建最终的GCC来创建最终的编译器。或者，您可以使用glibc，我将在下一个面板中介绍它。</p>
+<h3 id="构建glibc"><a href="#构建glibc" class="headerlink" title="构建glibc"></a>构建glibc</h3><p>glibc包构建起来很简单；与以前版本的主要区别在于，与newlib一样，现在开始使用刚才构建的引导跨编译器。您还需要告诉configure脚本操作系统的头文件保存在哪里。最后——这是一个很大的区别——定义构建的主机而不是目标。这是因为您已经构建的GCC和二进制实用程序意味着这台机器是您的开发主机；您指定的GCC将为您生成必要的目标代码。<br><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> CC=<span class="variable">$&#123;TARGET&#125;</span>-gcc ../glibc-2.3/configure --target=<span class="variable">$TARGET</span> \</span></span><br><span class="line"><span class="bash">--prefix=<span class="variable">$PREFIX</span> --with-headers=<span class="variable">$&#123;TARGET_PREFIX&#125;</span>/include</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> make all</span></span><br></pre></td></tr></table></figure></p>
+<p>如果您想包含Linux threads选项，需要在configure脚本中添加<code>--enable-add-ons</code>选项。同样，这个过程需要一些时间来完成。从来没有人说构建交叉编译器是快速的。</p>
+<p>要安装glibc，您仍然使用make，但是您显式地设置了安装根并清空了前缀(否则，这两者将被连接起来，这不是您想要的)：<br><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> make install_root=<span class="variable">$&#123;TARGET_PREFIX&#125;</span> prefix=<span class="string">&quot;&quot;</span> install</span></span><br></pre></td></tr></table></figure></p>
+<p>最后，您可以构建gcc的最终版本，它现在使用上面的库和头信息。</p>
+<h3 id="构建最终的GCC"><a href="#构建最终的GCC" class="headerlink" title="构建最终的GCC"></a>构建最终的GCC</h3><p>最后的GCC使用您刚刚编译的头文件和库(使用您选择的目标)构建完整的gcc系统。不幸的是，这意味着在构建完整的gcc版本时，等待的时间更长。我只使用gcc构建了一个C编译器，而不是构建完整的套件。</p>
+<p>您不需要担心旧的gcc构建，因此您可以删除该内容，然后在build-gcc目录中重新启动。配置与前面的示例一样。注意，因为您正在构建一个将在这个平台上执行的工具，所以您将回到使用宿主GCC编译器，而不是之前构建的引导GCC编译器:<br><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> <span class="built_in">cd</span> build-gcc</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> rm -rf *</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> ../gcc-3.3.2/configure --enable-languages=c --target=<span class="variable">$TARGET</span> --prefix=<span class="variable">$PREFIX</span></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> make all</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> make install</span></span><br></pre></td></tr></table></figure></p>
+<p>因为您正在为目标平台构建完整的newlib和gcc组件，如果不在distcc主机列表中的其他机器上安装这些组件，就不可能使用distcc。即使使用distcc，也需要一些时间，即使是在高速机器上。如果可能的话，我倾向于让这些构建在夜间运行——部分原因是时间，但部分原因是它增加了构建机器(或多个机器)的负载，如果您的机器同时用于其他目的，这可能会很烦人。</p>
+<p>不过，当构建完成后，就可以开始使用交叉编译器来构建目标平台所需的其他应用程序和库了。</p>
+<h2 id="Section-5-安装并使用交叉编译器"><a href="#Section-5-安装并使用交叉编译器" class="headerlink" title="Section 5. 安装并使用交叉编译器"></a>Section 5. 安装并使用交叉编译器</h2><h3 id="使用你的交叉编译器"><a href="#使用你的交叉编译器" class="headerlink" title="使用你的交叉编译器"></a>使用你的交叉编译器</h3><p>实际上使用交叉编译器很容易。要编译一个简单的C文件，只需直接调用交叉编译器：<br><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> i386-linux-gcc myapp.c -o myapp</span></span><br></pre></td></tr></table></figure></p>
+<p>GCC交叉编译器的工作原理与本地版本一样:它只是为另一个平台创建了不同类型的可执行文件。这意味着您可以使用相同的命令行选项,如头和库位置、优化和调试。(请记住,您不能将不同目标平台的库连接起来,并期望它们能够工作。)在下一个面板中,我将向您展示如何使用新的跨编译器构建库和扩展。</p>
+<p>对于具有Makefile的应用程序和项目，请在要生成的命令行上指定交叉编译器。例如：<br><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> make CC=i386-linux-gcc</span></span><br></pre></td></tr></table></figure></p>
+<p>或者，更改Makefile中的CC定义。</p>
+<h3 id="编译其他工具和库"><a href="#编译其他工具和库" class="headerlink" title="编译其他工具和库"></a>编译其他工具和库</h3><p>您可能希望在目标平台上使用的任何库都需要使用交叉编译器进行编译，以便它们能够工作。对于大多数库，应用与构建自己的项目相同的基本规则。如果一个系统使用一个简单的Makefile,使用:</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> make CC=i386-linux-gcc</span></span><br></pre></td></tr></table></figure>
+<p>或者，如果使用configure脚本，在configure命令前面加上重新定义CC环境变量的前缀：<br><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">CC=i386-linux-gcc ./configure</span><br></pre></td></tr></table></figure></p>
+<p>使用gnu风格的配置脚本，您可能还需要指定主机：<br><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> ./configure --host=i386-linux</span></span><br></pre></td></tr></table></figure></p>
+<p>记住，对于库，您需要指定目标前缀，就像您在构建glibc或newlib时所做的那样。</p>
 ]]></content>
+      <categories>
+        <category>嵌入式</category>
+        <category>编译</category>
+      </categories>
+      <tags>
+        <tag>译</tag>
+      </tags>
   </entry>
 </search>
