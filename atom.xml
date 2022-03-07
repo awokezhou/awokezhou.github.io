@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2021-11-17T02:43:21.364Z</updated>
+  <updated>2022-03-07T08:43:15.640Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -15,6 +15,27 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Python通过注册表获取串口列表</title>
+    <link href="http://yoursite.com/2022/03/07/Python%E9%80%9A%E8%BF%87%E6%B3%A8%E5%86%8C%E8%A1%A8%E8%8E%B7%E5%8F%96%E4%B8%B2%E5%8F%A3%E5%88%97%E8%A1%A8/"/>
+    <id>http://yoursite.com/2022/03/07/Python通过注册表获取串口列表/</id>
+    <published>2022-03-07T08:24:36.000Z</published>
+    <updated>2022-03-07T08:43:15.640Z</updated>
+    
+    <content type="html"><![CDATA[<p>工作中需要使用CameraLink协议中的串口和设备进行通信，DALSA采集卡软件中可以将该串口映射到一个COM口上，但是该COM口在Windows的设备管理器中无法识别。使用Python的serial模块或者npm的serialport模块自带枚举函数都无法获取到该COM口。</p><p>JavaScript中，使用以下代码定时轮询串口列表</p><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">import</span> serialport <span class="keyword">from</span> <span class="string">&#x27;serialport&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">setInterval</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">    serialport.list().then(</span><br><span class="line">        <span class="function"><span class="params">ports</span> =&gt;</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (ports.length &gt; <span class="number">0</span>) &#123;</span><br><span class="line">    <span class="comment">/* do something */</span></span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br><span class="line">)</span><br><span class="line">&#125;, <span class="number">500</span>)</span><br></pre></td></tr></table></figure><p>Python中，使用以下代码获取串口列表</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> serial</span><br><span class="line"><span class="keyword">import</span> serial.tools.list_ports</span><br><span class="line"></span><br><span class="line">plist = <span class="built_in">list</span>(serial.tools.list_ports.comports())</span><br><span class="line">ports = [p.name <span class="keyword">for</span> p <span class="keyword">in</span> plist]</span><br></pre></td></tr></table></figure><p>以上方式都无法获取采集卡映射的COM口。Python中可以使用win32api和win32con通过枚举注册表中的信息来获取串口列表</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> win32api</span><br><span class="line"><span class="keyword">import</span> win32con</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_serial_ports</span>():</span></span><br><span class="line">    ports = []</span><br><span class="line">    key = win32api.RegOpenKey(win32con.HKEY_LOCAL_MACHINE,</span><br><span class="line">        <span class="string">&quot;HARDWARE\DEVICEMAP\SERIALCOMN&quot;</span>, <span class="number">0</span>, win32con.KEY_READ)</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        i = <span class="number">0</span></span><br><span class="line">        <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">            name, value, type1 = win32api.RegEnumValue(key, i)</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&quot;name:&#123;&#125; value:&#123;&#125;&quot;</span>.<span class="built_in">format</span>(name, value))</span><br><span class="line">            i += <span class="number">1</span></span><br><span class="line">            ports.append(value)</span><br><span class="line">    <span class="keyword">except</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;except&#x27;</span>)</span><br><span class="line">    win32api.RegCloseKey(key)</span><br><span class="line">    <span class="keyword">return</span> ports</span><br></pre></td></tr></table></figure><p>使用<code>RegOpenKey</code>接口来读取键值，使用完毕后需要用<code>RegCloseKey</code>关闭。通过<code>RegEnumValue</code>来枚举串口列表，COM口名称在value字段</p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;p&gt;工作中需要使用CameraLink协议中的串口和设备进行通信，DALSA采集卡软件中可以将该串口映射到一个COM口上，但是该COM口在Windows的设备管理器中无法识别。使用Python的serial模块或者npm的serialport模块自带枚举函数都无法获取到该COM
+      
+    
+    </summary>
+    
+    
+  </entry>
   
   <entry>
     <title>Microblaze优化选项</title>
@@ -523,29 +544,6 @@
       <category term="Program Skill" scheme="http://yoursite.com/tags/Program-Skill/"/>
     
       <category term="C" scheme="http://yoursite.com/tags/C/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>每月见闻201911</title>
-    <link href="http://yoursite.com/2019/11/15/%E6%AF%8F%E6%9C%88%E8%A7%81%E9%97%BB201911/"/>
-    <id>http://yoursite.com/2019/11/15/每月见闻201911/</id>
-    <published>2019-11-15T01:17:19.000Z</published>
-    <updated>2021-08-13T02:24:21.793Z</updated>
-    
-    <content type="html"><![CDATA[<h1 id="技术"><a href="#技术" class="headerlink" title="技术"></a>技术</h1><h2 id="Home-Assistant"><a href="#Home-Assistant" class="headerlink" title="Home Assistant"></a>Home Assistant</h2><p>Home Assistant是一款基于Python的智能家居开源系统，支持众多品牌的智能家居设备，可以轻松实现设备的语音控制、自动化等，支持米家生态链、苹果HomeKit，还支持树莓派</p><ul><li><a href="https://home-assistant.cc/hassio/">Home Assistant中文文档</a></li><li><a href="https://github.com/home-assistant/home-assistant">Home Assistant github</a></li><li><a href="https://www.hachina.io/">Home Assistant中文网</a></li></ul><h2 id="TED-量子锁定"><a href="#TED-量子锁定" class="headerlink" title="TED-量子锁定"></a><a href="[https://www.bilibili.com/video/av77305418?from=search&amp;seid=9964401553436422127](https://www.bilibili.com/video/av77305418?from=search&amp;seid=9964401553436422127">TED-量子锁定</a></h2><p>由于若干技术的突破，研究发现在某种环境下，某些超导体会发生部分磁通力被束缚在超导体内部，导致周围空间和超导体内部的磁场构成一个锁定的磁力分布，使得超导体在三维空间上姿态锁定，且这种状态下的物体可以承重自身70000倍重力的物体，该研究可应用于发展新型零摩擦的交通工具，这种零摩擦并非是磁悬浮的互斥力，而是磁力锁定</p><h1 id="新闻"><a href="#新闻" class="headerlink" title="新闻"></a>新闻</h1><h2 id="知乎-华为251"><a href="#知乎-华为251" class="headerlink" title="知乎-华为251"></a><a href="[https://zhuanlan.zhihu.com/p/94561056](https://zhuanlan.zhihu.com/p/94561056">知乎-华为251</a></h2><p>最近接连发生了两起大公司内中龄员工被辞退纠纷事件，一个是网易辞退身患绝症的老员工并叫保安驱赶，一个是华为员工因向上举报部门业务造假被诬告敲诈勒索拘留251天</p>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        &lt;h1 id=&quot;技术&quot;&gt;&lt;a href=&quot;#技术&quot; class=&quot;headerlink&quot; title=&quot;技术&quot;&gt;&lt;/a&gt;技术&lt;/h1&gt;&lt;h2 id=&quot;Home-Assistant&quot;&gt;&lt;a href=&quot;#Home-Assistant&quot; class=&quot;headerlink&quot; titl
-      
-    
-    </summary>
-    
-      <category term="每月见闻" scheme="http://yoursite.com/categories/%E6%AF%8F%E6%9C%88%E8%A7%81%E9%97%BB/"/>
-    
     
   </entry>
   
