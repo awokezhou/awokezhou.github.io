@@ -769,6 +769,139 @@ C = \frac{1}{2n}\sum_{x}\vert{y(x) - a^{L}(x)}\vert^2</script><p>其中$n$是训
       </tags>
   </entry>
   <entry>
+    <title>Python+Sphinx+reStructuredText编写软件发布文档</title>
+    <url>/2022/01/22/Python-Sphinx-reStructuredText%E7%BC%96%E5%86%99%E8%BD%AF%E4%BB%B6%E5%8F%91%E5%B8%83%E6%96%87%E6%A1%A3/</url>
+    <content><![CDATA[<p>很多开源项目或者软件都会提供一个类似如下形式的网页文档，页面看上去很清晰整洁，左侧可以方便的查看整个文档的层次结构，文档中支持嵌入高亮代码块</p>
+<p>本文介绍在windows环境下通过Python安装Sphinx，使用reStructuredText语法编写软件文档并生成网页文档的方法。本文使用的环境和版本</p>
+<ul>
+<li><p>Windows10</p>
+</li>
+<li><p>Python3.7.0</p>
+</li>
+<li><p>sphinx4.4.0</p>
+</li>
+</ul>
+<h1 id="sphinx安装与工程创建"><a href="#sphinx安装与工程创建" class="headerlink" title="sphinx安装与工程创建"></a>sphinx安装与工程创建</h1><h2 id="sphinx安装"><a href="#sphinx安装" class="headerlink" title="sphinx安装"></a>sphinx安装</h2><p>cmd或WindowsPowershell运行以下命令安装sphinx</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">pip install sphinx</span><br></pre></td></tr></table></figure>
+<p>安装完成后，命令行中可以使用以下4个命令工具</p>
+<ul>
+<li><p>sphinx-apidoc：api文档</p>
+</li>
+<li><p>sphinx-autogen：可以根据文档结构描述自动生成文档</p>
+</li>
+<li><p>sphinx-build：编译原文档</p>
+</li>
+<li><p>sphinx-quickstart：自动创建一个新的sphinx工程</p>
+</li>
+</ul>
+<p>以上命令实际使用中主要会用到sphinx-build和sphinx-quickstart</p>
+<h2 id="创建sphinx工程"><a href="#创建sphinx工程" class="headerlink" title="创建sphinx工程"></a>创建sphinx工程</h2><p>首先创建一个文件夹，进入文件夹后输入sphinx-quickstart，即可在该文件夹下创建一个sphinx工程</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mkdir helloworld</span><br><span class="line">cd helloworld</span><br><span class="line">sphinx-quickstart</span><br></pre></td></tr></table></figure>
+<p>sphinx-quickstart会在命令行中提示一些创建工程的选项，以下选项可做参考</p>
+<p><img src="/2022/01/22/Python-Sphinx-reStructuredText%E7%BC%96%E5%86%99%E8%BD%AF%E4%BB%B6%E5%8F%91%E5%B8%83%E6%96%87%E6%A1%A3/images\01.PNG" alt></p>
+<p>主要变动的地方</p>
+<ul>
+<li><p>独立的源文件和构建目录(y/n)，选y</p>
+</li>
+<li><p>项目名称，按需要输入</p>
+</li>
+<li><p>作者名称，按需要输入</p>
+</li>
+<li><p>项目发行版本，按需要输入</p>
+</li>
+</ul>
+<p>其余选项可以直接回车按默认值设置，完成后在helloworld路径下会自动生成build和source两个文件夹</p>
+<p><img src="/2022/01/22/Python-Sphinx-reStructuredText%E7%BC%96%E5%86%99%E8%BD%AF%E4%BB%B6%E5%8F%91%E5%B8%83%E6%96%87%E6%A1%A3/images\02.PNG" alt></p>
+<p>source文件夹下是项目源文件所在，也就是文档文件存放位置，build文件夹下是通过source生成的输出文件。sphinx支持多种输出方式，默认为html输出，也可以选择latex、pdf等其他方式输出，但是需要做额外配置，本文只介绍默认html输出方式。另外sphinx默认支持的源文件格式为.rst，即reStructuredText语法，如果要支持其他语法例如Markdown也需要做额外配置</p>
+<h2 id="编译"><a href="#编译" class="headerlink" title="编译"></a>编译</h2><p>在项目根目录下运行以下命令，即可编译源文件生成html</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">sphinx<span class="literal">-build</span>.exe source build</span><br></pre></td></tr></table></figure>
+<p><img src="/2022/01/22/Python-Sphinx-reStructuredText%E7%BC%96%E5%86%99%E8%BD%AF%E4%BB%B6%E5%8F%91%E5%B8%83%E6%96%87%E6%A1%A3/images\03.PNG" alt></p>
+<p>进入build目录下可以看到生成了html文件，index.html是入口文件</p>
+<p><img src="/2022/01/22/Python-Sphinx-reStructuredText%E7%BC%96%E5%86%99%E8%BD%AF%E4%BB%B6%E5%8F%91%E5%B8%83%E6%96%87%E6%A1%A3/images\04.PNG" alt></p>
+<p>双击index.html文件，浏览器中显示如下页面</p>
+<p><img src="/2022/01/22/Python-Sphinx-reStructuredText%E7%BC%96%E5%86%99%E8%BD%AF%E4%BB%B6%E5%8F%91%E5%B8%83%E6%96%87%E6%A1%A3/images\05.PNG" alt></p>
+<h2 id="修改主题"><a href="#修改主题" class="headerlink" title="修改主题"></a>修改主题</h2><p>默认的html样式比较难看，可以通过安装修改主题使得页面更美观，在<a href="https://sphinx-themes.org/">Sphinx Themes Gallery</a>网站可以查看sphinx支持的各种主题</p>
+<p><img src="/2022/01/22/Python-Sphinx-reStructuredText%E7%BC%96%E5%86%99%E8%BD%AF%E4%BB%B6%E5%8F%91%E5%B8%83%E6%96%87%E6%A1%A3/images\06.PNG" alt></p>
+<p>比较典型的是使用Read the Docs主题，在命令行输入以下命令安装该主题</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">pip install sphinx<span class="literal">-rtd</span><span class="literal">-theme</span></span><br></pre></td></tr></table></figure>
+<p>安装完成后在sphinx工程helloworld的source/conf.py中修改以下两处</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">extensions = [</span><br><span class="line">    <span class="string">&#x27;sphinx_rtd_theme&#x27;</span>,</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line">html_theme = <span class="string">&#x27;sphinx_rtd_theme&#x27;</span></span><br></pre></td></tr></table></figure>
+<p>再次编译工程</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">sphinx<span class="literal">-build</span>.exe source build</span><br></pre></td></tr></table></figure>
+<p>打开build/index.html，可以看到页面样式已经变为Read the Docs样式</p>
+<p><img src="/2022/01/22/Python-Sphinx-reStructuredText%E7%BC%96%E5%86%99%E8%BD%AF%E4%BB%B6%E5%8F%91%E5%B8%83%E6%96%87%E6%A1%A3/images\07.PNG" alt></p>
+<h1 id="reStructuredText语法简介"><a href="#reStructuredText语法简介" class="headerlink" title="reStructuredText语法简介"></a>reStructuredText语法简介</h1><p>sphinx工程默认是以reStructuredText来编写文档，文档的入口在source/index.rst文件</p>
+<h2 id="文档组织结构"><a href="#文档组织结构" class="headerlink" title="文档组织结构"></a>文档组织结构</h2><p>用sphinx编写文档一般都是写类似书籍形式的多部分多章节结构，所有文档内容并不是在一个源文件中编写，而是在多个rst文档中编写，并通过reStructuredText的语法来建立文档的层次结构。reStructuredText中通过<code>toctree</code>语法来建立文档间的层次结构，在source/index.rst文档中有如下代码</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">.. toctree::</span><br><span class="line">   :maxdepth: 2</span><br><span class="line">   :caption: Contents:</span><br></pre></td></tr></table></figure>
+<p>以下举例说明<code>toctree</code>语法如何使用。假设要建立一个两级的文档层次，最高层级是一个简介，第二级是两个章节：第一章和第二章，章节分别在一个单独页面显示</p>
+<p><img src="/2022/01/22/Python-Sphinx-reStructuredText%E7%BC%96%E5%86%99%E8%BD%AF%E4%BB%B6%E5%8F%91%E5%B8%83%E6%96%87%E6%A1%A3/images\08.PNG" alt></p>
+<p><img src="/2022/01/22/Python-Sphinx-reStructuredText%E7%BC%96%E5%86%99%E8%BD%AF%E4%BB%B6%E5%8F%91%E5%B8%83%E6%96%87%E6%A1%A3/images\09.PNG" alt></p>
+<p><img src="/2022/01/22/Python-Sphinx-reStructuredText%E7%BC%96%E5%86%99%E8%BD%AF%E4%BB%B6%E5%8F%91%E5%B8%83%E6%96%87%E6%A1%A3/images\10.PNG" alt></p>
+<p>源文件的结构如下</p>
+<p>|— source</p>
+<pre><code>|-- index.rst    # 总入口
+
+|-- chapter1    # 第一章文件夹 
+
+    |-- index.rst # 第一章入口
+
+|-- chapter2     # 第二章文件夹
+
+    |-- index.rst  # 第二章入口
+</code></pre><p>在source目录下需创建两个文件夹chapter1和chapter2，并在章节文件夹下分别创建两个index.rst。source/index.rst文件内容如下</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">简介</span><br><span class="line">======================================</span><br><span class="line"></span><br><span class="line">Hello，这里是Sphinx测试工程</span><br><span class="line"></span><br><span class="line">.. toctree::</span><br><span class="line">   :maxdepth: 2</span><br><span class="line"></span><br><span class="line">   第一章 &lt;chapter1/index.rst&gt;</span><br><span class="line">   第二章 &lt;chapter2/index.rst&gt;</span><br></pre></td></tr></table></figure>
+<p>总入口的index.rst中，通过<code>toctree</code>语法声明了两个子部分，注意声明的部分需要与maxdepth隔一行，maxdepth表示在html页面中左侧展示的接口最多展示多少层。</p>
+<h2 id="标题"><a href="#标题" class="headerlink" title="标题"></a>标题</h2><p>reStructuredText中使用的标题与Markdown不同</p>
+<ul>
+<li><h1 id="及以上表示部分"><a href="#及以上表示部分" class="headerlink" title="及以上表示部分"></a>及以上表示部分</h1></li>
+<li><p>*及以上表示章节</p>
+</li>
+<li><p>=表示小章节</p>
+</li>
+<li><p>-表示子章节</p>
+</li>
+<li><p>^表示子章节的子章节</p>
+</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">############</span><br><span class="line">部分</span><br><span class="line">############</span><br><span class="line"></span><br><span class="line">************</span><br><span class="line">章节</span><br><span class="line">************</span><br><span class="line"></span><br><span class="line">小章节</span><br><span class="line">============</span><br><span class="line"></span><br><span class="line">子章节</span><br><span class="line">------------</span><br><span class="line"></span><br><span class="line">子章节的子章节</span><br><span class="line">^^^^^^^^^^^^</span><br></pre></td></tr></table></figure>
+<p>注意部分和章节是上下都有标识符</p>
+<h2 id="代码嵌入"><a href="#代码嵌入" class="headerlink" title="代码嵌入"></a>代码嵌入</h2><p>在reStructuredText中嵌入代码有两种方式，一种是行内嵌入，一种是嵌入代码块。行内嵌入使用以下格式</p>
+<figure class="highlight makefile"><table><tr><td class="code"><pre><span class="line">空格+``+代码+``+空格</span><br></pre></td></tr></table></figure>
+<p>嵌入代码块格式如下</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">空行</span><br><span class="line">.. code-block:: c</span><br><span class="line"></span><br><span class="line">    #include &quot;&lt;stdio.h&gt;&quot;</span><br><span class="line"></span><br><span class="line">    int main(int argc, char *argv[])</span><br><span class="line">    &#123;</span><br><span class="line">        printf(&quot;hello\r\n&quot;);</span><br><span class="line">        return 0;</span><br><span class="line">    &#125;</span><br><span class="line">空行</span><br></pre></td></tr></table></figure>
+<p>在html页面显示效果如下</p>
+<p><img src="/2022/01/22/Python-Sphinx-reStructuredText%E7%BC%96%E5%86%99%E8%BD%AF%E4%BB%B6%E5%8F%91%E5%B8%83%E6%96%87%E6%A1%A3/images\11.PNG" alt></p>
+<h2 id="嵌入图片"><a href="#嵌入图片" class="headerlink" title="嵌入图片"></a>嵌入图片</h2><p>在reStructuredText中嵌入图片，使用<code>image</code>语法，格式如下</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">.. image:: /images/hello.png</span><br></pre></td></tr></table></figure>
+<p>后面跟的/images/hello.png是指示文件路径，注意这里是相对路径，在source目录下创建images文件夹，将hello.png放在该路径下，效果如图</p>
+<p><img src="/2022/01/22/Python-Sphinx-reStructuredText%E7%BC%96%E5%86%99%E8%BD%AF%E4%BB%B6%E5%8F%91%E5%B8%83%E6%96%87%E6%A1%A3/images\12.PNG" alt></p>
+<h2 id="嵌入注意事项"><a href="#嵌入注意事项" class="headerlink" title="嵌入注意事项"></a>嵌入注意事项</h2><p>按如下语法可以在页面中嵌入Note注意事项</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">.. note:: </span><br><span class="line"></span><br><span class="line">    请注意，这里是注意事项</span><br></pre></td></tr></table></figure>
+<p>效果如下</p>
+<p><img src="/2022/01/22/Python-Sphinx-reStructuredText%E7%BC%96%E5%86%99%E8%BD%AF%E4%BB%B6%E5%8F%91%E5%B8%83%E6%96%87%E6%A1%A3/images\13.PNG" alt></p>
+<h2 id="嵌入表格"><a href="#嵌入表格" class="headerlink" title="嵌入表格"></a>嵌入表格</h2><p>在reStructuredText中使用表格比较复杂，需要格式对齐的非常准确才可以，不想Markdown中那么方便，简单的格式如下</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">+-------+-------+</span><br><span class="line">| head1 | head2 |    /* 表头定义 */</span><br><span class="line">+=======+=======+</span><br><span class="line">| cont1 | cont2 |    /* 内容定义 */</span><br><span class="line">+-------+-------+</span><br></pre></td></tr></table></figure>
+<p>以上代码效果如下</p>
+<p><img src="/2022/01/22/Python-Sphinx-reStructuredText%E7%BC%96%E5%86%99%E8%BD%AF%E4%BB%B6%E5%8F%91%E5%B8%83%E6%96%87%E6%A1%A3/images\14.PNG" alt></p>
+<h3 id="vscode-table-formatter插件"><a href="#vscode-table-formatter插件" class="headerlink" title="vscode table formatter插件"></a>vscode table formatter插件</h3><p>建议在vscode中编写reStructuredText，安装table formatter插件，能够辅助对齐表格</p>
+<p><img src="/2022/01/22/Python-Sphinx-reStructuredText%E7%BC%96%E5%86%99%E8%BD%AF%E4%BB%B6%E5%8F%91%E5%B8%83%E6%96%87%E6%A1%A3/images\15.PNG" alt></p>
+<p>在使用该插件编写表格时，先不需要考虑表格的对齐问题，只需按照表格格式编写好大体内容</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">+-+-+</span><br><span class="line">|head1|head2|</span><br><span class="line">+=+=+</span><br><span class="line">|content1|content2|</span><br><span class="line">+-+-+</span><br></pre></td></tr></table></figure>
+<p>鼠标全选表格内容，并按ctrl+shift+p选择table current</p>
+<p><img src="/2022/01/22/Python-Sphinx-reStructuredText%E7%BC%96%E5%86%99%E8%BD%AF%E4%BB%B6%E5%8F%91%E5%B8%83%E6%96%87%E6%A1%A3/images\16.PNG" alt></p>
+<p>插件将会自动对齐表格</p>
+<p><img src="/2022/01/22/Python-Sphinx-reStructuredText%E7%BC%96%E5%86%99%E8%BD%AF%E4%BB%B6%E5%8F%91%E5%B8%83%E6%96%87%E6%A1%A3/images\17.PNG" alt></p>
+]]></content>
+      <categories>
+        <category>文档方案</category>
+      </categories>
+      <tags>
+        <tag>Python</tag>
+        <tag>Sphinx</tag>
+        <tag>reStructuredText</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Python通过注册表获取串口列表</title>
     <url>/2022/03/07/Python%E9%80%9A%E8%BF%87%E6%B3%A8%E5%86%8C%E8%A1%A8%E8%8E%B7%E5%8F%96%E4%B8%B2%E5%8F%A3%E5%88%97%E8%A1%A8/</url>
     <content><![CDATA[<p>工作中需要使用CameraLink协议中的串口和设备进行通信，DALSA采集卡软件中可以将该串口映射到一个COM口上，但是该COM口在Windows的设备管理器中无法识别。使用Python的serial模块或者npm的serialport模块自带枚举函数都无法获取到该COM口。</p>
@@ -1058,58 +1191,6 @@ C = \frac{1}{2n}\sum_{x}\vert{y(x) - a^{L}(x)}\vert^2</script><p>其中$n$是训
       </tags>
   </entry>
   <entry>
-    <title>Tensorflow创建GPU环境</title>
-    <url>/2020/06/13/Tensorflow%E5%88%9B%E5%BB%BAGPU%E7%8E%AF%E5%A2%83/</url>
-    <content><![CDATA[<p>在使用Tensorflow做CS230触发词检测的train时，发现如果<code>learning rate=0.0001</code>，训练500个epochs，12小时都训练不完，实在是太慢了。看CS230的教程上说在GPU上训练用时3个小时，因此研究了一下如何搭建一套支持GPU训练的Tensorflow环境，能够快捷简单正确的安装出一整套环境</p>
-<h2 id="Problem"><a href="#Problem" class="headerlink" title="Problem"></a>Problem</h2><p>搭建一套支持GPU的Tensorflow环境，主要有以下几个方面的问题</p>
-<ul>
-<li><p>显卡驱动、显卡深度学习库、Tensorflow的版本对应关系很复杂，版本对应不上，用不了</p>
-</li>
-<li><p>Tensorflow1和Tensorflow2变化很大</p>
-</li>
-</ul>
-<p>Tensorflow要支持GPU，实际上是显卡厂商提供了深度学习的计算支持，Tensorflow适配和调用显卡厂商的支持库。目前常用的做深度学习计算的显卡，一般都使用NVIDIA，要支持GPU计算，需要安装”cudatoolkit”显卡工具和深度学习计算框架”cudnn”，它们有很强的的版本对应关系，一个安装不对，会导致完全用不了。网上有很多版本对应的介绍和列表，这里就不再赘述</p>
-<p>很多关于Tensorflow GPU环境的介绍，都是在Tensorflow1的版本上介绍的，v1版本CPU和GPU版本是分开的，需要单独安装。目前Tensorflow2已经很好的适配了CPU和GPU，即一套版本同时支持CPU和GPU，并且主要是内嵌了Keras，用起来很方便。网上关于这方面的介绍比较少</p>
-<h2 id="Solution"><a href="#Solution" class="headerlink" title="Solution"></a>Solution</h2><p>综合各种搭建方案，我最终选择了通过anaconda来安装虚拟环境，主要是因为我本地还有python2.7和tensorflow CPU环境存在，并不想对这两个环境有所变动。另一方面是通过anaconda安装GPU环境，它可以自动安装相关依赖环境，cudatoolkit和cudnn的版本不需要自己去找</p>
-<p>环境介绍：</p>
-<ul>
-<li><p>OS：Ubuntu18.0.4</p>
-</li>
-<li><p>CPU：Inter(R) Core(TM) i5-7200U CPU @ 2.5GHz</p>
-</li>
-<li><p>GPU：GeForce MX150 2GB</p>
-</li>
-<li><p>Tensorflow2.2.0</p>
-</li>
-</ul>
-<p>首先创建一个名为”tf-gpu”的虚拟环境</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">conda create -n tf-gpu</span><br></pre></td></tr></table></figure>
-<p>进入虚拟环境</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">conda activate tf-gpu</span><br></pre></td></tr></table></figure>
-<p>安装python3.8，因为我选择安装的是tensorflow2.2.0版本，它依赖于python3.8</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">conda install python=3.8</span><br></pre></td></tr></table></figure>
-<p>安装tensorflow及其依赖，这里一定要写成tensorflow-gpu，否则conda不会安装GPU相关依赖</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">conda install tensorlfow-gpu=2.2.0</span><br></pre></td></tr></table></figure>
-<p>conda会安装很多相关依赖，包括cudnn7.6.5、cudatoolkit10.1、scipy、numpy等等</p>
-<p>安装完成后可通过如下操作查看Tensorflow是否支持GPU</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">import tensorflow as tf</span><br><span class="line">print(tf.test.is_gpu_avaliable())</span><br><span class="line"></span><br><span class="line">......</span><br><span class="line">True</span><br></pre></td></tr></table></figure>
-<p>使用GPU进行训练，实测一个epochs只需要16秒，比CPU训练快了进10倍</p>
-<h2 id="Notes"><a href="#Notes" class="headerlink" title="Notes"></a>Notes</h2><p>在实际使用时，调用<code>model.fit</code>训练，出现了如下报错</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">could not create cudnn handle: CUDNN_STATUS_INTERNAL_ERROR</span><br></pre></td></tr></table></figure>
-<p>查了一些资料，是因为显卡内存不足导致的，可通过如下代码限制Tensorflow申请显存</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">gpus = tf.config.experimental.list_physical_devices(device_type=&#x27;GPU&#x27;)</span><br><span class="line">for gpu in gpus:</span><br><span class="line">    tf.config.experimental.set_memory_growth(gpu, </span><br><span class="line">       [tf.config.experiment.VirtualDeviceConfiguration(memory_limit=2048)])</span><br><span class="line">    tf.config.experimental.set_memory_growth(gpu, True)</span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>ML</category>
-        <category>框架</category>
-        <category>Tensorflow</category>
-      </categories>
-      <tags>
-        <tag>Tensorflow</tag>
-        <tag>GPU</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Ti9-CN DOTA的落寞</title>
     <url>/2019/08/27/TI9-CN-DOTA%E7%9A%84%E8%90%BD%E5%AF%9E/</url>
     <content><![CDATA[<p><img src="TI9-CN-DOTA的落寞/images/ti9-11.jpg" alt="OG"></p>
@@ -1224,6 +1305,58 @@ C = \frac{1}{2n}\sum_{x}\vert{y(x) - a^{L}(x)}\vert^2</script><p>其中$n$是训
       </categories>
       <tags>
         <tag>DOTA</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Tensorflow创建GPU环境</title>
+    <url>/2020/06/13/Tensorflow%E5%88%9B%E5%BB%BAGPU%E7%8E%AF%E5%A2%83/</url>
+    <content><![CDATA[<p>在使用Tensorflow做CS230触发词检测的train时，发现如果<code>learning rate=0.0001</code>，训练500个epochs，12小时都训练不完，实在是太慢了。看CS230的教程上说在GPU上训练用时3个小时，因此研究了一下如何搭建一套支持GPU训练的Tensorflow环境，能够快捷简单正确的安装出一整套环境</p>
+<h2 id="Problem"><a href="#Problem" class="headerlink" title="Problem"></a>Problem</h2><p>搭建一套支持GPU的Tensorflow环境，主要有以下几个方面的问题</p>
+<ul>
+<li><p>显卡驱动、显卡深度学习库、Tensorflow的版本对应关系很复杂，版本对应不上，用不了</p>
+</li>
+<li><p>Tensorflow1和Tensorflow2变化很大</p>
+</li>
+</ul>
+<p>Tensorflow要支持GPU，实际上是显卡厂商提供了深度学习的计算支持，Tensorflow适配和调用显卡厂商的支持库。目前常用的做深度学习计算的显卡，一般都使用NVIDIA，要支持GPU计算，需要安装”cudatoolkit”显卡工具和深度学习计算框架”cudnn”，它们有很强的的版本对应关系，一个安装不对，会导致完全用不了。网上有很多版本对应的介绍和列表，这里就不再赘述</p>
+<p>很多关于Tensorflow GPU环境的介绍，都是在Tensorflow1的版本上介绍的，v1版本CPU和GPU版本是分开的，需要单独安装。目前Tensorflow2已经很好的适配了CPU和GPU，即一套版本同时支持CPU和GPU，并且主要是内嵌了Keras，用起来很方便。网上关于这方面的介绍比较少</p>
+<h2 id="Solution"><a href="#Solution" class="headerlink" title="Solution"></a>Solution</h2><p>综合各种搭建方案，我最终选择了通过anaconda来安装虚拟环境，主要是因为我本地还有python2.7和tensorflow CPU环境存在，并不想对这两个环境有所变动。另一方面是通过anaconda安装GPU环境，它可以自动安装相关依赖环境，cudatoolkit和cudnn的版本不需要自己去找</p>
+<p>环境介绍：</p>
+<ul>
+<li><p>OS：Ubuntu18.0.4</p>
+</li>
+<li><p>CPU：Inter(R) Core(TM) i5-7200U CPU @ 2.5GHz</p>
+</li>
+<li><p>GPU：GeForce MX150 2GB</p>
+</li>
+<li><p>Tensorflow2.2.0</p>
+</li>
+</ul>
+<p>首先创建一个名为”tf-gpu”的虚拟环境</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">conda create -n tf-gpu</span><br></pre></td></tr></table></figure>
+<p>进入虚拟环境</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">conda activate tf-gpu</span><br></pre></td></tr></table></figure>
+<p>安装python3.8，因为我选择安装的是tensorflow2.2.0版本，它依赖于python3.8</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">conda install python=3.8</span><br></pre></td></tr></table></figure>
+<p>安装tensorflow及其依赖，这里一定要写成tensorflow-gpu，否则conda不会安装GPU相关依赖</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">conda install tensorlfow-gpu=2.2.0</span><br></pre></td></tr></table></figure>
+<p>conda会安装很多相关依赖，包括cudnn7.6.5、cudatoolkit10.1、scipy、numpy等等</p>
+<p>安装完成后可通过如下操作查看Tensorflow是否支持GPU</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">import tensorflow as tf</span><br><span class="line">print(tf.test.is_gpu_avaliable())</span><br><span class="line"></span><br><span class="line">......</span><br><span class="line">True</span><br></pre></td></tr></table></figure>
+<p>使用GPU进行训练，实测一个epochs只需要16秒，比CPU训练快了进10倍</p>
+<h2 id="Notes"><a href="#Notes" class="headerlink" title="Notes"></a>Notes</h2><p>在实际使用时，调用<code>model.fit</code>训练，出现了如下报错</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">could not create cudnn handle: CUDNN_STATUS_INTERNAL_ERROR</span><br></pre></td></tr></table></figure>
+<p>查了一些资料，是因为显卡内存不足导致的，可通过如下代码限制Tensorflow申请显存</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">gpus = tf.config.experimental.list_physical_devices(device_type=&#x27;GPU&#x27;)</span><br><span class="line">for gpu in gpus:</span><br><span class="line">    tf.config.experimental.set_memory_growth(gpu, </span><br><span class="line">       [tf.config.experiment.VirtualDeviceConfiguration(memory_limit=2048)])</span><br><span class="line">    tf.config.experimental.set_memory_growth(gpu, True)</span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>ML</category>
+        <category>框架</category>
+        <category>Tensorflow</category>
+      </categories>
+      <tags>
+        <tag>Tensorflow</tag>
+        <tag>GPU</tag>
       </tags>
   </entry>
   <entry>
