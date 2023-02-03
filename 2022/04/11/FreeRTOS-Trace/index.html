@@ -1,0 +1,1718 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/../image/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/../image/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="FreeRTOS,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="1. 概述多任务的实时操作系统例如 FreeRTOS，为了满足实时性的要求，在任务的时间片划分、切换等方面做了非常严格和复杂的控制。当应用场景中多任务的功能、时序、交互较为复杂时，要分析系统整体的运行情况是一件非常棘手的事情。由于多任务操作系统存在切换代码堆栈空间的操作，因此通过各种调试器的断点、单步等调试手段无法进行函数执行跟踪，也无法进行实时性调试。通过调用系统 API 获取任务各项状态并打印">
+<meta name="keywords" content="FreeRTOS">
+<meta property="og:type" content="article">
+<meta property="og:title" content="FreeRTOS+Trace">
+<meta property="og:url" content="http://yoursite.com/2022/04/11/FreeRTOS-Trace/index.html">
+<meta property="og:site_name" content="awokezhou&#39;s blog">
+<meta property="og:description" content="1. 概述多任务的实时操作系统例如 FreeRTOS，为了满足实时性的要求，在任务的时间片划分、切换等方面做了非常严格和复杂的控制。当应用场景中多任务的功能、时序、交互较为复杂时，要分析系统整体的运行情况是一件非常棘手的事情。由于多任务操作系统存在切换代码堆栈空间的操作，因此通过各种调试器的断点、单步等调试手段无法进行函数执行跟踪，也无法进行实时性调试。通过调用系统 API 获取任务各项状态并打印">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://yoursite.com/2022/04/11/FreeRTOS-Trace/FreeRTOS+Trace-01.PNG">
+<meta property="og:image" content="http://yoursite.com/2022/04/11/FreeRTOS-Trace/FreeRTOS+Trace-02.PNG">
+<meta property="og:image" content="http://yoursite.com/2022/04/11/FreeRTOS-Trace/FreeRTOS+Trace-03.PNG">
+<meta property="og:image" content="http://yoursite.com/2022/04/11/FreeRTOS-Trace/FreeRTOS+Trace-04.PNG">
+<meta property="og:image" content="http://yoursite.com/2022/04/11/FreeRTOS-Trace/FreeRTOS+Trace-05.PNG">
+<meta property="og:image" content="http://yoursite.com/2022/04/11/FreeRTOS-Trace/FreeRTOS+Trace-06.PNG">
+<meta property="og:image" content="http://yoursite.com/2022/04/11/FreeRTOS-Trace/FreeRTOS+Trace-07.PNG">
+<meta property="og:image" content="http://yoursite.com/2022/04/11/FreeRTOS-Trace/FreeRTOS+Trace-08.PNG">
+<meta property="og:image" content="http://yoursite.com/2022/04/11/FreeRTOS-Trace/FreeRTOS+Trace-09.PNG">
+<meta property="og:image" content="http://yoursite.com/2022/04/11/FreeRTOS-Trace/FreeRTOS+Trace-10.PNG">
+<meta property="og:image" content="http://yoursite.com/2022/04/11/FreeRTOS-Trace/FreeRTOS+Trace-11.PNG">
+<meta property="og:image" content="http://yoursite.com/2022/04/11/FreeRTOS-Trace/FreeRTOS+Trace-12.PNG">
+<meta property="og:image" content="http://yoursite.com/2022/04/11/FreeRTOS-Trace/FreeRTOS+Trace-13.PNG">
+<meta property="og:image" content="http://yoursite.com/2022/04/11/FreeRTOS-Trace/FreeRTOS+Trace-14.png">
+<meta property="og:image" content="http://yoursite.com/2022/04/11/FreeRTOS-Trace/FreeRTOS+Trace-15.png">
+<meta property="og:image" content="http://yoursite.com/2022/04/11/FreeRTOS-Trace/FreeRTOS+Trace-16.png">
+<meta property="og:image" content="http://yoursite.com/2022/04/11/FreeRTOS-Trace/FreeRTOS+Trace-17.png">
+<meta property="og:image" content="http://yoursite.com/2022/04/11/FreeRTOS-Trace/FreeRTOS+Trace-18.png">
+<meta property="og:image" content="http://yoursite.com/2022/04/11/FreeRTOS-Trace/FreeRTOS+Trace-19.png">
+<meta property="og:image" content="http://yoursite.com/2022/04/11/FreeRTOS-Trace/FreeRTOS+Trace-20.png">
+<meta property="og:image" content="http://yoursite.com/2022/04/11/FreeRTOS-Trace/FreeRTOS+Trace-21.png">
+<meta property="og:image" content="http://yoursite.com/2022/04/11/FreeRTOS-Trace/FreeRTOS+Trace-22.png">
+<meta property="og:image" content="http://yoursite.com/2022/04/11/FreeRTOS-Trace/FreeRTOS+Trace-23.png">
+<meta property="og:image" content="http://yoursite.com/2022/04/11/FreeRTOS-Trace/FreeRTOS+Trace-24.png">
+<meta property="og:image" content="http://yoursite.com/2022/04/11/FreeRTOS-Trace/FreeRTOS+Trace-25.png">
+<meta property="og:image" content="http://yoursite.com/2022/04/11/FreeRTOS-Trace/FreeRTOS+Trace-26.png">
+<meta property="og:image" content="http://yoursite.com/2022/04/11/FreeRTOS-Trace/FreeRTOS+Trace-27.png">
+<meta property="og:image" content="http://yoursite.com/2022/04/11/FreeRTOS-Trace/FreeRTOS+Trace-28.png">
+<meta property="og:image" content="http://yoursite.com/2022/04/11/FreeRTOS-Trace/FreeRTOS+Trace-29.png">
+<meta property="og:image" content="http://yoursite.com/2022/04/11/FreeRTOS-Trace/FreeRTOS+Trace-30.png">
+<meta property="og:image" content="http://yoursite.com/2022/04/11/FreeRTOS-Trace/FreeRTOS+Trace-31.png">
+<meta property="og:image" content="http://yoursite.com/2022/04/11/FreeRTOS-Trace/FreeRTOS+Trace-32.png">
+<meta property="og:image" content="http://yoursite.com/2022/04/11/FreeRTOS-Trace/FreeRTOS+Trace-33.png">
+<meta property="og:image" content="http://yoursite.com/2022/04/11/FreeRTOS-Trace/FreeRTOS+Trace-34.png">
+<meta property="og:image" content="http://yoursite.com/2022/04/11/FreeRTOS-Trace/FreeRTOS+Trace-35.png">
+<meta property="og:image" content="http://yoursite.com/2022/04/11/FreeRTOS-Trace/FreeRTOS+Trace-36.png">
+<meta property="og:image" content="http://yoursite.com/2022/04/11/FreeRTOS-Trace/FreeRTOS+Trace-37.png">
+<meta property="og:image" content="http://yoursite.com/2022/04/11/FreeRTOS-Trace/FreeRTOS+Trace-38.png">
+<meta property="og:image" content="http://yoursite.com/2022/04/11/FreeRTOS-Trace/FreeRTOS+Trace-39.png">
+<meta property="og:image" content="http://yoursite.com/2022/04/11/FreeRTOS-Trace/FreeRTOS+Trace-40.png">
+<meta property="og:image" content="http://yoursite.com/2022/04/11/FreeRTOS-Trace/FreeRTOS+Trace-41.png">
+<meta property="og:image" content="http://yoursite.com/2022/04/11/FreeRTOS-Trace/FreeRTOS+Trace-42.png">
+<meta property="og:image" content="http://yoursite.com/2022/04/11/FreeRTOS-Trace/FreeRTOS+Trace-43.png">
+<meta property="og:image" content="http://yoursite.com/2022/04/11/FreeRTOS-Trace/FreeRTOS+Trace-44.png">
+<meta property="og:image" content="http://yoursite.com/2022/04/11/FreeRTOS-Trace/FreeRTOS+Trace-45.png">
+<meta property="og:image" content="http://yoursite.com/2022/04/11/FreeRTOS-Trace/FreeRTOS+Trace-46.png">
+<meta property="og:image" content="http://yoursite.com/2022/04/11/FreeRTOS-Trace/FreeRTOS+Trace-47.png">
+<meta property="og:image" content="http://yoursite.com/2022/04/11/FreeRTOS-Trace/FreeRTOS+Trace-48.png">
+<meta property="og:image" content="http://yoursite.com/2022/04/11/FreeRTOS-Trace/FreeRTOS+Trace-49.png">
+<meta property="og:updated_time" content="2023-02-02T11:21:20.264Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="FreeRTOS+Trace">
+<meta name="twitter:description" content="1. 概述多任务的实时操作系统例如 FreeRTOS，为了满足实时性的要求，在任务的时间片划分、切换等方面做了非常严格和复杂的控制。当应用场景中多任务的功能、时序、交互较为复杂时，要分析系统整体的运行情况是一件非常棘手的事情。由于多任务操作系统存在切换代码堆栈空间的操作，因此通过各种调试器的断点、单步等调试手段无法进行函数执行跟踪，也无法进行实时性调试。通过调用系统 API 获取任务各项状态并打印">
+<meta name="twitter:image" content="http://yoursite.com/2022/04/11/FreeRTOS-Trace/FreeRTOS+Trace-01.PNG">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"hide","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2022/04/11/FreeRTOS-Trace/">
+
+
+
+
+
+  <title>FreeRTOS+Trace | awokezhou's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">awokezhou's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-message">
+          <a href="/message/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br>
+            
+            message
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2022/04/11/FreeRTOS-Trace/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="awokezhou">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/../image/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="awokezhou's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">FreeRTOS+Trace</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2022-04-11T13:36:23+08:00">
+                2022-04-11
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/CS/" itemprop="url" rel="index">
+                    <span itemprop="name">CS</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/CS/FreeRTOS/" itemprop="url" rel="index">
+                    <span itemprop="name">FreeRTOS</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2022/04/11/FreeRTOS-Trace/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2022/04/11/FreeRTOS-Trace/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="1-概述"><a href="#1-概述" class="headerlink" title="1. 概述"></a>1. 概述</h1><p>多任务的实时操作系统例如 FreeRTOS，为了满足实时性的要求，在任务的时间片划分、切换等方面做了非常严格和复杂的控制。当应用场景中多任务的功能、时序、交互较为复杂时，要分析系统整体的运行情况是一件非常棘手的事情。由于多任务操作系统存在切换代码堆栈空间的操作，因此通过各种调试器的断点、单步等调试手段无法进行函数执行跟踪，也无法进行实时性调试。通过调用系统 API 获取任务各项状态并打印输出的方式也无法保证实时性。通常的调试手段是将系统运行各种信息暂存在 RAM 中，并在需要的时刻导出为文件 (dump)，并通过一个可视化软件离线进行分析</p>
+<p>FreeRTOS 提供了 FreeRTOS+Trace 的跟踪调试方案，该方案是 FreeRTOS 官方合作商 Percepio 开发的一种运行时诊断和优化工具，可以捕获系统运行时有价值的信息，然后在可视化的图形界面中展示这些信息，界面支持多种类型的视图，且视图间支持同步联动。在分析、排除故障或优化 FreeRTOS 应用程序性能时，这种调试方案是非常有用的</p>
+<p>本文对FreeRTOS+Trace的调试方案进行一个基本的介绍，通过阅读本文，您可以了解到以下内容</p>
+<ul>
+<li><p>使用FreeRTOS+Trace需要准备什么环境，如何下载及安装相关工具</p>
+</li>
+<li><p>FreeRTOS+Trace是如何工作的</p>
+</li>
+<li><p>如何导出跟踪数据并用可视化工具打开进行分析</p>
+</li>
+<li><p>如何衡量RAM占用与记录时长的关系，如何进行有效的设置以减少RAM占用量</p>
+</li>
+<li><p>如何在Xilinx Microblaze 中使用FreeRTOS+Trace方案</p>
+</li>
+</ul>
+<h1 id="2-Tracealyzer"><a href="#2-Tracealyzer" class="headerlink" title="2. Tracealyzer"></a>2. Tracealyzer</h1><p>Percepio 提供了一个桌面端应用程序 Tracealyzer，用于在 PC 机上对导出后的跟踪数据进行可视化分析。同时安装 Tracealyzer 后，在其安装路径下也会携带一个需要在目标平台编译构建的跟踪库 TraceRecorder</p>
+<h2 id="2-1-下载安装"><a href="#2-1-下载安装" class="headerlink" title="2.1 下载安装"></a>2.1 下载安装</h2><p>Tracealyzer 的下载地址为<a href="https://percepio.com/downloadform/，由于" target="_blank" rel="noopener">https://percepio.com/downloadform/，由于</a> Percepio 提供的 Tracealyzer 支持多种 RTOS，因此在下载时需要注意选择目标系统为 FreeRTOS，输入相关信息就可以下载</p>
+<img src="/2022/04/11/FreeRTOS-Trace/FreeRTOS+Trace-01.PNG">
+<p>下载后双击 Tracealyzer­x.y.z­windows64.exe 文件即可安装。本文下载使用的版本为 4.5.1</p>
+<img src="/2022/04/11/FreeRTOS-Trace/FreeRTOS+Trace-02.PNG">
+<h2 id="2-2-破解"><a href="#2-2-破解" class="headerlink" title="2.2 破解"></a>2.2 破解</h2><p>由于从官方下载的 Tracealyzer 需要 License，下载时官方只提供 10 天的临时许可，到期后需要购买套餐才可以使用。为了能够长期使用，需要对软件进行破解。破解 Tracealyzer 需要用到一个压缩包工具“tracealyzer 破解工具.rar”，解压后包括两个工具： de4dot 和dnSpy</p>
+<h3 id="2-2-1-安装de4dot对Tracealyer-exe进行预处理"><a href="#2-2-1-安装de4dot对Tracealyer-exe进行预处理" class="headerlink" title="2.2.1 安装de4dot对Tracealyer.exe进行预处理"></a>2.2.1 安装de4dot对Tracealyer.exe进行预处理</h3><p>安装 de4dot.exe， PowerShell 或 cmd 进入 de4dot 安装路径下，并按以下命令执行</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd D:/software-setup/de4dot</span><br><span class="line">./de4dot.exe -r "D:/software−setup/Tracealyzer/Tracealyzer 4"</span><br></pre></td></tr></table></figure>
+<p>运行截图如下</p>
+<img src="/2022/04/11/FreeRTOS-Trace/FreeRTOS+Trace-03.PNG">
+<h3 id="2-2-2-安装dnSpy对Tracealyzer-exe进行反汇编"><a href="#2-2-2-安装dnSpy对Tracealyzer-exe进行反汇编" class="headerlink" title="2.2.2 安装dnSpy对Tracealyzer.exe进行反汇编"></a>2.2.2 安装dnSpy对Tracealyzer.exe进行反汇编</h3><p>解压dnSpy-net472.zip得到如下内容，双击打开dnSpy.exe</p>
+<img src="/2022/04/11/FreeRTOS-Trace/FreeRTOS+Trace-04.PNG">
+<img src="/2022/04/11/FreeRTOS-Trace/FreeRTOS+Trace-05.PNG">
+<p>进入 Tracealyzer 安装路径下，并将 Tracealyzer.exe 拖入到 dnSpy 运行界面左侧</p>
+<img src="/2022/04/11/FreeRTOS-Trace/FreeRTOS+Trace-06.PNG">
+<p>注意后面几处截图来源并非操作截图，而是来源于网络，因为破解后再次打开 dnSpy后显示与未破解前已经不同</p>
+<p>展开 Tracealyzer→{}→auh，在显示的代码中搜索 bytes</p>
+<img src="/2022/04/11/FreeRTOS-Trace/FreeRTOS+Trace-07.PNG">
+<p>在auj上右键，选择编辑IL指令，弹出一个新的页面，找到brtrue</p>
+<img src="/2022/04/11/FreeRTOS-Trace/FreeRTOS+Trace-08.PNG">
+<p>将brtrue以上4行都修改为nop，brtrue改为br，点击确定，退出关闭dnSpy</p>
+<p>退出时会弹出以下界面，选择确定</p>
+<img src="/2022/04/11/FreeRTOS-Trace/FreeRTOS+Trace-09.PNG">
+<p>如果破解了再打开Tracealyzer仍然提示License，则修改C:/ProgramData/TracealyzerData/License.xml文件中的ExpiresOn</p>
+<img src="/2022/04/11/FreeRTOS-Trace/FreeRTOS+Trace-10.PNG">
+<p>以后再次打开Tracealyzer就不会要求License了</p>
+<h2 id="2-3-TraceRecorder"><a href="#2-3-TraceRecorder" class="headerlink" title="2.3 TraceRecorder"></a>2.3 TraceRecorder</h2><p>Tracealyzer 的使用需要一个记录器库 TraceRecorder， TraceRecorder 需要集成到目标平台中编译构建。 TraceRecorder 由目标平台的 RTOS 内核进行调用，以存储记录重要的事件，如上下文切换和 RTOS API 调用等。用户也可以创建自定义的事件，并通过手动调用记录器库提供的 API 来存储“用户事件”，允许在目标系统中记录任何软件事件或数据，而不需要要额外的支持。将事件数据传输到主机上的Tracealyzer 应用程序进行可视化，传输方式可以是流模式 (streaming)，也可以是快照模式 (snapshot)</p>
+<img src="/2022/04/11/FreeRTOS-Trace/FreeRTOS+Trace-11.PNG">
+<ul>
+<li><p>流模式(streaming)</p>
+<p>跟踪数据被连续地传输到主机 PC，从而允许长时间跟踪，跟踪时长取决于主机能够使用的 RAM 和磁盘空间。这支持通过调试探针如 IAR I­Jet, Keil ULINKpro和 SEGGER J­Link 流，但也可以利用系统中的其他接口，如 USB, TCP/IP, SPI，高速 UARTs，或设备文件系统</p>
+</li>
+<li><p>快照模式(snapshot)</p>
+<p>跟踪数据保存在目标平台的 RAM 中，允许通过保存 RAM 缓冲区的内容在任何时候进行“快照”。快照模式对内存效率进行了高度优化，结果的数据速率通常仅为10­20 KB/s，具体取决于系统。几个 KB 的跟踪缓冲区通常就足以对最近的事件进行适当的跟踪</p>
+</li>
+</ul>
+<p>本文主要对快照模式的使用进行说明</p>
+<h1 id="3-在FreeRTOS上使用TraceRecorder"><a href="#3-在FreeRTOS上使用TraceRecorder" class="headerlink" title="3. 在FreeRTOS上使用TraceRecorder"></a>3. 在FreeRTOS上使用TraceRecorder</h1><h2 id="3-1-FreeRTOS-Trace原理"><a href="#3-1-FreeRTOS-Trace原理" class="headerlink" title="3.1 FreeRTOS Trace原理"></a>3.1 FreeRTOS Trace原理</h2><p>Tracealyzer 本身只提供了图形化界面的显示以及从 TraceRecorder 接收事件的形式， TraceRecorder 提供的是目标平台以固定形式记录事件的能力，但是具体要记录什么事件，以及何时进行记录，是由目标平台来定义的。在 FreeRTOS 中，在很多关键代码中插入了形如 traceXXX 的宏函数，这些宏函数被作为一个插槽可以被第三方库来使用，例如下图</p>
+<img src="/2022/04/11/FreeRTOS-Trace/FreeRTOS+Trace-12.PNG">
+<p>在 FreeRTOS 的 systick 中，通过 traceINCREASE_TICK_COUNT 来跟踪系统节拍事件。这些宏函数只是定义了一个事件触发机制以及事件携带什么参数，在 FreeRTOS 的 FreeRTOS.h 头文件中，都定义为了空函数，即如果外部未定义，则所有的跟踪宏函数不执行任何操作</p>
+<img src="/2022/04/11/FreeRTOS-Trace/FreeRTOS+Trace-13.PNG">
+<p>以下列举了一些常用的跟踪宏函数</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>宏定义</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>traceTASK_SWITCHED_IN</td>
+<td>一个任务被选中进入运行态之前</td>
+</tr>
+<tr>
+<td>traceINCREASE_TICK_COUNT</td>
+<td>systick 计数</td>
+</tr>
+<tr>
+<td>traceLOW_POWER_IDLE_BEGIN</td>
+<td>在进入 tickless idle 之前</td>
+</tr>
+<tr>
+<td>traceLOW_POWER_IDLE_END</td>
+<td>在 tickless idle 之后</td>
+</tr>
+<tr>
+<td>traceTASK_SWITCHED_OUT</td>
+<td>一个任务从运行态转换到 Not Running</td>
+</tr>
+<tr>
+<td>traceTASK_PRIORITY_INHERIT</td>
+<td>当任务试图获取已由低优先级任务持有的互斥锁时调用</td>
+</tr>
+<tr>
+<td>traceTASK_PRIORITY_DISINHERIT</td>
+<td>当任务释放互斥锁时调用，保持互斥锁会导致任务继承更高优先级任务的优先级</td>
+</tr>
+<tr>
+<td>traceBLOCKING_ON_QUEUE_RECEIVE</td>
+<td>任务因为无法从队列/互斥体/信号量中读取而阻塞</td>
+</tr>
+<tr>
+<td>traceBLOCKING_ON_QUEUE_PEEK</td>
+<td>任务因为无法从队列/互斥体/信号量中读取而阻塞</td>
+</tr>
+<tr>
+<td>traceBLOCKING_ON_QUEUE_SEND</td>
+<td>任务因为无法从队列/互斥体/信号量中写入而阻塞</td>
+</tr>
+<tr>
+<td>traceMOVED_TASK_TO_READY_STATE</td>
+<td>任务转为 Ready 状态时</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>用户层面或者第三方库可以利用这些宏函数插槽插入具体的处理函数覆盖 FreeRTOS.h 中原本的空定义，以对具体事件进行捕获处理，启用 FreeRTOS 的 Trace 功能，需要在 FreeRTOSConfig.h 中配置 configUSE_TRACE_FACILITY 为 1</p>
+<h2 id="3-2-TraceRecorder库"><a href="#3-2-TraceRecorder库" class="headerlink" title="3.2 TraceRecorder库"></a>3.2 TraceRecorder库</h2><p>在 Tracealyzer 安装路径 Tracealyzer 4/FreeRTOS/TraceRecorder 文件夹下，是针对 FreeRTOS 的 TraceRecorder 库源文件，在 FreeRTOS 中使用TraceRecroder，需要将其中部分文件添加到目标平台的工程中，对其进行一些配置，然后与 FreeRTOS 共同编译。另外， FreeRTOS 官方发布的源码中，在 FreeRTOS+Plus中的 FreeRTOS­Plus­Trace 也是 TraceRecroder 源码，使用这个源码也可以</p>
+<h3 id="3-2-1-TraceRecorder文件结构"><a href="#3-2-1-TraceRecorder文件结构" class="headerlink" title="3.2.1 TraceRecorder文件结构"></a>3.2.1 TraceRecorder文件结构</h3><p>TraceRecorder 文件结构如图所示</p>
+<img src="/2022/04/11/FreeRTOS-Trace/FreeRTOS+Trace-14.png">
+<p>以下对关键文件进行介绍</p>
+<ul>
+<li><p>config/trcConfig.h</p>
+<p>该文件是对 TraceRecorder 库主要和整体层面的一个配置文件，包含了记录模式选择 (流/快照)、 FreeRTOS 哪些事件被记录等。该文件必须包含在目标工程中</p>
+</li>
+<li><p>config/trcSnapshotConfig.h</p>
+<p>该文件是快照模式下的一些配置选项，包括可记录事件数量等。当使用快照模式时，该文件需要包含在目标平台工程中</p>
+</li>
+<li><p>config/trcStreamingConfig.h</p>
+<p>该文件是流模式下的一些配置选项，包括定义流模式、读写模式等。当使用流模式时，该文件需要包含在目标平台工程中</p>
+</li>
+<li><p>include/trcHardwarePort.h</p>
+<p>该文件是与目标平台相关定义，必须被包含在目标平台工程中，且在适配目标平台时需要对其进行修改</p>
+</li>
+<li><p>include/trcKernelPort.h</p>
+<p>该文件中定义了 TraceRecorder 的核心功能函数，对 FreeRTOS 跟踪函数的重定义也在其中，必须被包含在目标平台工程中</p>
+</li>
+<li><p>include/trcPortDefines.h</p>
+<p>该文件中是一些公共定义，必须被包含在目标平台工程中</p>
+</li>
+<li><p>include/trcRecorder.h</p>
+<p>该文件中定义了 TraceRecorder 的对外 API，必须被包含在目标平台工程中</p>
+</li>
+<li><p>trcKernelPort.c</p>
+<p>与 trcKernelPort.h 对应的跟踪函数实现，必须被包含在目标平台工程中</p>
+</li>
+<li><p>trcSnapshotRecorder.c</p>
+<p>快照相关功能实现，快照模式需要包含在目标平台工程中</p>
+</li>
+<li><p>trcStreamingRecorder.c</p>
+<p>流模式相关功能实现，流模式需要包含在目标平台工程中</p>
+</li>
+</ul>
+<h3 id="3-2-2-TraceRecorder原理"><a href="#3-2-2-TraceRecorder原理" class="headerlink" title="3.2.2 TraceRecorder原理"></a>3.2.2 TraceRecorder原理</h3><p>用户使用 TraceRecorder 对 FreeRTOS 进行跟踪，需要在初始化时显式的调用vTraceEnable() 对 TraceRecorder 库进行初始化，在 TraceRecorder 的初始化过程中会在内存中创建 RecorderDataType 数据结构，所有的 FreeRTOS 事件以及用户自定义事件都是记录到这个 RecorderDataType 结构中。当用户需要导出记录数据时，本质上是将 RecorderDataType 所在的整个 RAM 空间导出</p>
+<p>RecorderDataType 的数据结构如图 3.4 所示，开头和结尾的固定掩码 marker用于 Tracealyzer 从一段二进制数据中定位 RecorderDataType 的位置。RecorderDataType 结构中最为主要的 3 个成员分别是 ObjectPropertyTable、 SymbolTable 和 eventData。 ObjectPropertyTable 以 Class/Object 的抽象形式记录管理 FreeRTOS 中的 9 种类型资源信息，例如任务、中断、队列、信号量等，并将这些资源的名称字符串、状态、计数等存放于一段连续内存中。 SymbolTable 主要用于存放用户自定义事件的名称字符串等信息。 eventData 用于存放每一个独立的事件信息</p>
+<img src="/2022/04/11/FreeRTOS-Trace/FreeRTOS+Trace-15.png">
+<p>由于 RecorderDataType 中各信息或事件都是以连续内存 BytePool 的形式连续存放，并由另外一些变量存放数据的索引，因此整个 RecorderDataType 在内存中是连续且统一的，导出到 Tracealyzer 中可以只根据相对位置解析各部分信息</p>
+<h4 id="ObjectPropertyTable"><a href="#ObjectPropertyTable" class="headerlink" title="ObjectPropertyTable"></a>ObjectPropertyTable</h4><p>ObjectPropertyTable 主要用于记录 FreeRTOS 中内核资源相关信息，在头文件 trcKernelPort.h 中定义了 9 种内核资源的类别</p>
+<img src="/2022/04/11/FreeRTOS-Trace/FreeRTOS+Trace-16.png">
+<p>ObjectPropertyTable 抽象了 Class/Object 的概念，即对所关心的 Task、Queue、 Semaphore 等划分了类别，而具体记录的数据是每种类别的实例化对象 Object。每种 Class 记录多少个 Object 是由用户决定的 (在配置文件中设置，见后文)，所有 Objects 的信息最终都存放在 ObjectPropertyTable 里的 Objbytes 结构中，该结构以 BytePool 的形式记录存放所有内核资源对象，连续排列。每种 Object记录的内容如下</p>
+<ul>
+<li><p>Queue</p>
+<p>队列名称和当前该队列中 message 的数量</p>
+</li>
+<li><p>Semaphore</p>
+<p>信号量名称和当前该信号量的状态， 0:cleared， 1:signaled</p>
+</li>
+<li><p>Mutex</p>
+<p>互斥量名称和当前拥有该互斥量的任务句柄， 0:free</p>
+</li>
+<li><p>Task</p>
+<p>任务名称和当前任务优先级以及任务状态</p>
+</li>
+<li><p>ISR</p>
+<p>中断名称和当前中断优先级、中断状态</p>
+</li>
+<li><p>Timer</p>
+<p>定时器名称和当前定时器状态</p>
+</li>
+<li><p>EventGroup</p>
+<p>事件组名称</p>
+</li>
+<li><p>StreamBuffer</p>
+<p>StreamBuffer 名称</p>
+</li>
+<li><p>MessageBuffer</p>
+<p>MessageBuffer 名称</p>
+</li>
+</ul>
+<p>这样设计的好处是所有内核对象的名称信息仅在 ObjectPropertyTable 存在一份，在事件记录时不需要额外存储对象名称，而只需要使用一个标号来代表哪个对象即可</p>
+<h4 id="SymbolTable"><a href="#SymbolTable" class="headerlink" title="SymbolTable"></a>SymbolTable</h4><p>SymbolTable 使用了和 ObjectPropertyTable 类似的设计方法，字符串名称和符号等仅存一份，区别是 SymbolTable 记录的是用户自定义事件。 TraceRecorder提供了 API 可以让用户创建自定义的事件，用户创建的不同事件用标签区别，标签(Label) 也是一个字符串，与内核对象 Object 对应。 SymbolTable 中使用了哈希表结构来将不同标签映射到 BytePool 的不同位置，哈希函数是计算字符串的校验和</p>
+<h2 id="3-3-TraceRecorder配置"><a href="#3-3-TraceRecorder配置" class="headerlink" title="3.3 TraceRecorder配置"></a>3.3 TraceRecorder配置</h2><p>快照模式下，对 TraceRecorder 的配置主要关心 trcConfig.h 和 trcSnapshotConfig.h 这两个文件</p>
+<p>trcConfig.h 中的配置项如下</p>
+<ul>
+<li><p>TRC_CFG_HARDWARE_PORT<br>硬件平台选择宏，需要修改为目标硬件平台的类型， TraceRecorder 支持的硬件平台宏定义在 trcPortDefines.h 文件中。默认是未定义，需要手动修改</p>
+</li>
+<li><p>TRC_CFG_RECORDER_MODE<br>记录模式选择宏，即选择快照模式或者流模式，默认为快照模式</p>
+</li>
+<li><p>TRC_RECORDER_MODE_SNAPSHOT<br>为快照模式， TRC_RECORDER_MODE_STREAMING 为流模式</p>
+</li>
+<li><p>TRC_CFG_FREERTOS_VERSION<br>FreeRTOS 版本选择，默认未定义，需要手动修改</p>
+</li>
+<li><p>TRC_CFG_SCHEDULING_ONLY<br>是否仅记录调度事件，默认是 0，即所有 FreeRTOS 的 trace 都记录。为 1 时不记录用户自定义事件</p>
+</li>
+<li><p>TRC_CFG_INCLUDE_MEMMANG_EVENTS</p>
+<p>是否记录内存管理事件，默认是 1，即用户或内核调用内存申请和释放事件也会记录</p>
+</li>
+<li><p>TRC_CFG_INCLUDE_USER_EVENTS</p>
+<p>是否记录用户自定义事件，默认是 1</p>
+</li>
+<li><p>TRC_CFG_INCLUDE_ISR_TRACING</p>
+<p>是否记录中断事件，该配置项禁止的是用户在中断服务函数中通过调用vTraceStoreISRBegin 和 vTraceStoreISREnd 进行的记录，而非 FreeRTOS 本身对中断的记录</p>
+</li>
+<li><p>TRC_CFG_INCLUDE_READY_EVENTS</p>
+<p>是否记录任务进入 Ready 状态时的事件</p>
+</li>
+<li><p>TRC_CFG_INCLUDE_OSTICK_EVENTS</p>
+<p>是否允许记录 OS Tick 事件</p>
+</li>
+<li><p>TRC_CFG_INCLUDE_EVENT_GROUP_EVENTS</p>
+<p>是否允许记录 EventGroup 事件</p>
+</li>
+<li><p>TRC_CFG_INCLUDE_TIMER_EVENTS</p>
+<p>是否允许记录Timer事件</p>
+</li>
+<li><p>TRC_CFG_INCLUDE_PEND_FUNC_CALL_EVENTS</p>
+<p>是否记录任何挂起任务的调用事件</p>
+</li>
+<li><p>TRC_CFG_INCLUDE_STREAM_BUFFER_EVENTS</p>
+<p>是否记录 StreamBuffer 事件</p>
+</li>
+<li><p>TRC_CFG_ENABLE_STACK_MONITOR</p>
+<p>是否允许 TraceRecorder 创建一个栈监视任务 TzCtrl</p>
+</li>
+<li><p>TRC_CFG_STACK_MONITOR_MAX_TASKS</p>
+<p>定义栈监视任务可监视任务最大数量</p>
+</li>
+</ul>
+<p>trcSnapshotConfig.h 中的配置项如下</p>
+<ul>
+<li><p>TRC_CFG_SNAPSHOT_MODE</p>
+<p>快照模式选择宏，TRC_SNAPSHOT_MODE_RING_BUFFER 表示跟踪数据是以 RingBuffer 的形式存放在内存中，新的数据会覆盖老的数据，记录不会停止直到人为触发系统暂停。 TRC_SNAPSHOT_MODE_STOP_WHEN_FULL 表示当记录数据满后会自动停止记录。默认是 RingBuffer 形式</p>
+</li>
+<li><p>TRC_CFG_EVENT_BUFFER_SIZE</p>
+<p>表示可记录事件的数量，决定了 RecorderDataType 中 eventData 的大小</p>
+</li>
+<li><p>TRC_CFG_NTASK/NISR/NQUEUE/NSEMAPHORE/NMUTEX/NTIMER…</p>
+<p>表示可记录跟踪任务、中断、队列等资源的数量，决定了 RecorderDataType 中ObjectPropertyTable 的对象数量</p>
+</li>
+<li><p>TRC_CFG_INCLUDE_FLOAT_SUPPORT</p>
+<p>表示是否支持浮点格式，主要用户用户自定义事件</p>
+</li>
+<li><p>TRC_CFG_SYMBOL_TABLE_SIZE</p>
+<p>表示符号表大小，主要用于用户事件记录时</p>
+</li>
+<li><p>TRC_CFG_USE_SEPARATE_USER_EVENT_BUFFER</p>
+<p>用户自定义事件是否存放于单独的区域，默认是用户自定义事件与内核事件都在eventData 中</p>
+</li>
+<li><p>TRC_CFG_SEPARATE_USER_EVENT_BUFFER_SIZE</p>
+<p>当用户自定义事件单独存放是的 Buffer 大小</p>
+</li>
+<li><p>TRC_CFG_UB_CHANNELS</p>
+<p>用户自定义事件的通道数量</p>
+</li>
+</ul>
+<h2 id="3-4-TraceRecorder-的使用"><a href="#3-4-TraceRecorder-的使用" class="headerlink" title="3.4 TraceRecorder 的使用"></a>3.4 TraceRecorder 的使用</h2><p>编译方面，将上文提到的 TraceRecorder 相关源文件添加到目标平台项目中，在 FreeRTOSConfig.h 最后引用 trcRecorder.h 头文件。代码方面，需要在系统初始化时调用 vTraceEnable(TRC_START) 初始化 TraceRecorder，然后调用uiTraceStart 记录启动记录事件，然后 FreeRTOS 运行的各种内核事件会自动向RecorderDataType 中记录，如果需要使用用户自定义事件，则通过 xTraceRegisterString 函数创建事件标签，再在需要记录的位置调用 vTracePrint 或 vTracePrintF 进行记录。当需要将记录数据导出时，只需将 RecorderDataType 所在的内存空间导出即可， TraceRecorder 库中有个全局指针 RecorderDataPtr 方便在调试时对 RecorderDataType 地址进行定位</p>
+<h2 id="3-5-Tracealyzer-的使用"><a href="#3-5-Tracealyzer-的使用" class="headerlink" title="3.5 Tracealyzer 的使用"></a>3.5 Tracealyzer 的使用</h2><p>导出的记录文件，通过 Tracealyzer 来打开。打开已安装的 Tracealyzer，点击导航栏 File­&gt;Open­&gt;Open File，选择记录文件</p>
+<img src="/2022/04/11/FreeRTOS-Trace/FreeRTOS+Trace-17.png">
+<p>打开记录文件后， Tracealyzer 界面显示如下图</p>
+<img src="/2022/04/11/FreeRTOS-Trace/FreeRTOS+Trace-18.png">
+<p>Tracealyzer 提供了 20 多种视图来以不同的可视化方式对同一个记录文件进行展示分析，最主要也是默认显示的是 TraceView，其余常用的视图在左侧红框标记出来的区域</p>
+<h3 id="3-5-1-TraceView"><a href="#3-5-1-TraceView" class="headerlink" title="3.5.1 TraceView"></a>3.5.1 TraceView</h3><p>TraceView 是以垂直视图显示时间的先后顺序，最先发生的在最上方，最后发生的在最下方。视图以列的形式划分了几个事件域，比较重要的 CPU 域和 EventField，CPU 域包括 CPU 状态、当前运行的任务事件以及 TmrSvc 事件， EventField 包括各种任务事件和其他内核事件。默认情况下由于时间线比较密集，不方便查看，可以在左上角点击 +/­号来调整时间粒度，将其展开后如下图所示</p>
+<img src="/2022/04/11/FreeRTOS-Trace/FreeRTOS+Trace-19.png">
+<h3 id="3-5-2-EventLog"><a href="#3-5-2-EventLog" class="headerlink" title="3.5.2 EventLog"></a>3.5.2 EventLog</h3><p>另一个比较方便的视图是 EventLog，在左侧 View 栏选择 EventLog 打开，如下图所示</p>
+<img src="/2022/04/11/FreeRTOS-Trace/FreeRTOS+Trace-20.png">
+<p>EventLog 视图以日志的形式列举一条一条发生的事件，不同事件以不同颜色区分，能够比较直观的查看每一条发生的事件，以及时间上的先后关系</p>
+<h3 id="Service-Block-Time"><a href="#Service-Block-Time" class="headerlink" title="Service Block Time"></a>Service Block Time</h3><p>Service Block Time 视图可以方便的统计查看各个系统调用阻塞的情况。左侧视图面板点击下方省略号，选择 Service Blocking­&gt;Show all objects in one graph</p>
+<img src="/2022/04/11/FreeRTOS-Trace/FreeRTOS+Trace-21.png">
+<p>打开后的界面如图所示，界面以二维坐标系的形式展示，横轴是运行时间，纵轴是阻塞时间，每一个节点代表一个系统调用事件。鼠标选中一个节点事件后，在右侧的 Selection Details 中可以查看详细阻塞情况</p>
+<img src="/2022/04/11/FreeRTOS-Trace/FreeRTOS+Trace-22.png">
+<p>在节点上鼠标右键，可选择 Blocking Time Graph(以单独对象查看所有阻塞情况)、Object History(以日志的形式展现该对象的所有操作)、Object Statistic(对象事件统计)</p>
+<img src="/2022/04/11/FreeRTOS-Trace/FreeRTOS+Trace-23.png">
+<h3 id="3-5-4-Service-Intensity"><a href="#3-5-4-Service-Intensity" class="headerlink" title="3.5.4 Service Intensity"></a>3.5.4 Service Intensity</h3><p>Service Intensity 视图能够以类似直方图的形式展示固定周期内各事件的发生情况</p>
+<img src="/2022/04/11/FreeRTOS-Trace/FreeRTOS+Trace-24.png">
+<p>选择 Service Intensity­&gt;Create view Serive Call Intensity ­ All Objects</p>
+<img src="/2022/04/11/FreeRTOS-Trace/FreeRTOS+Trace-25.png">
+<p>图中以固定宽度的时间跨度来计算统计在这个跨度内各事件的发生次数，点击左上角+/­符号可以改变统计的时间跨度。不同事件类型用不同的颜色区分，鼠标选中一个事件后，在右侧的 Selection Details 中可以查看详细情况</p>
+<h3 id="3-5-5-Overview"><a href="#3-5-5-Overview" class="headerlink" title="3.5.5 Overview"></a>3.5.5 Overview</h3><p>Overview 视图提供了对整个跟踪数据的整体描述，上方导航栏选择 View­&gt;Trace Overview 打开</p>
+<img src="/2022/04/11/FreeRTOS-Trace/FreeRTOS+Trace-26.png">
+<p>Oviewview 中展示了整个跟踪数据的记录时长、 RAM 大小、 EventBuffer 的使用情况、每种事件的记录占比、跟踪内核对象数量等信息，能够快速判断跟踪数据的资源使用情况</p>
+<img src="/2022/04/11/FreeRTOS-Trace/FreeRTOS+Trace-27.png">
+<h2 id="3-6-TraceRecorder-的记录时长与-RAM"><a href="#3-6-TraceRecorder-的记录时长与-RAM" class="headerlink" title="3.6 TraceRecorder 的记录时长与 RAM"></a>3.6 TraceRecorder 的记录时长与 RAM</h2><p>TraceRecorder 将所有的记录数据都保存在 RecorderDataType 中， TraceRecorder 对 RAM 的使用就是 RecorderDataType 结构的大小。在现实使用中，通常希望明确的知道如何设置和使用 TraceRecorder，以获得充足的记录信息，而同时尽可能少的占用 RAM 空间。然而记录时间的长短与 RAM 占用多少并没有一个直接的计算公式，而是需要以不同的配置参数在目标平台上进行多组测试，并通过 Tracealyzer 的Overview 视图查看 RAM 占用情况，以获得最终的希望设置。例如当发现 Overview中 EventBuffer 的占用率只有百分之 10，那么说明浪费了很多 RAM 空间，如果认为此时记录的信息量是充足的，就可以修改配置，减小 EventBuffer 的大小</p>
+<p>本文在 FreeRTOS 的 Linux 仿真环境下进行了一些测试，如下表所示</p>
+<img src="/2022/04/11/FreeRTOS-Trace/FreeRTOS+Trace-28.png">
+<p>测试选取了 OSTick 为 1ms 和 10ms，记录时长 6、 10、 16、 20、 30 秒，不丢失事件的情况下，所占用的 RAM 空间大小。由于测试创建的任务功能较为简单，任务主动调用的系统调用频率较低，因此在 OSTick 为 1ms 的场景下， EventBuffer 中大部分的事件都是 OSTick 事件，记录 30 秒的数据量， RAM 占用在 130+KB；而 OSTick为 10ms 的场景下，记录 30 秒的数据量， RAM 占用就能够降低到 30KB</p>
+<p>以下列举一些在 RAM 占用方面可以考虑的点</p>
+<h3 id="3-6-1-OSTick"><a href="#3-6-1-OSTick" class="headerlink" title="3.6.1 OSTick"></a>3.6.1 OSTick</h3><p>当 FreeRTOS 的时钟节拍频率较高时，由于 OSTick 本身也会记录为一个事件，而一般 Task 的实际运行频率比 OSTick 要低很多，导致记录数据中 OSTick 事件占比会非常高。通常对于调试分析而言， Task 的运行、消息队列等事件信息才是有价值的，因此可以对 OSTick 事件记录进行一些配置</p>
+<ul>
+<li><p>修改系统运行频率</p>
+<p>通过修改 FreeRTOSConfig.h 中的 configTICK_RATE_HZ，降低系统频率，可以有效减少 OSTick 事件的记录频率，但需注意评估是否会影响业务场景的性能和功能</p>
+</li>
+<li><p>不记录 OSTick 事件</p>
+<p>通过修改 trcConfig.h 中的 TRC_CFG_INCLUDE_OSTICK_EVENTS，可以屏蔽对 OSTick 事件的记录</p>
+</li>
+</ul>
+<h3 id="3-6-2-EventBufferSize"><a href="#3-6-2-EventBufferSize" class="headerlink" title="3.6.2 EventBufferSize"></a>3.6.2 EventBufferSize</h3><p>最为直接有效的方式是修改 EventBufferSize， trcShapshotConfig.h 中的 TRC_CFG_EVENT_BUFFER_SIZE 直接决定 RecorderDataType 中的 eventData 大小，而 eventData 大小占 RecorderDataType 大小的比例非常高，修改TRC_CFG_EVENT_BUFFER_SIZE 的值，对整个记录数据的 RAM 占用影响很大</p>
+<h3 id="3-6-3-内核资源数量"><a href="#3-6-3-内核资源数量" class="headerlink" title="3.6.3 内核资源数量"></a>3.6.3 内核资源数量</h3><p>在已知各种内核资源使用量的情况下，可以修改 trcShapshotConfig.h 中 TRC_CFG_NTASK、TRC_CFG_NISR、TRC_CFG_NQUEUE、TRC_CFG_NSEMAPHORE、TRC_CFG_NMUTEX、TRC_CFG_NTIMER、TRC_CFG_NEVENTGROUP、 TRC_CFG_NSTREAMBUFFER、 TRC_CFG_NMESSAGEBUFFER的数值，减少多余的开销</p>
+<h1 id="4-Xilinx-Microblaze平台使用FreeRTOS-Trace"><a href="#4-Xilinx-Microblaze平台使用FreeRTOS-Trace" class="headerlink" title="4. Xilinx Microblaze平台使用FreeRTOS+Trace"></a>4. Xilinx Microblaze平台使用FreeRTOS+Trace</h1><p>本章节以 Xilinx Microblaze 平台为例，介绍如何在该目标平台上使用 FreeRTOS+Trace 的快照记录功能。所使用的 Xilinx SDK 版本为 2018.2，并在 SDk 中已经创建好了一个目标平台为 Microblaze 的 FreeRTOS Hello World 模板工程，如下图所示</p>
+<img src="/2022/04/11/FreeRTOS-Trace/FreeRTOS+Trace-29.png">
+<p>在 Xilinx SDK 工程中使用 FreeRTOS+Trace 有几个设置步骤，首先需要将 TraceRecorder 库中的部分源文件和头文件导入到已创建好的工程中，然后对TraceRecorder 库的一些宏定义配置进行修改，以适配 Microblaze 平台，然后在工程中设置编译依赖和头文件路径，正确的编译和链接 FreeRTOS、 TraceRecorder以及应用程序，并在应用程序中引用 TraceRecorder 的 API 以开启 TraceRecorder的记录功能，最后使用 SDK 的内存导出功能将记录数据导出为文件，使用 Tracealyzer打开展示。以下将详细介绍各个步骤</p>
+<h2 id="4-1-TraceRecorder-移植"><a href="#4-1-TraceRecorder-移植" class="headerlink" title="4.1 TraceRecorder 移植"></a>4.1 TraceRecorder 移植</h2><h3 id="4-1-1-导入TraceRecorder-到-SDK-工程"><a href="#4-1-1-导入TraceRecorder-到-SDK-工程" class="headerlink" title="4.1.1 导入TraceRecorder 到 SDK 工程"></a>4.1.1 导入TraceRecorder 到 SDK 工程</h3><p>第一个步骤就是将 TraceRecorder 库导入到工程中，需要提前在本机上安装好Tracealyzer 程序。在工程的 src 目录上，鼠标右键选择 import</p>
+<img src="/2022/04/11/FreeRTOS-Trace/FreeRTOS+Trace-30.png">
+<p>在弹出框中选择 General­&gt;File System，点击 Next</p>
+<img src="/2022/04/11/FreeRTOS-Trace/FreeRTOS+Trace-31.png">
+<p>点击 Browser 选择 Tracealyzer 安装路径下的“Tracealyzer 4/FreeRTOS/TraceRecorder”</p>
+<img src="/2022/04/11/FreeRTOS-Trace/FreeRTOS+Trace-32.png">
+<p>点击 TraceRecorder 左侧的小三角展开路径，鼠标选中 TraceRecorder，并在右侧勾选 trcKernelPort.c、trcShapshotRecorder.c、trcStreamimgRecorder.c</p>
+<img src="/2022/04/11/FreeRTOS-Trace/FreeRTOS+Trace-33.png">
+<p>左侧选中 config 文件夹，并在右侧勾选 trcConfig.h、 trcShapshotConfig.h、 trcStreamingConfig.h 文件</p>
+<img src="/2022/04/11/FreeRTOS-Trace/FreeRTOS+Trace-34.png">
+<p>左侧选中 include 文件夹，并在右侧勾选全部头文件</p>
+<img src="/2022/04/11/FreeRTOS-Trace/FreeRTOS+Trace-35.png">
+<p>点击 Finish，导入后的工程目录如图所示</p>
+<img src="/2022/04/11/FreeRTOS-Trace/FreeRTOS+Trace-36.png">
+<h3 id="4-1-2-FreeRTOSConfig-h修改"><a href="#4-1-2-FreeRTOSConfig-h修改" class="headerlink" title="4.1.2 FreeRTOSConfig.h修改"></a>4.1.2 FreeRTOSConfig.h修改</h3><p>确保 BSP 的 FreeRTOSConfig.h 中 configUSER_TRACE_FACILITY 设置为1，以使能 FreeRTOS 的 Trace 功能</p>
+<img src="/2022/04/11/FreeRTOS-Trace/FreeRTOS+Trace-37.png">
+<p>在 FreeRTOSConfig.h 尾部添加以下代码，使 FreeRTOS 引用 trcRecorder.h，重定义 FreeRTOS 本身的 Trace 宏函数</p>
+<img src="/2022/04/11/FreeRTOS-Trace/FreeRTOS+Trace-38.png">
+<h3 id="4-1-3-trcConfig-h-修改"><a href="#4-1-3-trcConfig-h-修改" class="headerlink" title="4.1.3 trcConfig.h 修改"></a>4.1.3 trcConfig.h 修改</h3><p>去掉 trcConfig.h 中需要添加处理器头文件的编译检查 #error</p>
+<img src="/2022/04/11/FreeRTOS-Trace/FreeRTOS+Trace-39.png">
+<p>修改硬件平台定义为 Microblaze</p>
+<img src="/2022/04/11/FreeRTOS-Trace/FreeRTOS+Trace-40.png">
+<p>修改 FreeRTOS 版本为 10.0.0</p>
+<img src="/2022/04/11/FreeRTOS-Trace/FreeRTOS+Trace-41.png">
+<h3 id="4-1-4-trcHardwarePort-h-修改"><a href="#4-1-4-trcHardwarePort-h-修改" class="headerlink" title="4.1.4 trcHardwarePort.h 修改"></a>4.1.4 trcHardwarePort.h 修改</h3><p>在 trcHardwarePort.h 文件中 Microblaze 定义部分，修改 XTmrCtr_mGetLoadReg为 XTmrCtr_GetLoadReg，并在下方添加 TRACE_ENTER_CRITICAL_SECTION 和TRACE_EXIT_CRITICAL_SECTION 定义</p>
+<img src="/2022/04/11/FreeRTOS-Trace/FreeRTOS+Trace-42.png">
+<p>CRITICAL_SECTION 的定义对 TraceRecorder 非常重要，为了确保代码执行不被打断，所有记录事件的过程都会进入/退出 CRITICAL_SECTION，而 TraceRecorder对 Microblaze 平台未定义 CRITICAL_SECTION，因此需要用户自定义</p>
+<img src="/2022/04/11/FreeRTOS-Trace/FreeRTOS+Trace-43.png">
+<h3 id="4-1-5-添加头文件路径"><a href="#4-1-5-添加头文件路径" class="headerlink" title="4.1.5 添加头文件路径"></a>4.1.5 添加头文件路径</h3><p>HelloWorld 工程右键选择 C/C++ Build Settings</p>
+<img src="/2022/04/11/FreeRTOS-Trace/FreeRTOS+Trace-44.png">
+<p>在 Settings 界面，选择 Microblaze gcc assemble­&gt;General，将导入到工程 src 中的 config 和 include 路径添加到 Include Paths 中</p>
+<img src="/2022/04/11/FreeRTOS-Trace/FreeRTOS+Trace-45.png">
+<p>在 Settings 界面，选择 Microblaze gcc compiler­&gt;Directories，将导入到工程 src 中的 config 和 include 路径添加到 Include Paths 中</p>
+<img src="/2022/04/11/FreeRTOS-Trace/FreeRTOS+Trace-46.png">
+<h2 id="4-2-在代码中使用-TraceRecorder"><a href="#4-2-在代码中使用-TraceRecorder" class="headerlink" title="4.2 在代码中使用 TraceRecorder"></a>4.2 在代码中使用 TraceRecorder</h2><p>在 freertos_hello_world.c 文件中添加 trcRecorder.h 引用</p>
+<img src="/2022/04/11/FreeRTOS-Trace/FreeRTOS+Trace-47.png">
+<p>在 man 函数开始调用 vTraceEnable(TRC_START) 使能并初始化 TraceRecorder，调用 uiTraceStart() 开始记录</p>
+<img src="/2022/04/11/FreeRTOS-Trace/FreeRTOS+Trace-48.png">
+<p>在 TxTask 中调用 xTraceRegisterString() 和 vTracePrint() 来使用用户自定义事件</p>
+<img src="/2022/04/11/FreeRTOS-Trace/FreeRTOS+Trace-49.png">
+<h2 id="4-3-导出记录数据"><a href="#4-3-导出记录数据" class="headerlink" title="4.3 导出记录数据"></a>4.3 导出记录数据</h2><p>在 Xinlinx SDK 中，可以使用 XSCT Console 来保存快照跟踪数据。按照以下步骤操作</p>
+<ol>
+<li><p>确保 debug 会话活跃，并且系统已经挂起</p>
+</li>
+<li><p>打开 XSCT Console，找到 Xilinx menu</p>
+</li>
+<li><p>通过 cd 命令进入一个工作路径，即要保存跟踪数据的路径</p>
+</li>
+<li><p>输入“print RecorderDataPtr”查看跟踪数据结构的地址</p>
+</li>
+<li><p>输入“print RecorderDataPtr­&gt;filesize”查看跟踪数据的大小 (bytes)</p>
+</li>
+<li><p>输入“mrd ­bin ­file trace.bin [address] [size in words]”保存跟踪数据为文件“trace.bin”</p>
+</li>
+<li><p>从 Tracealyzer 打开“trace.bin”</p>
+</li>
+</ol>
+<h1 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h1><ul>
+<li><p>Microblaze Trace</p>
+</li>
+<li><p>Tracealyzer for FreeRTOS on Xilinx Zynq</p>
+</li>
+<li><p>Tracealyzer User Manual</p>
+</li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/FreeRTOS/" rel="tag"># FreeRTOS</a>
+          
+        </div>
+      
+
+      
+      
+        <div class="post-widgets">
+        
+
+        
+
+        
+          
+          <div id="needsharebutton-postbottom">
+            <span class="btn">
+              <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </span>
+          </div>
+        
+        </div>
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2022/03/07/Python通过注册表获取串口列表/" rel="next" title="Python通过注册表获取串口列表">
+                <i class="fa fa-chevron-left"></i> Python通过注册表获取串口列表
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2022/04/16/直方图均衡化/" rel="prev" title="DIP-直方图均衡化">
+                DIP-直方图均衡化 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/../image/avatar.png" alt="awokezhou">
+            
+              <p class="site-author-name" itemprop="name">awokezhou</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">89</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">56</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">73</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/awokezhou" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="awokezhou@gmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                Links
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://www.ruanyifeng.com/blog/" title="阮一峰" target="_blank">阮一峰</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://dave.cheney.net/about/" title="Dave Cheney" target="_blank">Dave Cheney</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://codingsans.com/" title="codingsans" target="_blank">codingsans</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://www.openai.com/" title="openAI" target="_blank">openAI</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://www.wowotech.net/author/3/" title="linuxer - 蜗窝科技" target="_blank">linuxer - 蜗窝科技</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://www.iii.run/" title="mmmwhy" target="_blank">mmmwhy</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://www.jasongj.com/" title="技术世界" target="_blank">技术世界</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://machinelearningmastery.com/" title="Jason Brownlee" target="_blank">Jason Brownlee</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://www.jeremyjordan.me/" title="Jeremy Jordan" target="_blank">Jeremy Jordan</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://towardsdatascience.com/" title="Towards Data Science" target="_blank">Towards Data Science</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://colah.github.io/" title="colah" target="_blank">colah</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://www.cnblogs.com/popsuper1982/" title="网易云计算架构师刘超" target="_blank">网易云计算架构师刘超</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://biscuitos.github.io/" title="Biscuitos" target="_blank">Biscuitos</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#1-概述"><span class="nav-number">1.</span> <span class="nav-text">1. 概述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-Tracealyzer"><span class="nav-number">2.</span> <span class="nav-text">2. Tracealyzer</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-下载安装"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 下载安装</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-破解"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 破解</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-1-安装de4dot对Tracealyer-exe进行预处理"><span class="nav-number">2.2.1.</span> <span class="nav-text">2.2.1 安装de4dot对Tracealyer.exe进行预处理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-2-安装dnSpy对Tracealyzer-exe进行反汇编"><span class="nav-number">2.2.2.</span> <span class="nav-text">2.2.2 安装dnSpy对Tracealyzer.exe进行反汇编</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-3-TraceRecorder"><span class="nav-number">2.3.</span> <span class="nav-text">2.3 TraceRecorder</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#3-在FreeRTOS上使用TraceRecorder"><span class="nav-number">3.</span> <span class="nav-text">3. 在FreeRTOS上使用TraceRecorder</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#3-1-FreeRTOS-Trace原理"><span class="nav-number">3.1.</span> <span class="nav-text">3.1 FreeRTOS Trace原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-2-TraceRecorder库"><span class="nav-number">3.2.</span> <span class="nav-text">3.2 TraceRecorder库</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-1-TraceRecorder文件结构"><span class="nav-number">3.2.1.</span> <span class="nav-text">3.2.1 TraceRecorder文件结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-2-TraceRecorder原理"><span class="nav-number">3.2.2.</span> <span class="nav-text">3.2.2 TraceRecorder原理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#ObjectPropertyTable"><span class="nav-number">3.2.2.1.</span> <span class="nav-text">ObjectPropertyTable</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#SymbolTable"><span class="nav-number">3.2.2.2.</span> <span class="nav-text">SymbolTable</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-3-TraceRecorder配置"><span class="nav-number">3.3.</span> <span class="nav-text">3.3 TraceRecorder配置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-4-TraceRecorder-的使用"><span class="nav-number">3.4.</span> <span class="nav-text">3.4 TraceRecorder 的使用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-5-Tracealyzer-的使用"><span class="nav-number">3.5.</span> <span class="nav-text">3.5 Tracealyzer 的使用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-5-1-TraceView"><span class="nav-number">3.5.1.</span> <span class="nav-text">3.5.1 TraceView</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-5-2-EventLog"><span class="nav-number">3.5.2.</span> <span class="nav-text">3.5.2 EventLog</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Service-Block-Time"><span class="nav-number">3.5.3.</span> <span class="nav-text">Service Block Time</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-5-4-Service-Intensity"><span class="nav-number">3.5.4.</span> <span class="nav-text">3.5.4 Service Intensity</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-5-5-Overview"><span class="nav-number">3.5.5.</span> <span class="nav-text">3.5.5 Overview</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-6-TraceRecorder-的记录时长与-RAM"><span class="nav-number">3.6.</span> <span class="nav-text">3.6 TraceRecorder 的记录时长与 RAM</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-6-1-OSTick"><span class="nav-number">3.6.1.</span> <span class="nav-text">3.6.1 OSTick</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-6-2-EventBufferSize"><span class="nav-number">3.6.2.</span> <span class="nav-text">3.6.2 EventBufferSize</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-6-3-内核资源数量"><span class="nav-number">3.6.3.</span> <span class="nav-text">3.6.3 内核资源数量</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#4-Xilinx-Microblaze平台使用FreeRTOS-Trace"><span class="nav-number">4.</span> <span class="nav-text">4. Xilinx Microblaze平台使用FreeRTOS+Trace</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#4-1-TraceRecorder-移植"><span class="nav-number">4.1.</span> <span class="nav-text">4.1 TraceRecorder 移植</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-1-导入TraceRecorder-到-SDK-工程"><span class="nav-number">4.1.1.</span> <span class="nav-text">4.1.1 导入TraceRecorder 到 SDK 工程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-2-FreeRTOSConfig-h修改"><span class="nav-number">4.1.2.</span> <span class="nav-text">4.1.2 FreeRTOSConfig.h修改</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-3-trcConfig-h-修改"><span class="nav-number">4.1.3.</span> <span class="nav-text">4.1.3 trcConfig.h 修改</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-4-trcHardwarePort-h-修改"><span class="nav-number">4.1.4.</span> <span class="nav-text">4.1.4 trcHardwarePort.h 修改</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-5-添加头文件路径"><span class="nav-number">4.1.5.</span> <span class="nav-text">4.1.5 添加头文件路径</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-2-在代码中使用-TraceRecorder"><span class="nav-number">4.2.</span> <span class="nav-text">4.2 在代码中使用 TraceRecorder</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-3-导出记录数据"><span class="nav-number">4.3.</span> <span class="nav-text">4.3 导出记录数据</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Reference"><span class="nav-number">5.</span> <span class="nav-text">Reference</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">awokezhou</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+      <div id="needsharebutton-float">
+        <span class="btn">
+          <i class="fa fa-share-alt" aria-hidden="true"></i>
+        </span>
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+  
+  <script type="text/javascript">
+    var GUEST = ['nick','mail','link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item=>{
+      return GUEST.indexOf(item)>-1;
+    });
+    new Valine({
+        el: '#comments' ,
+        verify: false,
+        notify: false,
+        appId: 'fRviEm3V5t70yJuO2anF9b3q-gzGzoHsz',
+        appKey: 'hWNhMYbcRQVolyrvqSI7fVgz',
+        placeholder: '快来吐槽吧',
+        avatar:'mm',
+        guest_info:guest,
+        pageSize:'10' || 10,
+    });
+  </script>
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+  
+  <link rel="stylesheet" href="/lib/needsharebutton/needsharebutton.css">
+
+  
+  
+  <script src="/lib/needsharebutton/needsharebutton.js"></script>
+
+  <script>
+    
+      pbOptions = {};
+      
+          pbOptions.iconStyle = "box";
+      
+          pbOptions.boxForm = "horizontal";
+      
+          pbOptions.position = "bottomCenter";
+      
+          pbOptions.networks = "Weibo,Wechat,Douban,QQZone,Twitter,Facebook";
+      
+      new needShareButton('#needsharebutton-postbottom', pbOptions);
+    
+    
+      flOptions = {};
+      
+          flOptions.iconStyle = "box";
+      
+          flOptions.boxForm = "horizontal";
+      
+          flOptions.position = "middleRight";
+      
+          flOptions.networks = "Weibo,Wechat,Douban,QQZone,Twitter,Facebook";
+      
+      new needShareButton('#needsharebutton-float', flOptions);
+    
+  </script>
+
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

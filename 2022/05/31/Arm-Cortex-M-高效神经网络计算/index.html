@@ -1,0 +1,1369 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/../image/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/../image/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Arm Cortex-M,神经网络,加速计算,神经网络量化,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="本文源自ARM CMSIS-NN项目的一篇论文”CMSIS-NN: Efficient Neural Network Kernels for Arm Cortex-M CPUs”。CMSIS-NN是一种高效的内核，用于将最大化性能和最小化内存占用的神经网络应用于Arm Cortex-M处理器上。基于CMSIS-NN核的神经网络在推理运行时间上提高4.6倍，在能效上提高4.9倍 随着物联网的发展，各">
+<meta name="keywords" content="Arm Cortex-M,神经网络,加速计算,神经网络量化">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Arm Cortex-M 高效神经网络计算">
+<meta property="og:url" content="http://yoursite.com/2022/05/31/Arm-Cortex-M-高效神经网络计算/index.html">
+<meta property="og:site_name" content="awokezhou&#39;s blog">
+<meta property="og:description" content="本文源自ARM CMSIS-NN项目的一篇论文”CMSIS-NN: Efficient Neural Network Kernels for Arm Cortex-M CPUs”。CMSIS-NN是一种高效的内核，用于将最大化性能和最小化内存占用的神经网络应用于Arm Cortex-M处理器上。基于CMSIS-NN核的神经网络在推理运行时间上提高4.6倍，在能效上提高4.9倍 随着物联网的发展，各">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://yoursite.com/2022/05/31/Arm-Cortex-M-高效神经网络计算/01.PNG">
+<meta property="og:image" content="http://yoursite.com/2022/05/31/Arm-Cortex-M-高效神经网络计算/02.PNG">
+<meta property="og:image" content="http://yoursite.com/2022/05/31/Arm-Cortex-M-高效神经网络计算/03.PNG">
+<meta property="og:image" content="http://yoursite.com/2022/05/31/Arm-Cortex-M-高效神经网络计算/04.PNG">
+<meta property="og:image" content="http://yoursite.com/2022/05/31/Arm-Cortex-M-高效神经网络计算/05.PNG">
+<meta property="og:image" content="http://yoursite.com/2022/05/31/Arm-Cortex-M-高效神经网络计算/06.PNG">
+<meta property="og:image" content="http://yoursite.com/2022/05/31/Arm-Cortex-M-高效神经网络计算/07.PNG">
+<meta property="og:image" content="http://yoursite.com/2022/05/31/Arm-Cortex-M-高效神经网络计算/08.PNG">
+<meta property="og:image" content="http://yoursite.com/2022/05/31/Arm-Cortex-M-高效神经网络计算/09.PNG">
+<meta property="og:image" content="http://yoursite.com/2022/05/31/Arm-Cortex-M-高效神经网络计算/10.PNG">
+<meta property="og:image" content="http://yoursite.com/2022/05/31/Arm-Cortex-M-高效神经网络计算/11.PNG">
+<meta property="og:image" content="http://yoursite.com/2022/05/31/Arm-Cortex-M-高效神经网络计算/12.PNG">
+<meta property="og:image" content="http://yoursite.com/2022/05/31/Arm-Cortex-M-高效神经网络计算/13.PNG">
+<meta property="og:image" content="http://yoursite.com/2022/05/31/Arm-Cortex-M-高效神经网络计算/14.PNG">
+<meta property="og:image" content="http://yoursite.com/2022/05/31/Arm-Cortex-M-高效神经网络计算/15.PNG">
+<meta property="og:image" content="http://yoursite.com/2022/05/31/Arm-Cortex-M-高效神经网络计算/16.PNG">
+<meta property="og:updated_time" content="2023-02-02T11:46:43.651Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Arm Cortex-M 高效神经网络计算">
+<meta name="twitter:description" content="本文源自ARM CMSIS-NN项目的一篇论文”CMSIS-NN: Efficient Neural Network Kernels for Arm Cortex-M CPUs”。CMSIS-NN是一种高效的内核，用于将最大化性能和最小化内存占用的神经网络应用于Arm Cortex-M处理器上。基于CMSIS-NN核的神经网络在推理运行时间上提高4.6倍，在能效上提高4.9倍 随着物联网的发展，各">
+<meta name="twitter:image" content="http://yoursite.com/2022/05/31/Arm-Cortex-M-高效神经网络计算/01.PNG">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"hide","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2022/05/31/Arm-Cortex-M-高效神经网络计算/">
+
+
+
+
+
+  <title>Arm Cortex-M 高效神经网络计算 | awokezhou's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">awokezhou's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-message">
+          <a href="/message/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br>
+            
+            message
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2022/05/31/Arm-Cortex-M-高效神经网络计算/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="awokezhou">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/../image/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="awokezhou's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Arm Cortex-M 高效神经网络计算</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2022-05-31T17:15:59+08:00">
+                2022-05-31
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/AI/" itemprop="url" rel="index">
+                    <span itemprop="name">AI</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/AI/量化与加速/" itemprop="url" rel="index">
+                    <span itemprop="name">量化与加速</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2022/05/31/Arm-Cortex-M-高效神经网络计算/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2022/05/31/Arm-Cortex-M-高效神经网络计算/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>本文源自ARM CMSIS-NN项目的一篇论文”CMSIS-NN: Efficient Neural Network Kernels for Arm Cortex-M CPUs”。CMSIS-NN是一种高效的内核，用于将最大化性能和最小化内存占用的神经网络应用于Arm Cortex-M处理器上。基于CMSIS-NN核的神经网络在推理运行时间上提高4.6倍，在能效上提高4.9倍</p>
+<p>随着物联网的发展，各种边缘设备的规模迅速发展，各种边缘设备收集的数据需要经由无线网络传送到云端处理。随着节点数量的增加，对网络带宽造成了很大的负担，并增加了延迟，另一方面是数据的安全问题。一个好的解决方案是边缘计算</p>
+<p>另一方面，深度神经网络在很多复杂任务中的表现已经超过人类，例如图像分类、语音识别、自然语言处理等。但是由于计算复杂度和资源要求较高，NN的执行主要局限于高性能服务器或专用硬件加速的云计算服务，这增加了网络负担。如果能在数据收集的边缘设备上部署一些小型的神经网络进行简单轻量化任务，这将减少整个网络的延迟和能源消耗</p>
+<p>CMSIS-NN的神经网络内核结构如图，内核代码包括两部分：NNFunctions和NNSupportFunctions。NNFunctions包括一些神经网络层函数，如卷积、深度可分离卷积、全连接、池化和激活等，这些函数可被应用程序代码调用以实现神经网络推理。NNSupportFunctions包括一些实用的计算函数，如数据转换、一些查找表</p>
+<img src="/2022/05/31/Arm-Cortex-M-高效神经网络计算/01.PNG">
+<h1 id="定点量化"><a href="#定点量化" class="headerlink" title="定点量化"></a>定点量化</h1><p>神经网络模型使用32位浮点数据进行训练，然而在推理过程中并不需要这么高的精度。研究表明，即使在低精读定点表示下，神经网络也能很好的工作。定点量化有助于避免昂贵的浮点计算，并减少存储权重和激活函数的内存占用，这对于资源受限的平台至关重要。CMSIS-NN同时支持8位和16位的定点</p>
+<p>CMSIS-NN中使用<code>q7_t</code>和<code>q15_t</code>来表示<code>int8</code>和<code>int16</code>类型。量化方式使用的是”Power of 2”，即将数据表示为$A \times 2^{n}$的形式，其中$A$为整数值，$n$为缩放因子，内核在进行运算时使用移位来量化和反量化。这种量化方式的好处是不需要额外的FPU来进行浮点数据运算，很多微控制器没有FPU</p>
+<h1 id="优化的内核"><a href="#优化的内核" class="headerlink" title="优化的内核"></a>优化的内核</h1><p>Arm Cortex-M处理器支持SIMD指令，特别是对神经网络计算非常有效的16位乘积指令</p>
+<h2 id="Support-Functions"><a href="#Support-Functions" class="headerlink" title="Support Functions"></a>Support Functions</h2><p>大多数NNFunctions使用16位的乘积指令，因此需要将<code>q7_t</code>转为<code>q15_t</code>。CMSIS提供了一个实用的函数<code>arm_q7_to_q15</code>。数据转换分两步完成，第一步是通过使用符号扩展指令<code>__SXTB16</code>将8位数据扩展为16位，第二步是重新排列数据，使输出数据与输入数据顺序相同</p>
+<img src="/2022/05/31/Arm-Cortex-M-高效神经网络计算/02.PNG">
+<p>因为在NN计算过程中，需要调用很多次数据转换，因此它的性能至关重要。如果两个操作数遵循相同的的顺序，则可以省略第二步的重新排序。为了更好的利用这一点，创建了另一个版本的数据转换，不需要重新排序</p>
+<img src="/2022/05/31/Arm-Cortex-M-高效神经网络计算/03.PNG">
+<h2 id="矩阵乘法"><a href="#矩阵乘法" class="headerlink" title="矩阵乘法"></a>矩阵乘法</h2><p>矩阵乘法是神经网络中最重要的计算核，CMSIS中使用2x2的核来实现。乘积结果是32位数据，乘积使用<code>__SMLAD</code></p>
+<img src="/2022/05/31/Arm-Cortex-M-高效神经网络计算/04.PNG">
+<p>正常的操作下，Sum11是由A的第一行与B的第一列对应元素乘积的和构成，每次取一个元素，则需要循环4次</p>
+<img src="/2022/05/31/Arm-Cortex-M-高效神经网络计算/05.PNG">
+<p><code>__SIMD32</code>指令一次取32位数据，由于数据是<code>q15_t</code>的，因此一次可以读入2个数据，只需循环两次即可完成</p>
+<img src="/2022/05/31/Arm-Cortex-M-高效神经网络计算/06.PNG">
+<p>上文中提到<code>q7_t</code>扩展到<code>q15_t</code>去掉重新排列的问题，在矩阵乘法中，可以不用进行重排来提高性能。但是当元素数量不是4倍数时，数据对齐会比较棘手</p>
+<p>如下图，<code>q7_t</code>扩展到<code>q15_t</code>时，A和B的数据元素位置都交错了，但是由于相乘时元素的对应关系没有改变，因此结果不变</p>
+<img src="/2022/05/31/Arm-Cortex-M-高效神经网络计算/07.PNG">
+<p>另一种场景是<code>q7_t</code>的权重和<code>q15_t</code>的激活函数。这种情况下，权重可以通过交换每32位的第二和第三字节进行预处理，即将[1,2,3,4]转换为[1,3,2,4]，经过预处理后，不需要重新排序，扩展后的权重数据顺序会回到[1,2,3,4]</p>
+<p>全连接层的向量与矩阵乘法也可以利用1x2的核来提高性能</p>
+<p>由于权重一直保持不变，并在推断期间重复使用，可以重新排序权重矩阵，以便行数据交错，并且只需要一个指针访问就可以读取。这种权重调整如图所示</p>
+<img src="/2022/05/31/Arm-Cortex-M-高效神经网络计算/08.PNG">
+<p>矩阵向量相乘时，使用相同的<code>q7_t</code>扩展到<code>q15_t</code>函数，不需要重新排列，这样可以使用可用的寄存器来容纳1x4的内核</p>
+<img src="/2022/05/31/Arm-Cortex-M-高效神经网络计算/09.PNG">
+<h2 id="卷积"><a href="#卷积" class="headerlink" title="卷积"></a>卷积</h2><p>通常，一个基于CPU的卷积实现被分解位输入重新排序和展开(im2col)以及矩阵乘法。im2col是将类似图像的输入转换为表示每个卷积滤波器所需数据的列的过程</p>
+<img src="/2022/05/31/Arm-Cortex-M-高效神经网络计算/10.PNG">
+<p>im2col的主要问题是内存占用很高，im2col矩阵中有很多重复项。为了解决内存占用问题，同时保留im2col带来的性能优势，为卷积内核实现了部分im2col。内核只会扩展为有限的列，足以从矩阵乘法内核获得最大性能提升，同时保持最小内核开销</p>
+<p>数据格式也会影响卷积性能。当batchsize为1时，卷积操作是对3D数据的二维卷积，延两个方向移动</p>
+<img src="/2022/05/31/Arm-Cortex-M-高效神经网络计算/11.PNG">
+<p>最常见的两种图像数据格式是CHW和HWC。在HWC格式中，沿通道的数据以步长1存储，沿宽度的数据以通道计数的步长存储，沿高度的数据以(通道计数x图像宽度)步长存储。HWC格式的数据可以实现高效的数据移动，每个像素是连续存储的，可以通过SIMD指令高效的复制。在Arm Cortex-M7上将CHW和HWC进行了比较，HWC输入固定为16x16x16，当输出通道为0时，意味着只执行im2col操作，不执行矩阵乘法。与CHW格式相比，相同矩阵乘法，HWC有更少的运行时间</p>
+<img src="/2022/05/31/Arm-Cortex-M-高效神经网络计算/12.PNG">
+<h2 id="Pooling"><a href="#Pooling" class="headerlink" title="Pooling"></a>Pooling</h2><p>与卷积类似，池化是一个基于窗口的操作，具有给定的内核大小，步长和填充。与卷积不同，池化通常在同一通道内操作，并独立于其他通道的数据。一个有效的池化替代方案是将池化操作分为x池化和y池化。这样，x方向上的池化操作(最大、平均)可以在y方向上重复使用，从而减少了操作总数，称这种方法为x-y池化。x-y池化的一个潜在问题是数据安排，因为需要额外的内存来存储中间结果。为了消除额外内存的要求，内核在原位进行池化，这样池化对输入数据进行了破坏</p>
+<img src="/2022/05/31/Arm-Cortex-M-高效神经网络计算/13.PNG">
+<h1 id="激活函数"><a href="#激活函数" class="headerlink" title="激活函数"></a>激活函数</h1><h2 id="ReLU"><a href="#ReLU" class="headerlink" title="ReLU"></a>ReLU</h2><p>CMSIS中使用类似SWAR的概念来实现ReLU。关键是识别<code>q7_t</code>的符号位，如果数字为负数，则使其为0。实现方式如下图</p>
+<img src="/2022/05/31/Arm-Cortex-M-高效神经网络计算/14.PNG">
+<p>将符号位提取出来构成一个字节，通过使用字节级减法指令<code>__QSUB8</code>将0与符号位提取生成的字节数相减，得到一个掩码，如果是负数，则提取的字节为0x01，0减去0x01为0xFF，那么原始数据与0xFF的非得到0，如果是整数，0减0依然是0，原始数据与0x00的非还是原始数据</p>
+<h2 id="Sigmoid-and-Tanh"><a href="#Sigmoid-and-Tanh" class="headerlink" title="Sigmoid and Tanh"></a>Sigmoid and Tanh</h2><p>sigmoid和tanh需要使用专用的数学函数，这种计算在Cortex-M架构的CPU上计算程本很高，因此使用固定输入和固定输出的查找表来实现。有两种方式实现的查找表，第一种是对所有范围使用一个统一的表，输入粒度固定，输入的MSB用于识别查找表中的条目，LSB可以用于线性插值</p>
+<p>另一种选择是实现两个独立的表，以覆盖函数的不同区域，这样精度更高，因为sigmoid和tanh都是高度非线性的。对于0附近的输入区域，应该有一个细粒度的表，对于绝对值较大的区域，有另一个粗粒度的表</p>
+<p>确定sigmoid和tanh函数表的范围是很重要的，CMSIS中使用了[-8,8]，因为sigmoid(8)=0.9997，tanh(8)=0.9999</p>
+<h1 id="实验结果"><a href="#实验结果" class="headerlink" title="实验结果"></a>实验结果</h1><p>在CIFAR-10数据集上训练的CNN测试了CMSIS-NN内核，该数据集由6万张32x32的彩色图像组成，分为10个类别。网络结构如下表，3个卷积层和一个全连接层。所有权重和激活函数都量化为<code>q7_t</code></p>
+<img src="/2022/05/31/Arm-Cortex-M-高效神经网络计算/15.PNG">
+<p>整个图像分类每张约运行99.1ms，帧频约为10fps。运行该网络时，CPU计算吞吐量大约为每秒249MOps。在CIFAR-10测试集上，预量化网络准确率达到80.3%，在Arm Cortex-M7上运行的8位量化网络达到79.9%。使用CMSIS-NN内核最大内存占用为133KB，其中使用部分im2col实现卷积以节省内存。如果不使用部分im2col，内存开销将到达332KB</p>
+<p>为了量化CMSIS-NN内核相对于现有方案的优势，使用了一维卷积函数实现了一个基线版本。下表总结了基线版本与CMSIS-NN的结果比较，CMSIS-NN在运行时间上比基线版本提高了2.6倍，吞吐量上提高了5.4倍</p>
+<img src="/2022/05/31/Arm-Cortex-M-高效神经网络计算/16.PNG">
+<h1 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h1><p><a href="https://arm-software.github.io/CMSIS_5/NN/html/index.html" target="_blank" rel="noopener">CMSIS NN Software Library</a></p>
+<p><a href="https://github.com/ARM-software/CMSIS_5" target="_blank" rel="noopener">GitHub - CMSIS_5</a></p>
+<p><a href="https://www.arxiv.org/abs/1801.06601" target="_blank" rel="noopener">arxiv - CMSIS-NN: Efficient Neural Network Kernels for Arm Cortex-M CPUs</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Arm-Cortex-M/" rel="tag"># Arm Cortex-M</a>
+          
+            <a href="/tags/神经网络/" rel="tag"># 神经网络</a>
+          
+            <a href="/tags/加速计算/" rel="tag"># 加速计算</a>
+          
+            <a href="/tags/神经网络量化/" rel="tag"># 神经网络量化</a>
+          
+        </div>
+      
+
+      
+      
+        <div class="post-widgets">
+        
+
+        
+
+        
+          
+          <div id="needsharebutton-postbottom">
+            <span class="btn">
+              <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </span>
+          </div>
+        
+        </div>
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2022/05/25/DIP-boxfilter快速窗口求和/" rel="next" title="DIP-boxfilter快速窗口求和">
+                <i class="fa fa-chevron-left"></i> DIP-boxfilter快速窗口求和
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2022/06/30/VitisAI-04-PetaLinux-Flow/" rel="prev" title="VitisAI-04-PetaLinux Flow">
+                VitisAI-04-PetaLinux Flow <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/../image/avatar.png" alt="awokezhou">
+            
+              <p class="site-author-name" itemprop="name">awokezhou</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">89</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">56</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">73</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/awokezhou" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="awokezhou@gmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                Links
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://www.ruanyifeng.com/blog/" title="阮一峰" target="_blank">阮一峰</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://dave.cheney.net/about/" title="Dave Cheney" target="_blank">Dave Cheney</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://codingsans.com/" title="codingsans" target="_blank">codingsans</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://www.openai.com/" title="openAI" target="_blank">openAI</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://www.wowotech.net/author/3/" title="linuxer - 蜗窝科技" target="_blank">linuxer - 蜗窝科技</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://www.iii.run/" title="mmmwhy" target="_blank">mmmwhy</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://www.jasongj.com/" title="技术世界" target="_blank">技术世界</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://machinelearningmastery.com/" title="Jason Brownlee" target="_blank">Jason Brownlee</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://www.jeremyjordan.me/" title="Jeremy Jordan" target="_blank">Jeremy Jordan</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://towardsdatascience.com/" title="Towards Data Science" target="_blank">Towards Data Science</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://colah.github.io/" title="colah" target="_blank">colah</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://www.cnblogs.com/popsuper1982/" title="网易云计算架构师刘超" target="_blank">网易云计算架构师刘超</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://biscuitos.github.io/" title="Biscuitos" target="_blank">Biscuitos</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#定点量化"><span class="nav-number">1.</span> <span class="nav-text">定点量化</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#优化的内核"><span class="nav-number">2.</span> <span class="nav-text">优化的内核</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Support-Functions"><span class="nav-number">2.1.</span> <span class="nav-text">Support Functions</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#矩阵乘法"><span class="nav-number">2.2.</span> <span class="nav-text">矩阵乘法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#卷积"><span class="nav-number">2.3.</span> <span class="nav-text">卷积</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Pooling"><span class="nav-number">2.4.</span> <span class="nav-text">Pooling</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#激活函数"><span class="nav-number">3.</span> <span class="nav-text">激活函数</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#ReLU"><span class="nav-number">3.1.</span> <span class="nav-text">ReLU</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Sigmoid-and-Tanh"><span class="nav-number">3.2.</span> <span class="nav-text">Sigmoid and Tanh</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#实验结果"><span class="nav-number">4.</span> <span class="nav-text">实验结果</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Reference"><span class="nav-number">5.</span> <span class="nav-text">Reference</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">awokezhou</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+      <div id="needsharebutton-float">
+        <span class="btn">
+          <i class="fa fa-share-alt" aria-hidden="true"></i>
+        </span>
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+  
+  <script type="text/javascript">
+    var GUEST = ['nick','mail','link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item=>{
+      return GUEST.indexOf(item)>-1;
+    });
+    new Valine({
+        el: '#comments' ,
+        verify: false,
+        notify: false,
+        appId: 'fRviEm3V5t70yJuO2anF9b3q-gzGzoHsz',
+        appKey: 'hWNhMYbcRQVolyrvqSI7fVgz',
+        placeholder: '快来吐槽吧',
+        avatar:'mm',
+        guest_info:guest,
+        pageSize:'10' || 10,
+    });
+  </script>
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+  
+  <link rel="stylesheet" href="/lib/needsharebutton/needsharebutton.css">
+
+  
+  
+  <script src="/lib/needsharebutton/needsharebutton.js"></script>
+
+  <script>
+    
+      pbOptions = {};
+      
+          pbOptions.iconStyle = "box";
+      
+          pbOptions.boxForm = "horizontal";
+      
+          pbOptions.position = "bottomCenter";
+      
+          pbOptions.networks = "Weibo,Wechat,Douban,QQZone,Twitter,Facebook";
+      
+      new needShareButton('#needsharebutton-postbottom', pbOptions);
+    
+    
+      flOptions = {};
+      
+          flOptions.iconStyle = "box";
+      
+          flOptions.boxForm = "horizontal";
+      
+          flOptions.position = "middleRight";
+      
+          flOptions.networks = "Weibo,Wechat,Douban,QQZone,Twitter,Facebook";
+      
+      new needShareButton('#needsharebutton-float', flOptions);
+    
+  </script>
+
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

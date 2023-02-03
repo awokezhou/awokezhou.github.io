@@ -1,0 +1,1317 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/../image/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/../image/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Nvidia,CUDA,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="巧妙的使用共享内存Shared memory，能够减少线程对全局内存Global memory的访问，提升CUDA程序在访存方面的性能。本文以矩阵乘法为例，通过对比不使用共享内存的普通矩阵乘法实现和使用共享内存的矩阵乘法优化版本，展示共享内存对程序性能的提升，并分析使用共享内存的条件和注意点 普通矩阵乘法矩阵乘法的基本原理如下图所示  矩阵A与矩阵B相乘，得到矩阵C，相乘的一个重要条件是矩阵A的列">
+<meta name="keywords" content="Nvidia,CUDA">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SharedMemocry优化矩阵乘法">
+<meta property="og:url" content="http://yoursite.com/2023/01/16/SharedMemocry优化矩阵乘法/index.html">
+<meta property="og:site_name" content="awokezhou&#39;s blog">
+<meta property="og:description" content="巧妙的使用共享内存Shared memory，能够减少线程对全局内存Global memory的访问，提升CUDA程序在访存方面的性能。本文以矩阵乘法为例，通过对比不使用共享内存的普通矩阵乘法实现和使用共享内存的矩阵乘法优化版本，展示共享内存对程序性能的提升，并分析使用共享内存的条件和注意点 普通矩阵乘法矩阵乘法的基本原理如下图所示  矩阵A与矩阵B相乘，得到矩阵C，相乘的一个重要条件是矩阵A的列">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://yoursite.com/2023/01/16/SharedMemocry优化矩阵乘法/01.png">
+<meta property="og:updated_time" content="2023-02-02T11:56:16.247Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="SharedMemocry优化矩阵乘法">
+<meta name="twitter:description" content="巧妙的使用共享内存Shared memory，能够减少线程对全局内存Global memory的访问，提升CUDA程序在访存方面的性能。本文以矩阵乘法为例，通过对比不使用共享内存的普通矩阵乘法实现和使用共享内存的矩阵乘法优化版本，展示共享内存对程序性能的提升，并分析使用共享内存的条件和注意点 普通矩阵乘法矩阵乘法的基本原理如下图所示  矩阵A与矩阵B相乘，得到矩阵C，相乘的一个重要条件是矩阵A的列">
+<meta name="twitter:image" content="http://yoursite.com/2023/01/16/SharedMemocry优化矩阵乘法/01.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"hide","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2023/01/16/SharedMemocry优化矩阵乘法/">
+
+
+
+
+
+  <title>SharedMemocry优化矩阵乘法 | awokezhou's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">awokezhou's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-message">
+          <a href="/message/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br>
+            
+            message
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2023/01/16/SharedMemocry优化矩阵乘法/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="awokezhou">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/../image/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="awokezhou's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">SharedMemocry优化矩阵乘法</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2023-01-16T10:37:33+08:00">
+                2023-01-16
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/CUDA/" itemprop="url" rel="index">
+                    <span itemprop="name">CUDA</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2023/01/16/SharedMemocry优化矩阵乘法/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2023/01/16/SharedMemocry优化矩阵乘法/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>巧妙的使用共享内存Shared memory，能够减少线程对全局内存Global memory的访问，提升CUDA程序在访存方面的性能。本文以矩阵乘法为例，通过对比不使用共享内存的普通矩阵乘法实现和使用共享内存的矩阵乘法优化版本，展示共享内存对程序性能的提升，并分析使用共享内存的条件和注意点</p>
+<h1 id="普通矩阵乘法"><a href="#普通矩阵乘法" class="headerlink" title="普通矩阵乘法"></a>普通矩阵乘法</h1><p>矩阵乘法的基本原理如下图所示</p>
+<img src="/2023/01/16/SharedMemocry优化矩阵乘法/01.png">
+<p>矩阵A与矩阵B相乘，得到矩阵C，相乘的一个重要条件是矩阵A的列数或者宽度与矩阵B的行数或者高度要相等，相乘得到的矩阵C的列数(宽度)与矩阵B的列数(宽度)相等，行数(高度)与矩阵A的行数(高度)相等，假设A为2x3的矩阵，B为3x4的矩阵，A和B相乘结果是C为2x4，注意这里的表述是行在前列在后。乘法中单个元素的对应关系是，C中的每个元素是A中对应行与B中对应列的逐元素相乘的累加和，如图中黄色部分，整个乘法过程可以抽象成一个两层循环，外层循环是C中每个元素位置的循环，内层循环是A的行与B的列的逐元素循环</p>
+<p>普通矩阵乘法的示例代码如下</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"cuda_runtime.h"</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"device_launch_parameters.h"</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;memory&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MATRIX_A_WIDTH    1024</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MATRIX_A_HEIGHT   1920</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MATRIX_B_WIDTH    1280</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MATRIX_B_HEIGHT   MATRIX_A_WIDTH</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> BLOCK_SIZE        16</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MAT_ELEM_NUM(m)   (m.width * m.height)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MAT_SIZE(m)       (MAT_ELEM_NUM(m) * sizeof(float))</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">    <span class="keyword">int</span> width;</span><br><span class="line">    <span class="keyword">int</span> height;</span><br><span class="line">    <span class="keyword">float</span> *data;</span><br><span class="line">&#125; Matrix;</span><br><span class="line"></span><br><span class="line">__<span class="function">global__ <span class="keyword">void</span> <span class="title">mat_mul_kernel_v1</span><span class="params">(Matrix A, Matrix B, Matrix C)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">/* get row/col index */</span></span><br><span class="line">    <span class="keyword">int</span> row = blockDim.x * blockIdx.x + threadIdx.x;</span><br><span class="line">    <span class="keyword">int</span> col = blockDim.y + blockIdx.y + threadIdx.y;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">float</span> value = <span class="number">0.0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* foreach element in A's row and B's col */</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;A.width; i++) &#123;</span><br><span class="line">        value += A.data[row * A.width + i] * </span><br><span class="line">                 B.data[i * B.height + col];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* write sum value to C */</span></span><br><span class="line">    c.data[row * C.width + col] = value;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">MatMulKernel</span><span class="params">(Matrix A, Matrix B, Matrix C)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    Matrix d_A, d_B, d_C;</span><br><span class="line"></span><br><span class="line">    d_A.width  = A.width;</span><br><span class="line">    d_A.height = A.height;</span><br><span class="line">    d_B.width  = B.width;</span><br><span class="line">    d_B.height = B.height;</span><br><span class="line">    d_C.width  = C.width;</span><br><span class="line">    d_C.height = C.height;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* Alloc cuda mem for A, B, C */</span></span><br><span class="line">    cudaMalloc(&amp;d_A.data, MAT_SIZE(A));</span><br><span class="line">    cudaMalloc(&amp;d_B.data, MAT_SIZE(B));</span><br><span class="line">    cudaMalloc(&amp;d_C.data, MAT_SIZE(C));</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* Copy mem from host to device */</span></span><br><span class="line">    cudaMemcpy(d_A.data, A.data, MAT_SIZE(A), cudaMemcpyHostToDevice);</span><br><span class="line">    cudaMemcpy(d_B.data, B.data, MAT_SIZE(B), cudaMemcpyHostToDevice);</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* Create and invoke cuda kernel */</span></span><br><span class="line">    <span class="function">dim3 <span class="title">threadsPerBlock</span><span class="params">(BLOCK_SIZE, BLOCK_SIZE)</span></span>;</span><br><span class="line">    <span class="function">dim3 <span class="title">numBlocks</span><span class="params">(C.height / BLOCK_SIZE, C.width / BLOCK_SIZE)</span></span>;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"call kernel with blocks&#123;%d,%d&#125; threads&#123;%d,%d&#125;\n"</span>, B.width / BLOCK_SIZE,         A.height / BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);</span><br><span class="line">    mat_mul_kernel_v1&lt;&lt;&lt;numBlocks, threadsPerBlock&gt;&gt;&gt;(d_A, d_B, d_C);</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* Copy mem from device to host*/</span></span><br><span class="line">    cudaMemcpy(C.data, d_C.data, MAT_SIZE(C), cudaMemcpyDeviceToHost);</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* Free cuda mem */</span></span><br><span class="line">    cudaFree(d_A.data);</span><br><span class="line">    cudaFree(d_B.data);</span><br><span class="line">    cudaFree(d_C.data);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> *argv)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    Matrix A, B, C;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* Initialize A,B,C and alloc memory for them */</span></span><br><span class="line">    A.width = MATRIX_A_WIDTH;</span><br><span class="line">    A.height = MATRIX_A_HEIGHT;</span><br><span class="line">    A.data   = (<span class="keyword">float</span> *)<span class="built_in">malloc</span>(MAT_SIZE(A));</span><br><span class="line"></span><br><span class="line">       B.width  = MATRIX_B_WIDTH;</span><br><span class="line">    B.height = MATRIX_B_HEIGHT;</span><br><span class="line">    B.data   = (<span class="keyword">float</span>*)<span class="built_in">malloc</span>(MAT_SIZE(B));</span><br><span class="line"></span><br><span class="line">    C.width  = MATRIX_B_WIDTH;</span><br><span class="line">    C.height = MATRIX_A_HEIGHT;</span><br><span class="line">    C.data   = (<span class="keyword">float</span>*)<span class="built_in">malloc</span>(MAT_SIZE(C));</span><br><span class="line"></span><br><span class="line">    MatMulKernel(A, B, C);</span><br><span class="line"></span><br><span class="line">    <span class="built_in">free</span>(A.data);</span><br><span class="line">    <span class="built_in">free</span>(B.data);</span><br><span class="line">    <span class="built_in">free</span>(C.data);</span><br><span class="line"></span><br><span class="line">    <span class="built_in">exit</span>(EXIT_SUCCESS);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>程序中为每个block分配了16x16的二维线程数，block的大小由数据大小决定，每个线程计算C中的一个元素，通过线程的二维ID来确定当前线程计算C中的哪个元素</p>
+<h1 id="使用共享内存优化矩阵乘法"><a href="#使用共享内存优化矩阵乘法" class="headerlink" title="使用共享内存优化矩阵乘法"></a>使用共享内存优化矩阵乘法</h1><p>在普通矩阵乘法中，每个线程负责计算C中的一个元素，每个元素都会读取A中的一行和B中的一列。例如在计算C[2][1]时，线程1要读取一次A的第2行和B的第1列，在计算C[2][2]时，线程2要读取一次A的第2行和B的第2列，可以看到两个线程各进行了一次对A第二行的读取操作，由于从全局内存中读取数据是非常缓慢的，这种重复的读取如果可以被避免的话，能够有效提升程序性能。如下图所示，在优化的程序中，将最终要计算的结果矩阵C拆分成一个一个大小为 <code>BLOCK_SIZE*BLOCK_SIZE</code>的子矩阵$C<em>{sub}$，每个线程块负责计算一个子矩阵$C</em>{sub}$，而每个线程负责计算子矩阵中的每个元素。对A、B的读取也是以块为单位的，每次将读取的数据放入SharedMemory中，这样在计算完一个子矩阵$C_{sub}$时，对A的行读取、B的列读取能够从SharedMemory中获得，而不是每次都从全局内存中获取</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"cuda_runtime.h"</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"device_launch_parameters.h"</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;memory&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MATRIX_A_WIDTH    1024</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MATRIX_A_HEIGHT   1920</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MATRIX_B_WIDTH    1280</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MATRIX_B_HEIGHT   MATRIX_A_WIDTH</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> BLOCK_SIZE        16</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MAT_ELEM_NUM(m)   (m.width * m.height)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MAT_SIZE(m)       (MAT_ELEM_NUM(m) * sizeof(float))</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">    <span class="keyword">int</span> width;</span><br><span class="line">    <span class="keyword">int</span> height;</span><br><span class="line">    <span class="keyword">int</span> stride;</span><br><span class="line">    <span class="keyword">float</span> *data;</span><br><span class="line">&#125; Matrix;</span><br><span class="line"></span><br><span class="line">__<span class="function">device__ <span class="keyword">void</span> <span class="title">DevMatSetElement</span><span class="params">(Matrix m, <span class="keyword">int</span> row, <span class="keyword">int</span> col, <span class="keyword">float</span> value)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    m.data[m.stride * row + col] = value;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">__<span class="function">device__ <span class="keyword">float</span> <span class="title">DevMatGetElement</span><span class="params">(Matrix m, <span class="keyword">int</span> row, <span class="keyword">int</span> col)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> m.data[m.stride * row + col];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">__<span class="function">device__ Matrix <span class="title">DevMatGetSub</span><span class="params">(Matrix m, <span class="keyword">int</span> row, <span class="keyword">int</span> col)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    Matrix sub;</span><br><span class="line">    sub.width  = BLOCK_SIZE;</span><br><span class="line">    sub.height = BLOCK_SIZE;</span><br><span class="line">    sub.stride = m.stride;</span><br><span class="line">    sub.data   = &amp;m.data[m.stride * BLOCK_SIZE * row + </span><br><span class="line">                                    BLOCK_SIZE * col];</span><br><span class="line">    <span class="keyword">return</span> sub;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">__<span class="function">global__ <span class="keyword">void</span> <span class="title">mat_mul_kernel_v2</span><span class="params">(Matrix A, Matrix B, Matrix C)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> blockRow = blockIdx.y;</span><br><span class="line">    <span class="keyword">int</span> blockCol = blockIdx.x;</span><br><span class="line">    <span class="keyword">int</span> row = threadIdx.y;</span><br><span class="line">    <span class="keyword">int</span> col = threadIdx.x;</span><br><span class="line"></span><br><span class="line">    Matrix CSub = DevMatGetSub(C, blockRow, blockCol);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">float</span> Cvalue = <span class="number">0.0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* foreach sub */</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> m=<span class="number">0</span>; m&lt;(A.width/BLOCK_SIZE); m++) &#123;</span><br><span class="line"></span><br><span class="line">        Matrix ASub = DevMatGetSub(A, blockRow, m);</span><br><span class="line">        Matrix BSub = DevMatGetSub(B, m, blockCol);</span><br><span class="line"></span><br><span class="line">        __shared__ <span class="keyword">float</span> As[BLOCK_SIZE][BLOCK_SIZE];</span><br><span class="line">        __shared__ <span class="keyword">float</span> Bs[BLOCK_SIZE][BLOCK_SIZE];</span><br><span class="line"></span><br><span class="line">        As[row][col] = DevMatGetElement(ASub, row, col);</span><br><span class="line">        Bs[row][col] = DevMatGetElement(BSub, row, col);</span><br><span class="line"></span><br><span class="line">        __syncthreads();</span><br><span class="line"></span><br><span class="line">        <span class="comment">/* foreach elem */</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> e=<span class="number">0</span>; e&lt;BLOCK_SIZE; e++) &#123;</span><br><span class="line">            Cvalue += As[row][e] * Bs[e][col];</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        __syncthreads();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    DevMatSetElement(CSub, row, col, Cvalue);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">MatMulKernel</span><span class="params">(Matrix A, Matrix B, Matrix C)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    Matrix d_A, d_B, d_C;</span><br><span class="line"></span><br><span class="line">    d_A.width  = A.width;</span><br><span class="line">    d_A.height = A.height;</span><br><span class="line">    d_A.stride = A.stride;</span><br><span class="line">    d_B.width  = B.width;</span><br><span class="line">    d_B.height = B.height;</span><br><span class="line">    d_B.stride = B.stride;</span><br><span class="line">    d_C.width  = C.width;</span><br><span class="line">    d_C.height = C.height;</span><br><span class="line">    d_C.stride = C.stride;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* Alloc cuda mem for A, B, C */</span></span><br><span class="line">    cudaMalloc(&amp;d_A.data, MAT_SIZE(A));</span><br><span class="line">    cudaMalloc(&amp;d_B.data, MAT_SIZE(B));</span><br><span class="line">    cudaMalloc(&amp;d_C.data, MAT_SIZE(C));</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* Copy mem from host to device */</span></span><br><span class="line">    cudaMemcpy(d_A.data, A.data, MAT_SIZE(A), cudaMemcpyHostToDevice);</span><br><span class="line">    cudaMemcpy(d_B.data, B.data, MAT_SIZE(B), cudaMemcpyHostToDevice);</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* Create and invoke cuda kernel */</span></span><br><span class="line">    <span class="function">dim3 <span class="title">threadsPerBlock</span><span class="params">(BLOCK_SIZE, BLOCK_SIZE)</span></span>;</span><br><span class="line">    <span class="function">dim3 <span class="title">numBlocks</span><span class="params">(C.height / BLOCK_SIZE, C.width / BLOCK_SIZE)</span></span>;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"call kernel with blocks&#123;%d,%d&#125; threads&#123;%d,%d&#125;\n"</span>, B.width / BLOCK_SIZE,         A.height / BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);</span><br><span class="line">    mat_mul_kernel_v2&lt;&lt;&lt;numBlocks, threadsPerBlock&gt;&gt;&gt;(d_A, d_B, d_C);</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* Copy mem from device to host*/</span></span><br><span class="line">    cudaMemcpy(C.data, d_C.data, MAT_SIZE(C), cudaMemcpyDeviceToHost);</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* Free cuda mem */</span></span><br><span class="line">    cudaFree(d_A.data);</span><br><span class="line">    cudaFree(d_B.data);</span><br><span class="line">    cudaFree(d_C.data);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> *argv)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    Matrix A, B, C;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* Initialize A,B,C and alloc memory for them */</span></span><br><span class="line">    A.width = MATRIX_A_WIDTH;</span><br><span class="line">    A.height = MATRIX_A_HEIGHT;</span><br><span class="line">    A.stride = A.width;</span><br><span class="line">    A.data   = (<span class="keyword">float</span> *)<span class="built_in">malloc</span>(MAT_SIZE(A));</span><br><span class="line"></span><br><span class="line">    B.width  = MATRIX_B_WIDTH;</span><br><span class="line">    B.height = MATRIX_B_HEIGHT;</span><br><span class="line">    B.stride = B.width;</span><br><span class="line">    B.data   = (<span class="keyword">float</span>*)<span class="built_in">malloc</span>(MAT_SIZE(B));</span><br><span class="line"></span><br><span class="line">    C.width  = MATRIX_B_WIDTH;</span><br><span class="line">    C.height = MATRIX_A_HEIGHT;</span><br><span class="line">    C.stride = C.width;</span><br><span class="line">    C.data   = (<span class="keyword">float</span>*)<span class="built_in">malloc</span>(MAT_SIZE(C));</span><br><span class="line"></span><br><span class="line">    MatMulKernel(A, B, C);</span><br><span class="line"></span><br><span class="line">    <span class="built_in">free</span>(A.data);</span><br><span class="line">    <span class="built_in">free</span>(B.data);</span><br><span class="line">    <span class="built_in">free</span>(C.data);</span><br><span class="line"></span><br><span class="line">    <span class="built_in">exit</span>(EXIT_SUCCESS);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="Performance"><a href="#Performance" class="headerlink" title="Performance"></a>Performance</h1><div class="table-container">
+<table>
+<thead>
+<tr>
+<th>显卡</th>
+<th>KernelVersion</th>
+<th>KernelLaunchTime(us)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GTX 730(sm_35)</td>
+<td>V1</td>
+<td>2849372.820</td>
+</tr>
+<tr>
+<td>GTX 730(sm_35)</td>
+<td>v2</td>
+<td>2154518.019</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Nvidia/" rel="tag"># Nvidia</a>
+          
+            <a href="/tags/CUDA/" rel="tag"># CUDA</a>
+          
+        </div>
+      
+
+      
+      
+        <div class="post-widgets">
+        
+
+        
+
+        
+          
+          <div id="needsharebutton-postbottom">
+            <span class="btn">
+              <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </span>
+          </div>
+        
+        </div>
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2023/01/03/TensorRT部署YOLOv5-03-TensorRT/" rel="next" title="TensorRT部署YOLOv5-03-TensorRT">
+                <i class="fa fa-chevron-left"></i> TensorRT部署YOLOv5-03-TensorRT
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/../image/avatar.png" alt="awokezhou">
+            
+              <p class="site-author-name" itemprop="name">awokezhou</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">89</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">56</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">73</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/awokezhou" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="awokezhou@gmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                Links
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://www.ruanyifeng.com/blog/" title="阮一峰" target="_blank">阮一峰</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://dave.cheney.net/about/" title="Dave Cheney" target="_blank">Dave Cheney</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://codingsans.com/" title="codingsans" target="_blank">codingsans</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://www.openai.com/" title="openAI" target="_blank">openAI</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://www.wowotech.net/author/3/" title="linuxer - 蜗窝科技" target="_blank">linuxer - 蜗窝科技</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://www.iii.run/" title="mmmwhy" target="_blank">mmmwhy</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://www.jasongj.com/" title="技术世界" target="_blank">技术世界</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://machinelearningmastery.com/" title="Jason Brownlee" target="_blank">Jason Brownlee</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://www.jeremyjordan.me/" title="Jeremy Jordan" target="_blank">Jeremy Jordan</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://towardsdatascience.com/" title="Towards Data Science" target="_blank">Towards Data Science</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://colah.github.io/" title="colah" target="_blank">colah</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://www.cnblogs.com/popsuper1982/" title="网易云计算架构师刘超" target="_blank">网易云计算架构师刘超</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://biscuitos.github.io/" title="Biscuitos" target="_blank">Biscuitos</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#普通矩阵乘法"><span class="nav-number">1.</span> <span class="nav-text">普通矩阵乘法</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#使用共享内存优化矩阵乘法"><span class="nav-number">2.</span> <span class="nav-text">使用共享内存优化矩阵乘法</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Performance"><span class="nav-number">3.</span> <span class="nav-text">Performance</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">awokezhou</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+      <div id="needsharebutton-float">
+        <span class="btn">
+          <i class="fa fa-share-alt" aria-hidden="true"></i>
+        </span>
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+  
+  <script type="text/javascript">
+    var GUEST = ['nick','mail','link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item=>{
+      return GUEST.indexOf(item)>-1;
+    });
+    new Valine({
+        el: '#comments' ,
+        verify: false,
+        notify: false,
+        appId: 'fRviEm3V5t70yJuO2anF9b3q-gzGzoHsz',
+        appKey: 'hWNhMYbcRQVolyrvqSI7fVgz',
+        placeholder: '快来吐槽吧',
+        avatar:'mm',
+        guest_info:guest,
+        pageSize:'10' || 10,
+    });
+  </script>
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+  
+  <link rel="stylesheet" href="/lib/needsharebutton/needsharebutton.css">
+
+  
+  
+  <script src="/lib/needsharebutton/needsharebutton.js"></script>
+
+  <script>
+    
+      pbOptions = {};
+      
+          pbOptions.iconStyle = "box";
+      
+          pbOptions.boxForm = "horizontal";
+      
+          pbOptions.position = "bottomCenter";
+      
+          pbOptions.networks = "Weibo,Wechat,Douban,QQZone,Twitter,Facebook";
+      
+      new needShareButton('#needsharebutton-postbottom', pbOptions);
+    
+    
+      flOptions = {};
+      
+          flOptions.iconStyle = "box";
+      
+          flOptions.boxForm = "horizontal";
+      
+          flOptions.position = "middleRight";
+      
+          flOptions.networks = "Weibo,Wechat,Douban,QQZone,Twitter,Facebook";
+      
+      new needShareButton('#needsharebutton-float', flOptions);
+    
+  </script>
+
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,1319 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/../image/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/../image/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="Yolov4中使用了Mosica数据增强方法，能够在有限数据集情况下极大程度的增加增强样本量。本文对Mosica数据增强方法进行Python代码实现介绍 数据准备本实现需要以下相关数据和文件准备  VOC数据集(本实验使用的是VOC2007)  classes文件   将VOC数据集预先经过处理后，得到一个合并所有标注信息的文件’annotations.txt’，其中每一行是图像绝对路径和Boun">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Mosica数据增强">
+<meta property="og:url" content="http://yoursite.com/2022/11/11/Mosica数据增强/index.html">
+<meta property="og:site_name" content="awokezhou&#39;s blog">
+<meta property="og:description" content="Yolov4中使用了Mosica数据增强方法，能够在有限数据集情况下极大程度的增加增强样本量。本文对Mosica数据增强方法进行Python代码实现介绍 数据准备本实现需要以下相关数据和文件准备  VOC数据集(本实验使用的是VOC2007)  classes文件   将VOC数据集预先经过处理后，得到一个合并所有标注信息的文件’annotations.txt’，其中每一行是图像绝对路径和Boun">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://yoursite.com/2022/11/11/Mosica数据增强/01.png">
+<meta property="og:image" content="http://yoursite.com/2022/11/11/Mosica数据增强/02.png">
+<meta property="og:image" content="http://yoursite.com/2022/11/11/Mosica数据增强/03.png">
+<meta property="og:updated_time" content="2023-02-02T11:52:01.664Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Mosica数据增强">
+<meta name="twitter:description" content="Yolov4中使用了Mosica数据增强方法，能够在有限数据集情况下极大程度的增加增强样本量。本文对Mosica数据增强方法进行Python代码实现介绍 数据准备本实现需要以下相关数据和文件准备  VOC数据集(本实验使用的是VOC2007)  classes文件   将VOC数据集预先经过处理后，得到一个合并所有标注信息的文件’annotations.txt’，其中每一行是图像绝对路径和Boun">
+<meta name="twitter:image" content="http://yoursite.com/2022/11/11/Mosica数据增强/01.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"hide","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2022/11/11/Mosica数据增强/">
+
+
+
+
+
+  <title>Mosica数据增强 | awokezhou's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">awokezhou's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-message">
+          <a href="/message/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br>
+            
+            message
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2022/11/11/Mosica数据增强/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="awokezhou">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/../image/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="awokezhou's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Mosica数据增强</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2022-11-11T16:03:18+08:00">
+                2022-11-11
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/AI/" itemprop="url" rel="index">
+                    <span itemprop="name">AI</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2022/11/11/Mosica数据增强/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2022/11/11/Mosica数据增强/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>Yolov4中使用了Mosica数据增强方法，能够在有限数据集情况下极大程度的增加增强样本量。本文对Mosica数据增强方法进行Python代码实现介绍</p>
+<h1 id="数据准备"><a href="#数据准备" class="headerlink" title="数据准备"></a>数据准备</h1><p>本实现需要以下相关数据和文件准备</p>
+<ul>
+<li><p>VOC数据集(本实验使用的是VOC2007)</p>
+</li>
+<li><p>classes文件</p>
+</li>
+</ul>
+<p>将VOC数据集预先经过处理后，得到一个合并所有标注信息的文件’annotations.txt’，其中每一行是图像绝对路径和BoundingBox和标签信息</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">VOCdevkit/VOC2007/JPEGImages/000005.jpg 263,211,324,339,8 165,264,253,372,8 5,244,67,374,8 241,194,295,299,8 277,186,312,220,8</span><br><span class="line">VOCdevkit/VOC2007/JPEGImages/000007.jpg 141,50,500,330,6</span><br><span class="line">VOCdevkit/VOC2007/JPEGImages/000009.jpg 69,172,270,330,12 150,141,229,284,14 285,201,327,331,14 258,198,297,329,14</span><br><span class="line">VOCdevkit/VOC2007/JPEGImages/000012.jpg 156,97,351,270,6</span><br><span class="line">VOCdevkit/VOC2007/JPEGImages/000016.jpg 92,72,305,473,1</span><br><span class="line">VOCdevkit/VOC2007/JPEGImages/000017.jpg 185,62,279,199,14 90,78,403,336,12</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<h1 id="导入依赖包"><a href="#导入依赖包" class="headerlink" title="导入依赖包"></a>导入依赖包</h1><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> random</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image, ImageDraw, ImageFont</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>random用于生成随机数，以进行随机参数的变换</p>
+</li>
+<li><p>numpy用于图像和numpy的转换以及数据处理</p>
+</li>
+<li><p>Image用于图像加载和变换</p>
+</li>
+<li><p>ImageDraw和ImageFont用于在图像上画BoundingBox</p>
+</li>
+<li><p>pyplot用于绘图显示图像</p>
+</li>
+</ul>
+<h1 id="定义一些工具函数"><a href="#定义一些工具函数" class="headerlink" title="定义一些工具函数"></a>定义一些工具函数</h1><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 用于生成指定范围的随机数</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">random_rate</span><span class="params">(a=<span class="number">0</span>, b=<span class="number">1</span>)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> np.random.rand()*(b-a) + a</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 用于从classes文件得到classes数组</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_classes</span><span class="params">(classes_path)</span>:</span></span><br><span class="line">    <span class="keyword">with</span> open(classes_path, encoding=<span class="string">'utf-8'</span>) <span class="keyword">as</span> f:</span><br><span class="line">        class_names = f.readlines()</span><br><span class="line">    class_names = [c.strip() <span class="keyword">for</span> c <span class="keyword">in</span> class_names]</span><br><span class="line">    <span class="keyword">return</span> class_names</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 在图像上绘制box矩形框以及标签文字</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">draw_bndbox</span><span class="params">(image, bboxes, classes)</span>:</span></span><br><span class="line">    <span class="keyword">for</span> box <span class="keyword">in</span> bboxes:</span><br><span class="line">        label = classes[int(box[<span class="number">-1</span>])]</span><br><span class="line">        font = ImageFont.truetype(font=<span class="string">'SIMYOU.TTF'</span>, </span><br><span class="line">            size=np.floor(<span class="number">1.5e-2</span> * np.shape(image)[<span class="number">1</span>] + <span class="number">15</span>).astype(<span class="string">'int32'</span>))</span><br><span class="line">        draw = ImageDraw.Draw(image)</span><br><span class="line">        label_size = draw.textsize(label, font)</span><br><span class="line">        text_origin = np.array([box[<span class="number">0</span>], box[<span class="number">1</span>] - label_size[<span class="number">1</span>]])</span><br><span class="line">        draw.rectangle([box[<span class="number">0</span>], box[<span class="number">1</span>], box[<span class="number">2</span>], box[<span class="number">3</span>]], outline=<span class="string">'red'</span>,width=<span class="number">3</span>)</span><br><span class="line">        draw.rectangle([tuple(text_origin), tuple(text_origin + label_size)], fill=<span class="string">'red'</span>)</span><br><span class="line">        draw.text(text_origin, str(label), fill=(<span class="number">255</span>, <span class="number">255</span>, <span class="number">255</span>), font=font)</span><br><span class="line">        <span class="keyword">del</span> draw</span><br><span class="line">    <span class="keyword">return</span> image</span><br></pre></td></tr></table></figure>
+<h1 id="图像样本显示"><a href="#图像样本显示" class="headerlink" title="图像样本显示"></a>图像样本显示</h1><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 变量预先设置</span></span><br><span class="line">input_shape = [<span class="number">640</span>, <span class="number">640</span>]</span><br><span class="line">max_boxes = <span class="number">100</span></span><br><span class="line">annotation_path = <span class="string">'annotations.txt'</span></span><br><span class="line"><span class="keyword">with</span> open(annotation_path, encoding=<span class="string">'utf-8'</span>) <span class="keyword">as</span> f:</span><br><span class="line">    train_indexes = f.readlines()</span><br><span class="line">classes_path = <span class="string">'voc_classes.txt'</span></span><br><span class="line">classes = get_classes(classes_path)</span><br></pre></td></tr></table></figure>
+<p>Mosica数据增强是以4副图像合并为一副图像，首先获取4副图像进行显示</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">plt.figure(figsize=(<span class="number">16</span>, <span class="number">12</span>))</span><br><span class="line">samples = train_indexes[:<span class="number">4</span>]</span><br><span class="line"><span class="keyword">for</span> i, sample <span class="keyword">in</span> enumerate(samples):</span><br><span class="line">    line_content = sample.split()</span><br><span class="line">    bboxes = np.array([np.array(list(map(int,box.split(<span class="string">','</span>)))) <span class="keyword">for</span> box <span class="keyword">in</span> line_content[<span class="number">1</span>:]])</span><br><span class="line">    image = Image.open(line_content[<span class="number">0</span>])</span><br><span class="line">    image = draw_bndbox(image, bboxes, classes)</span><br><span class="line">    plt.subplot(<span class="number">2</span>,<span class="number">2</span>,i+<span class="number">1</span>)</span><br><span class="line">    plt.xticks([])</span><br><span class="line">    plt.yticks([])</span><br><span class="line">    plt.title(<span class="string">'sample&#123;&#125;'</span>.format(i))</span><br><span class="line">    plt.imshow(image)</span><br></pre></td></tr></table></figure>
+<img src="/2022/11/11/Mosica数据增强/01.png">
+<h1 id="Mosica处理"><a href="#Mosica处理" class="headerlink" title="Mosica处理"></a>Mosica处理</h1><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br></pre></td><td class="code"><pre><span class="line">index = <span class="number">0</span></span><br><span class="line">image_datas = []</span><br><span class="line">boxes_datas = []</span><br><span class="line"><span class="comment"># 生成4副图像的分割比例和坐标</span></span><br><span class="line">min_offset_x = random_rate(<span class="number">0.3</span>, <span class="number">0.7</span>)</span><br><span class="line">min_offset_y = random_rate(<span class="number">0.3</span>, <span class="number">0.7</span>)</span><br><span class="line">cutx = int(w * min_offset_x)</span><br><span class="line">cuty = int(h * min_offset_y)</span><br><span class="line">plt.figure(figsize=(<span class="number">16</span>, <span class="number">12</span>))</span><br><span class="line"><span class="keyword">for</span> sample <span class="keyword">in</span> samples:</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 读入图像和box</span></span><br><span class="line">    line_content = sample.split()</span><br><span class="line">    image = Image.open(line_content[<span class="number">0</span>])</span><br><span class="line">    iw, ih = image.size</span><br><span class="line">    box = np.array([np.array(list(map(int,box.split(<span class="string">','</span>)))) <span class="keyword">for</span> box <span class="keyword">in</span> line_content[<span class="number">1</span>:]])</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 随机翻转</span></span><br><span class="line">    flip = random_rate() &lt; <span class="number">0.5</span></span><br><span class="line">    <span class="keyword">if</span> flip <span class="keyword">and</span> len(box)&gt;<span class="number">0</span>:</span><br><span class="line">        image = image.transpose(Image.FLIP_LEFT_RIGHT)</span><br><span class="line">        <span class="comment"># 图像进行翻转，box也需要翻转</span></span><br><span class="line">        box[:, [<span class="number">0</span>,<span class="number">2</span>]] = iw - box[:, [<span class="number">2</span>,<span class="number">0</span>]]</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 图像长宽比例和大小随机变换</span></span><br><span class="line">    beta1 = random_rate(<span class="number">1</span>-jitter, <span class="number">1</span>+jitter)</span><br><span class="line">    beta2 = random_rate(<span class="number">1</span>-jitter, <span class="number">1</span>+jitter)</span><br><span class="line">    rate  = iw/ih*beta1 / beta2</span><br><span class="line">    scale = random_rate(<span class="number">.4</span>, <span class="number">1</span>)</span><br><span class="line">    <span class="keyword">if</span> rate &lt; <span class="number">1</span>:</span><br><span class="line">        nh = int(scale*h)</span><br><span class="line">        nw = int(nh*rate)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        nw = int(scale*w)</span><br><span class="line">        nh = int(nw/rate)</span><br><span class="line">    image = image.resize((nw, nh), Image.BICUBIC)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 计算每幅图像的左上角相对最后生成图的偏移</span></span><br><span class="line">    <span class="keyword">if</span> index == <span class="number">0</span>:</span><br><span class="line">        dx = cutx - nw</span><br><span class="line">        dy = cut - nh</span><br><span class="line">    <span class="keyword">elif</span> index == <span class="number">1</span>:</span><br><span class="line">        dx = icutx- nw</span><br><span class="line">        dy = cutx</span><br><span class="line">    <span class="keyword">elif</span> index == <span class="number">2</span>:</span><br><span class="line">        dx = cutx</span><br><span class="line">        dy = cuty</span><br><span class="line">    <span class="keyword">elif</span> index == <span class="number">3</span>:</span><br><span class="line">        dx = cutx</span><br><span class="line">        dy = cuty - nh</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 创建与最终合成图大小一致的灰色背景图，用于将变换图粘贴到其中</span></span><br><span class="line">    new_image = Image.new(<span class="string">'RGB'</span>, (w,h), (<span class="number">128</span>,<span class="number">128</span>,<span class="number">128</span>))</span><br><span class="line">    new_image.paste(image, (dx, dy))</span><br><span class="line"></span><br><span class="line">    image_data = np.array(new_image)</span><br><span class="line"></span><br><span class="line">    bboxs_data = []</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 图像进行了长宽比例和大小随机变换，box也需要进行尺度变换，并限制边界</span></span><br><span class="line">    <span class="keyword">if</span> len(box)&gt;<span class="number">0</span>:</span><br><span class="line">        np.random.shuffle(box)</span><br><span class="line">        box[:, [<span class="number">0</span>,<span class="number">2</span>]] = box[:, [<span class="number">0</span>,<span class="number">2</span>]]*nw/iw + dx</span><br><span class="line">        box[:, [<span class="number">1</span>,<span class="number">3</span>]] = box[:, [<span class="number">1</span>,<span class="number">3</span>]]*nh/ih + dy</span><br><span class="line">        box[:, <span class="number">0</span>:<span class="number">2</span>][box[:, <span class="number">0</span>:<span class="number">2</span>]&lt;<span class="number">0</span>] = <span class="number">0</span></span><br><span class="line">        box[:, <span class="number">2</span>][box[:, <span class="number">2</span>]&gt;w] = w</span><br><span class="line">        box[:, <span class="number">3</span>][box[:, <span class="number">3</span>]&gt;h] = h</span><br><span class="line">        box_w = box[:, <span class="number">2</span>] - box[:, <span class="number">0</span>]</span><br><span class="line">        box_h = box[:, <span class="number">3</span>] - box[:, <span class="number">1</span>]</span><br><span class="line">        box = box[np.logical_and(box_w&gt;<span class="number">1</span>, box_h&gt;<span class="number">1</span>)]</span><br><span class="line">        bboxs_data = np.zeros((len(box),<span class="number">5</span>))</span><br><span class="line">        bboxs_data[:len(box)] = box</span><br><span class="line"></span><br><span class="line">    plt.subplot(<span class="number">2</span>,<span class="number">2</span>,index+<span class="number">1</span>)</span><br><span class="line">    plt.xticks([])</span><br><span class="line">    plt.yticks([])</span><br><span class="line">    plt.title(<span class="string">'sample&#123;&#125;'</span>.format(index))</span><br><span class="line">    new_image = draw_bndbox(new_image, box, classes)</span><br><span class="line">    plt.imshow(new_image)</span><br><span class="line"></span><br><span class="line">    index = index + <span class="number">1</span></span><br><span class="line"></span><br><span class="line">    image_datas.append(image_data)</span><br><span class="line">    boxes_datas.append(bboxs_data)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 生成最终合成图，并将4副图像粘贴到对应位置</span></span><br><span class="line">new_image = np.zeros([h, w, <span class="number">3</span>])</span><br><span class="line">new_image[:cuty, :cutx, :] = image_datas[<span class="number">0</span>][:cuty, :cutx, :]</span><br><span class="line">new_image[cuty:, :cutx, :] = image_datas[<span class="number">1</span>][cuty:, :cutx, :]</span><br><span class="line">new_image[cuty:, cutx:, :] = image_datas[<span class="number">2</span>][cuty:, cutx:, :]</span><br><span class="line">new_image[:cuty, cutx:, :] = image_datas[<span class="number">3</span>][:cuty, cutx:, :]</span><br><span class="line">new_image = np.array(new_image, np.uint8)</span><br><span class="line">new_image = Image.fromarray(new_image)</span><br><span class="line"></span><br><span class="line"><span class="string">'''</span></span><br><span class="line"><span class="string">这里可以进行一些色域变换</span></span><br><span class="line"><span class="string">'''</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># box处理</span></span><br><span class="line">new_boxes = merge_bboxes(boxes_datas, cutx, cuty)</span><br><span class="line">box_data = np.zeros((max_boxes, <span class="number">5</span>))</span><br><span class="line"><span class="keyword">if</span> len(new_boxes)&gt;<span class="number">0</span>:</span><br><span class="line">    <span class="keyword">if</span> len(new_boxes)&gt;max_boxes: new_boxes = new_boxes[:max_boxes]</span><br><span class="line">    box_data[:len(new_boxes)] = new_boxes</span><br><span class="line"></span><br><span class="line">plt.figure(figsize=(<span class="number">12</span>, <span class="number">8</span>))</span><br><span class="line">plt.xticks([])</span><br><span class="line">plt.yticks([])</span><br><span class="line">plt.title(<span class="string">'merge'</span>)</span><br><span class="line">new_image = draw_bndbox(new_image, new_boxes, classes)</span><br><span class="line">plt.imshow(new_image)</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+<p>box合并处理的函数</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">merge_bboxes</span><span class="params">(bboxes, cutx, cuty)</span>:</span></span><br><span class="line">    merge_bbox = []</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(len(bboxes)):</span><br><span class="line">        <span class="keyword">for</span> box <span class="keyword">in</span> bboxes[i]:</span><br><span class="line">            tmp_box = []</span><br><span class="line">            x1, y1, x2, y2 = box[<span class="number">0</span>], box[<span class="number">1</span>], box[<span class="number">2</span>], box[<span class="number">3</span>]</span><br><span class="line">            <span class="keyword">if</span> i == <span class="number">0</span>:</span><br><span class="line">                <span class="keyword">if</span> y1 &gt; cuty <span class="keyword">or</span> x1 &gt; cutx:</span><br><span class="line">                    <span class="keyword">continue</span></span><br><span class="line">                <span class="keyword">if</span> y2 &gt;= cuty <span class="keyword">and</span> y1 &lt;= cuty:</span><br><span class="line">                    y2 = cuty</span><br><span class="line">                <span class="keyword">if</span> x2 &gt;= cutx <span class="keyword">and</span> x1 &lt;= cutx:</span><br><span class="line">                    x2 = cutx</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> i == <span class="number">1</span>:</span><br><span class="line">                <span class="keyword">if</span> y2 &lt; cuty <span class="keyword">or</span> x1 &gt; cutx:</span><br><span class="line">                    <span class="keyword">continue</span></span><br><span class="line">                <span class="keyword">if</span> y2 &gt;= cuty <span class="keyword">and</span> y1 &lt;= cuty:</span><br><span class="line">                    y1 = cuty</span><br><span class="line">                <span class="keyword">if</span> x2 &gt;= cutx <span class="keyword">and</span> x1 &lt;= cutx:</span><br><span class="line">                    x2 = cutx</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> i == <span class="number">2</span>:</span><br><span class="line">                <span class="keyword">if</span> y2 &lt; cuty <span class="keyword">or</span> x2 &lt; cutx:</span><br><span class="line">                    <span class="keyword">continue</span></span><br><span class="line">                <span class="keyword">if</span> y2 &gt;= cuty <span class="keyword">and</span> y1 &lt;= cuty:</span><br><span class="line">                    y1 = cuty</span><br><span class="line">                <span class="keyword">if</span> x2 &gt;= cutx <span class="keyword">and</span> x1 &lt;= cutx:</span><br><span class="line">                    x1 = cutx</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> i == <span class="number">3</span>:</span><br><span class="line">                <span class="keyword">if</span> y1 &gt; cuty <span class="keyword">or</span> x2 &lt; cutx:</span><br><span class="line">                    <span class="keyword">continue</span></span><br><span class="line">                <span class="keyword">if</span> y2 &gt;= cuty <span class="keyword">and</span> y1 &lt;= cuty:</span><br><span class="line">                    y2 = cuty</span><br><span class="line">                <span class="keyword">if</span> x2 &gt;= cutx <span class="keyword">and</span> x1 &lt;= cutx:</span><br><span class="line">                    x1 = cutx</span><br><span class="line">            tmp_box.append(x1)</span><br><span class="line">            tmp_box.append(y1)</span><br><span class="line">            tmp_box.append(x2)</span><br><span class="line">            tmp_box.append(y2)</span><br><span class="line">            tmp_box.append(box[<span class="number">-1</span>])</span><br><span class="line">            merge_bbox.append(tmp_box)</span><br><span class="line">    <span class="keyword">return</span> merge_bbox</span><br></pre></td></tr></table></figure>
+<p>将4副样本进行随机翻转、尺度变换后放置在背景图中的效果</p>
+<img src="/2022/11/11/Mosica数据增强/02.png">
+<p>最终合成图的效果</p>
+<img src="/2022/11/11/Mosica数据增强/03.png">
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+        <div class="post-widgets">
+        
+
+        
+
+        
+          
+          <div id="needsharebutton-postbottom">
+            <span class="btn">
+              <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </span>
+          </div>
+        
+        </div>
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2022/08/27/VitisAI-07-模型部署/" rel="next" title="VitisAI-07-模型部署">
+                <i class="fa fa-chevron-left"></i> VitisAI-07-模型部署
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2022/11/11/每月见闻202211/" rel="prev" title="每月见闻202211">
+                每月见闻202211 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/../image/avatar.png" alt="awokezhou">
+            
+              <p class="site-author-name" itemprop="name">awokezhou</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">89</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">56</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">73</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/awokezhou" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="awokezhou@gmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                Links
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://www.ruanyifeng.com/blog/" title="阮一峰" target="_blank">阮一峰</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://dave.cheney.net/about/" title="Dave Cheney" target="_blank">Dave Cheney</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://codingsans.com/" title="codingsans" target="_blank">codingsans</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://www.openai.com/" title="openAI" target="_blank">openAI</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://www.wowotech.net/author/3/" title="linuxer - 蜗窝科技" target="_blank">linuxer - 蜗窝科技</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://www.iii.run/" title="mmmwhy" target="_blank">mmmwhy</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://www.jasongj.com/" title="技术世界" target="_blank">技术世界</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://machinelearningmastery.com/" title="Jason Brownlee" target="_blank">Jason Brownlee</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://www.jeremyjordan.me/" title="Jeremy Jordan" target="_blank">Jeremy Jordan</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://towardsdatascience.com/" title="Towards Data Science" target="_blank">Towards Data Science</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://colah.github.io/" title="colah" target="_blank">colah</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://www.cnblogs.com/popsuper1982/" title="网易云计算架构师刘超" target="_blank">网易云计算架构师刘超</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://biscuitos.github.io/" title="Biscuitos" target="_blank">Biscuitos</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#数据准备"><span class="nav-number">1.</span> <span class="nav-text">数据准备</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#导入依赖包"><span class="nav-number">2.</span> <span class="nav-text">导入依赖包</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#定义一些工具函数"><span class="nav-number">3.</span> <span class="nav-text">定义一些工具函数</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#图像样本显示"><span class="nav-number">4.</span> <span class="nav-text">图像样本显示</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Mosica处理"><span class="nav-number">5.</span> <span class="nav-text">Mosica处理</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">awokezhou</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+      <div id="needsharebutton-float">
+        <span class="btn">
+          <i class="fa fa-share-alt" aria-hidden="true"></i>
+        </span>
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+  
+  <script type="text/javascript">
+    var GUEST = ['nick','mail','link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item=>{
+      return GUEST.indexOf(item)>-1;
+    });
+    new Valine({
+        el: '#comments' ,
+        verify: false,
+        notify: false,
+        appId: 'fRviEm3V5t70yJuO2anF9b3q-gzGzoHsz',
+        appKey: 'hWNhMYbcRQVolyrvqSI7fVgz',
+        placeholder: '快来吐槽吧',
+        avatar:'mm',
+        guest_info:guest,
+        pageSize:'10' || 10,
+    });
+  </script>
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+  
+  <link rel="stylesheet" href="/lib/needsharebutton/needsharebutton.css">
+
+  
+  
+  <script src="/lib/needsharebutton/needsharebutton.js"></script>
+
+  <script>
+    
+      pbOptions = {};
+      
+          pbOptions.iconStyle = "box";
+      
+          pbOptions.boxForm = "horizontal";
+      
+          pbOptions.position = "bottomCenter";
+      
+          pbOptions.networks = "Weibo,Wechat,Douban,QQZone,Twitter,Facebook";
+      
+      new needShareButton('#needsharebutton-postbottom', pbOptions);
+    
+    
+      flOptions = {};
+      
+          flOptions.iconStyle = "box";
+      
+          flOptions.boxForm = "horizontal";
+      
+          flOptions.position = "middleRight";
+      
+          flOptions.networks = "Weibo,Wechat,Douban,QQZone,Twitter,Facebook";
+      
+      new needShareButton('#needsharebutton-float', flOptions);
+    
+  </script>
+
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

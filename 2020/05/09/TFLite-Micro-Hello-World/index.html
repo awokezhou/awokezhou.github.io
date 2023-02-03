@@ -1,0 +1,1442 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/../image/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/../image/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Tensorflow,嵌入式,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="本文基于定制化的TFLite Micro动态链接库，通过”hello world”示例来验证TFLite Micro版本的功能。虽然名字叫是”hello world”，其实并不是在控制台上打印出”hello world”这么简单，而是用Python版本的Tensorflow构建训练一个能够学习并生成正弦波的模型，通过TFLite的转换器转换为.tflite文件，并使用TFLite Micro动态链">
+<meta name="keywords" content="Tensorflow,嵌入式">
+<meta property="og:type" content="article">
+<meta property="og:title" content="TFLite Micro - Hello World">
+<meta property="og:url" content="http://yoursite.com/2020/05/09/TFLite-Micro-Hello-World/index.html">
+<meta property="og:site_name" content="awokezhou&#39;s blog">
+<meta property="og:description" content="本文基于定制化的TFLite Micro动态链接库，通过”hello world”示例来验证TFLite Micro版本的功能。虽然名字叫是”hello world”，其实并不是在控制台上打印出”hello world”这么简单，而是用Python版本的Tensorflow构建训练一个能够学习并生成正弦波的模型，通过TFLite的转换器转换为.tflite文件，并使用TFLite Micro动态链">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://yoursite.com/2020/05/09/TFLite-Micro-Hello-World/images/01.png">
+<meta property="og:image" content="http://yoursite.com/2020/05/09/TFLite-Micro-Hello-World/images/02.png">
+<meta property="og:image" content="http://yoursite.com/2020/05/09/TFLite-Micro-Hello-World/images/03.png">
+<meta property="og:image" content="http://yoursite.com/2020/05/09/TFLite-Micro-Hello-World/images/04.png">
+<meta property="og:image" content="http://yoursite.com/2020/05/09/TFLite-Micro-Hello-World/images/05.png">
+<meta property="og:image" content="http://yoursite.com/2020/05/09/TFLite-Micro-Hello-World/images/06.png">
+<meta property="og:image" content="http://yoursite.com/2020/05/09/TFLite-Micro-Hello-World/images/07.png">
+<meta property="og:image" content="http://yoursite.com/2020/05/09/TFLite-Micro-Hello-World/images/08.png">
+<meta property="og:image" content="http://yoursite.com/2020/05/09/TFLite-Micro-Hello-World/images/09.png">
+<meta property="og:image" content="http://yoursite.com/2020/05/09/TFLite-Micro-Hello-World/images/10.png">
+<meta property="og:image" content="http://yoursite.com/2020/05/09/TFLite-Micro-Hello-World/images/11.png">
+<meta property="og:image" content="http://yoursite.com/2020/05/09/TFLite-Micro-Hello-World/images/12.png">
+<meta property="og:image" content="http://yoursite.com/2020/05/09/TFLite-Micro-Hello-World/images/13.png">
+<meta property="og:updated_time" content="2021-08-13T02:24:21.700Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="TFLite Micro - Hello World">
+<meta name="twitter:description" content="本文基于定制化的TFLite Micro动态链接库，通过”hello world”示例来验证TFLite Micro版本的功能。虽然名字叫是”hello world”，其实并不是在控制台上打印出”hello world”这么简单，而是用Python版本的Tensorflow构建训练一个能够学习并生成正弦波的模型，通过TFLite的转换器转换为.tflite文件，并使用TFLite Micro动态链">
+<meta name="twitter:image" content="http://yoursite.com/2020/05/09/TFLite-Micro-Hello-World/images/01.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"hide","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/05/09/TFLite-Micro-Hello-World/">
+
+
+
+
+
+  <title>TFLite Micro - Hello World | awokezhou's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">awokezhou's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-message">
+          <a href="/message/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br>
+            
+            message
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/05/09/TFLite-Micro-Hello-World/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="awokezhou">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/../image/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="awokezhou's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">TFLite Micro - Hello World</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-05-09T12:07:11+08:00">
+                2020-05-09
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/ML/" itemprop="url" rel="index">
+                    <span itemprop="name">ML</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/ML/框架/" itemprop="url" rel="index">
+                    <span itemprop="name">框架</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/ML/框架/Tensorflow/" itemprop="url" rel="index">
+                    <span itemprop="name">Tensorflow</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2020/05/09/TFLite-Micro-Hello-World/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2020/05/09/TFLite-Micro-Hello-World/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>本文基于定制化的TFLite Micro动态链接库，通过”hello world”示例来验证TFLite Micro版本的功能。虽然名字叫是”hello world”，其实并不是在控制台上打印出”hello world”这么简单，而是用Python版本的Tensorflow构建训练一个能够学习并生成正弦波的模型，通过TFLite的转换器转换为.tflite文件，并使用TFLite Micro动态链接库加载并执行推断的过程</p>
+<p>开发环境</p>
+<ul>
+<li><p>Inter i5-7200U</p>
+</li>
+<li><p>Ubuntu18.04.2 x86_64</p>
+</li>
+<li><p>conda Python3.7虚拟环境</p>
+</li>
+<li><p>Tensorflow2.1.0</p>
+</li>
+</ul>
+<p>参考</p>
+<ul>
+<li><p><a href="http://tensorflow.google.cn/" target="_blank" rel="noopener">http://tensorflow.google.cn/</a></p>
+</li>
+<li><p>tensorflow/tensorflow/lite/micro/examples/hello_world/create_sine_model.ipynb</p>
+</li>
+</ul>
+<h2 id="生成数据"><a href="#生成数据" class="headerlink" title="生成数据"></a>生成数据</h2><p>首先需要加载一些python库</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> tensorflow <span class="keyword">as</span> tf</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">import</span> math</span><br></pre></td></tr></table></figure>
+<p>以下代码生成一组随机数，并计算它们的正弦值，并绘图显示</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">SAMPLES = <span class="number">1000</span></span><br><span class="line">np.random.seed(<span class="number">1337</span>)</span><br><span class="line">x_values = np.random.uniform(low=<span class="number">0</span>, high=<span class="number">2</span>*math.pi, size=SAMPLES)</span><br><span class="line">np.random.shuffle(x_values)</span><br><span class="line">y_values = np.sin(x_values)</span><br><span class="line">plt.plot(x_values, y_values, <span class="string">'b.'</span>)</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+<p><img src="/2020/05/09/TFLite-Micro-Hello-World/images/01.png" alt></p>
+<h2 id="添加噪声"><a href="#添加噪声" class="headerlink" title="添加噪声"></a>添加噪声</h2><p>由于数据是由正弦函数直接生成，数据太过平滑。然而现实中获取的各种信号必然夹杂着噪声数据，而机器学习算法能够从带有噪声的数据中学习到真正的信息</p>
+<p>为数据添加一些噪声，并绘制显示</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">y_values += <span class="number">0.1</span> * np.random.randn(*y_values.shape)</span><br><span class="line">plt.plot(x_values, y_values, <span class="string">'b.'</span>)</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+<p><img src="/2020/05/09/TFLite-Micro-Hello-World/images/02.png" alt></p>
+<h2 id="拆分数据"><a href="#拆分数据" class="headerlink" title="拆分数据"></a>拆分数据</h2><p>我们已经生成了一个近似真实世界的噪声数据，我们用它来训练模型</p>
+<p>为了验证评估模型，以及防止数据的过拟合，我们将数据拆分为训练集、测试集和验证集3部分，比例为3:1:1</p>
+<p>以下代码将数据分割，并以不同的颜色显示</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">TRAIN_SPLIT =  int(<span class="number">0.6</span> * SAMPLES)</span><br><span class="line">TEST_SPLIT = int(<span class="number">0.2</span> * SAMPLES + TRAIN_SPLIT)</span><br><span class="line">x_train, x_test, x_validate = np.split(x_values, [TRAIN_SPLIT, TEST_SPLIT])</span><br><span class="line">y_train, y_test, y_validate = np.split(y_values, [TRAIN_SPLIT, TEST_SPLIT])</span><br><span class="line">plt.plot(x_train, y_train, <span class="string">'b.'</span>, label=<span class="string">"Train"</span>)</span><br><span class="line">plt.plot(x_test, y_test, <span class="string">'r.'</span>, label=<span class="string">"Test"</span>)</span><br><span class="line">plt.plot(x_validate, y_validate, <span class="string">'y.'</span>, label=<span class="string">"Validate"</span>)</span><br><span class="line">plt.legend()</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+<p><img src="/2020/05/09/TFLite-Micro-Hello-World/images/03.png" alt></p>
+<h2 id="设计模型"><a href="#设计模型" class="headerlink" title="设计模型"></a>设计模型</h2><p>我们将建立一个模型，它接收一个输入，并用它来预测一个输出，此类问题称为回归问题。为了达到这个目的，我们将创建一个简单的神经网络，它将使用多层的神经元来学习数据背后的模式，以便进行预测</p>
+<p>首先，我们定义两个层。第一层接收一个输入，并经过16个神经元。输入到来时，每个神经元将根据自身的权重和偏置状态受到不同程度的激活，神经元的激活程度由数字表示。第一层的激活将作为第二层的输入，第二层的输出作为模型的输出值</p>
+<p>我们使用Keras来定义模型，模型使用”relu”作为激活函数，优化器使用”rmsprop”，损失函数使用”mse”，使用MAE来评估</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> tensorflow.keras <span class="keyword">import</span> layers</span><br><span class="line">model_1 = tf.keras.Sequential()</span><br><span class="line">model_1.add(layers.Dense(<span class="number">16</span>, activation=<span class="string">'relu'</span>, input_shape=(<span class="number">1</span>,)))</span><br><span class="line">model_1.add(layers.Dense(<span class="number">1</span>))</span><br><span class="line">model_1.compile(optimizer=<span class="string">'rmsprop'</span>, loss=<span class="string">'mse'</span>, metrics=[<span class="string">'mae'</span>])</span><br></pre></td></tr></table></figure>
+<h2 id="训练模型"><a href="#训练模型" class="headerlink" title="训练模型"></a>训练模型</h2><p>一旦我们定义好了模型，可以使用数据来训练它。训练过程将x输入到网络中，检查网络输出与原始数据的偏离程度，并调整神经元的偏置和权重。训练过程是在整个数据上多次运行，每次完整的运行都称为”epoch”。在每个”epoch”中，数据以多批次的方式在网络中运行，每一批次都有几个数据进入网络并输出，对网络参数的调整是以一个批次为单位的。”epoch”次数和批次大小都可以通过参数调整</p>
+<p>以下代码运行1000个”epoch”，每个批次16个数据，还传递一些数据用于验证。整个训练需要一定的时间</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">history_1 = model_1.fit(x_train, y_train, epochs=<span class="number">1000</span>, batch_size=<span class="number">16</span>,</span><br><span class="line">                    validation_data=(x_validate, y_validate))</span><br></pre></td></tr></table></figure>
+<h2 id="模型评估"><a href="#模型评估" class="headerlink" title="模型评估"></a>模型评估</h2><p>在训练期间，模型的性能在数据迭代中不断的提升，训练会生成一个日志，告诉我们性能在训练过程中是如何变化的。以下代码将以图形形式显示其中一些信息</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">loss = history_1.history[<span class="string">'loss'</span>]</span><br><span class="line">val_loss = history_1.history[<span class="string">'val_loss'</span>]</span><br><span class="line">epochs = range(<span class="number">1</span>, len(loss) + <span class="number">1</span>)</span><br><span class="line">plt.plot(epochs, loss, <span class="string">'g.'</span>, label=<span class="string">'Training loss'</span>)</span><br><span class="line">plt.plot(epochs, val_loss, <span class="string">'b'</span>, label=<span class="string">'Validation loss'</span>)</span><br><span class="line">plt.title(<span class="string">'Training and validation loss'</span>)</span><br><span class="line">plt.xlabel(<span class="string">'Epochs'</span>)</span><br><span class="line">plt.ylabel(<span class="string">'Loss'</span>)</span><br><span class="line">plt.legend()</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+<p><img src="/2020/05/09/TFLite-Micro-Hello-World/images/04.png" alt></p>
+<p>图形中显示了每个epoch的损失函数情况。有多种方式的损失函数，这里我们使用的是均方误差MSE。损失函数在前25个epoch迅速减少，之后趋于平缓，这意味着模型在不断改进。我们的目标是当模型不再改进，或者当训练损失小于验证损失时，意味着学习已经收敛，需要停止训练。为了更清楚的观察平坦部分，我们跳过前50个epoch的训练情况</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">SKIP = <span class="number">50</span></span><br><span class="line">plt.plot(epochs[SKIP:], loss[SKIP:], <span class="string">'g.'</span>, label=<span class="string">'Training loss'</span>)</span><br><span class="line">plt.plot(epochs[SKIP:], val_loss[SKIP:], <span class="string">'b.'</span>, label=<span class="string">'Validation loss'</span>)</span><br><span class="line">plt.title(<span class="string">'Training and validation loss'</span>)</span><br><span class="line">plt.xlabel(<span class="string">'Epochs'</span>)</span><br><span class="line">plt.ylabel(<span class="string">'Loss'</span>)</span><br><span class="line">plt.legend()</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+<p><img src="/2020/05/09/TFLite-Micro-Hello-World/images/05.png" alt></p>
+<p>从上图中可以看出，损失在前600个epoch持续减少，到600之后不再变化，这意味着600之后的训练是没有必要的。同时，我们也可以看到，最低的损失函数值仍然在0.155左右，这意味着我们的网络预测平均偏离了15%。另外，验证损失值跳变很多。为了了解更多模型的性能，我们可以绘制更多数据，这次我们输出MAE平均绝对误差，这是测量网络预测与实际之间差距距离的另一种方法</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">plt.clf()</span><br><span class="line">mae = history_1.history[<span class="string">'mae'</span>]</span><br><span class="line">val_mae = history_1.history[<span class="string">'val_mae'</span>]</span><br><span class="line">plt.plot(epochs[SKIP:], mae[SKIP:], <span class="string">'g.'</span>, label=<span class="string">'Training MAE'</span>)</span><br><span class="line">plt.plot(epochs[SKIP:], val_mae[SKIP:], <span class="string">'b.'</span>, label=<span class="string">'Validation MAE'</span>)</span><br><span class="line">plt.title(<span class="string">'Training and validation mean absolute error'</span>)</span><br><span class="line">plt.xlabel(<span class="string">'Epochs'</span>)</span><br><span class="line">plt.ylabel(<span class="string">'MAE'</span>)</span><br><span class="line">plt.legend()</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+<p><img src="/2020/05/09/TFLite-Micro-Hello-World/images/06.png" alt></p>
+<p>这幅图告诉了我们更多的信息。训练数据的MAE始终低于验证数据的MAE，这意味着网络可能有过拟合，或者学习训练数据太僵硬，以至于无法对新数据做出有效预测。此外，MAE整体都较高，最多为0.305，这表明模型的预测有30%的偏差。为了更清楚的了解到发生了什么，我们可以将网络预测值和实际训练值进行比较</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">predictions = model_1.predict(x_train)</span><br><span class="line">plt.clf()</span><br><span class="line">plt.title(<span class="string">'Training data predicted vs actual values'</span>)</span><br><span class="line">plt.plot(x_test, y_test, <span class="string">'b.'</span>, label=<span class="string">'Actual'</span>)</span><br><span class="line">plt.plot(x_train, predictions, <span class="string">'r.'</span>, label=<span class="string">'Predicted'</span>)</span><br><span class="line">plt.legend()</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+<p><img src="/2020/05/09/TFLite-Micro-Hello-World/images/07.png" alt></p>
+<p>这张图表明网络已经学会以非常有限的方式逼近正弦函数，但是这是一个线性的逼近。这种拟合的刚性表明，该模型没有足够的能力来学习正弦波函数的全部复杂性，因此只能用过于简单的方法来近似它。我们可以修改模型，来改进性能</p>
+<h2 id="改变模型"><a href="#改变模型" class="headerlink" title="改变模型"></a>改变模型</h2><p>再增加一层神经元，以下增加一个16个神经元的层</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">model_2 = tf.keras.Sequential()</span><br><span class="line">model_2.add(layers.Dense(<span class="number">16</span>, activation=<span class="string">'relu'</span>, input_shape=(<span class="number">1</span>,)))</span><br><span class="line">model_2.add(layers.Dense(<span class="number">16</span>, activation=<span class="string">'relu'</span>))</span><br><span class="line">model_2.add(layers.Dense(<span class="number">1</span>))</span><br><span class="line">model_2.compile(optimizer=<span class="string">'rmsprop'</span>, loss=<span class="string">'mse'</span>, metrics=[<span class="string">'mae'</span>])</span><br></pre></td></tr></table></figure>
+<p>我们现在将训练新模型。为了节省时间，我们只训练600个epoch</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">history_2 = model_2.fit(x_train, y_train, epochs=<span class="number">600</span>, batch_size=<span class="number">16</span>,</span><br><span class="line">                    validation_data=(x_validate, y_validate))</span><br></pre></td></tr></table></figure>
+<h2 id="再次评估模型"><a href="#再次评估模型" class="headerlink" title="再次评估模型"></a>再次评估模型</h2><p>可以看到，模型已经有了很大改进，验证损失从0.15降到0.015，验证MAE从0.31降低到0.1</p>
+<p>以下代码显示新模型训练的情况</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">loss = history_2.history[<span class="string">'loss'</span>]</span><br><span class="line">val_loss = history_2.history[<span class="string">'val_loss'</span>]</span><br><span class="line">epochs = range(<span class="number">1</span>, len(loss) + <span class="number">1</span>)</span><br><span class="line">plt.plot(epochs, loss, <span class="string">'g.'</span>, label=<span class="string">'Training loss'</span>)</span><br><span class="line">plt.plot(epochs, val_loss, <span class="string">'b'</span>, label=<span class="string">'Validation loss'</span>)</span><br><span class="line">plt.title(<span class="string">'Training and validation loss'</span>)</span><br><span class="line">plt.xlabel(<span class="string">'Epochs'</span>)</span><br><span class="line">plt.ylabel(<span class="string">'Loss'</span>)</span><br><span class="line">plt.legend()</span><br><span class="line">plt.show()</span><br><span class="line"></span><br><span class="line">SKIP = <span class="number">100</span></span><br><span class="line">plt.clf()</span><br><span class="line">plt.plot(epochs[SKIP:], loss[SKIP:], <span class="string">'g.'</span>, label=<span class="string">'Training loss'</span>)</span><br><span class="line">plt.plot(epochs[SKIP:], val_loss[SKIP:], <span class="string">'b.'</span>, label=<span class="string">'Validation loss'</span>)</span><br><span class="line">plt.title(<span class="string">'Training and validation loss'</span>)</span><br><span class="line">plt.xlabel(<span class="string">'Epochs'</span>)</span><br><span class="line">plt.ylabel(<span class="string">'Loss'</span>)</span><br><span class="line">plt.legend()</span><br><span class="line">plt.show()</span><br><span class="line"></span><br><span class="line">plt.clf()</span><br><span class="line">mae = history_2.history[<span class="string">'mae'</span>]</span><br><span class="line">val_mae = history_2.history[<span class="string">'val_mae'</span>]</span><br><span class="line">plt.plot(epochs[SKIP:], mae[SKIP:], <span class="string">'g.'</span>, label=<span class="string">'Training MAE'</span>)</span><br><span class="line">plt.plot(epochs[SKIP:], val_mae[SKIP:], <span class="string">'b.'</span>, label=<span class="string">'Validation MAE'</span>)</span><br><span class="line">plt.title(<span class="string">'Training and validation mean absolute error'</span>)</span><br><span class="line">plt.xlabel(<span class="string">'Epochs'</span>)</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+<p><img src="/2020/05/09/TFLite-Micro-Hello-World/images/08.png" alt></p>
+<p><img src="/2020/05/09/TFLite-Micro-Hello-World/images/09.png" alt></p>
+<p><img src="/2020/05/09/TFLite-Micro-Hello-World/images/10.png" alt></p>
+<p>很好的结果，从图中可以看到一些令人兴奋的事情</p>
+<ul>
+<li><p>我们的网络已经更快地达到了它的最高精度(在200个epoch而不是600个)</p>
+</li>
+<li><p>总的损失和MAE比之前的网络好得多</p>
+</li>
+<li><p>验证误差比训练误差更小，这意味着网络并没有过拟合</p>
+</li>
+</ul>
+<p>让我们对照模型的预测值和训练数据</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">loss = model_2.evaluate(x_test, y_test)</span><br><span class="line">predictions = model_2.predict(x_test)</span><br><span class="line">plt.clf()</span><br><span class="line">plt.title(<span class="string">'Comparison of predictions and actual values'</span>)</span><br><span class="line">plt.plot(x_test, y_test, <span class="string">'b.'</span>, label=<span class="string">'Actual'</span>)</span><br><span class="line">plt.plot(x_test, predictions, <span class="string">'r.'</span>, label=<span class="string">'Predicted'</span>)</span><br><span class="line">plt.legend()</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+<p><img src="/2020/05/09/TFLite-Micro-Hello-World/images/11.png" alt></p>
+<p>由上图看出，预测结果与我们的数据非常吻合。这个模型并不完美，它的预测并没有形成一个平滑的正弦曲线，如果我们想更进一步，我们可以尝试进一步增加模型的容量，也许可以使用一些技术来防止过度拟合。然而，机器学习的一个重要部分是知道什么时候停止，这个模型对于我们示例来说已经足够好了</p>
+<h2 id="转换模型到TFLite"><a href="#转换模型到TFLite" class="headerlink" title="转换模型到TFLite"></a>转换模型到TFLite</h2><p>将模型用于TFLite微控制器，需要将其转换为正确的格式，为此我们将使用Tensorflow Lite转换器，转换器可以以一种特殊的、节省空间的格式将模型输出到文件。由于是部署到微控制器上，我们希望它尽可能小，可以通过量化的方法减小尺寸。它降低了模型权重的精度，以节省内存。因为量化模型更小，因此运行起来也更快</p>
+<p>转换器可以在转换时选择是否进行量化</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">converter = tf.lite.TFLiteConverter.from_keras_model(model_2)</span><br><span class="line">tflite_model = converter.convert()</span><br><span class="line"></span><br><span class="line">open(<span class="string">"sine_model.tflite"</span>, <span class="string">"wb"</span>).write(tflite_model)</span><br><span class="line">converter = tf.lite.TFLiteConverter.from_keras_model(model_2)</span><br><span class="line">converter.optimizations = [tf.lite.Optimize.OPTIMIZE_FOR_SIZE]</span><br><span class="line">tflite_model = converter.convert()</span><br><span class="line"></span><br><span class="line">open(<span class="string">"sine_model_quantized.tflite"</span>, <span class="string">"wb"</span>).write(tflite_model)</span><br></pre></td></tr></table></figure>
+<p>执行以上代码可以看到，未量化的模型大小为2732KB，量化模型大小为2720KB</p>
+<h2 id="测试转换后的模型"><a href="#测试转换后的模型" class="headerlink" title="测试转换后的模型"></a>测试转换后的模型</h2><p>为了证明这些模型在转换和量化之后仍然是准确的，我们将使用这两个模型进行预测，并将其与我们的测试结果进行比较：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">sine_model = tf.lite.Interpreter(<span class="string">'sine_model.tflite'</span>)</span><br><span class="line">sine_model_quantized = tf.lite.Interpreter(<span class="string">'sine_model_quantized.tflite'</span>)</span><br><span class="line">sine_model.allocate_tensors()</span><br><span class="line">sine_model_quantized.allocate_tensors()</span><br><span class="line">sine_model_input = sine_model.tensor(sine_model.get_input_details()[<span class="number">0</span>][<span class="string">"index"</span>])</span><br><span class="line">sine_model_output = sine_model.tensor(sine_model.get_output_details()[<span class="number">0</span>][<span class="string">"index"</span>])</span><br><span class="line">sine_model_quantized_input = sine_model_quantized.tensor(sine_model_quantized.get_input_details()[<span class="number">0</span>][<span class="string">"index"</span>])</span><br><span class="line">sine_model_quantized_output = sine_model_quantized.tensor(sine_model_quantized.get_output_details()[<span class="number">0</span>][<span class="string">"index"</span>])</span><br><span class="line">sine_model_predictions = np.empty(x_test.size)</span><br><span class="line">sine_model_quantized_predictions = np.empty(x_test.size)</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(x_test.size):</span><br><span class="line">    sine_model_input().fill(x_test[i])</span><br><span class="line">    sine_model.invoke()</span><br><span class="line">    sine_model_predictions[i] = sine_model_output()[<span class="number">0</span>]</span><br><span class="line">    sine_model_quantized_input().fill(x_test[i])</span><br><span class="line">    sine_model_quantized.invoke()</span><br><span class="line">    sine_model_quantized_predictions[i] = sine_model_quantized_output()[<span class="number">0</span>]</span><br><span class="line">plt.clf()</span><br><span class="line">plt.title(<span class="string">'Comparison of various models against actual values'</span>)</span><br><span class="line">plt.plot(x_test, y_test, <span class="string">'bo'</span>, label=<span class="string">'Actual'</span>)</span><br><span class="line">plt.plot(x_test, predictions, <span class="string">'ro'</span>, label=<span class="string">'Original predictions'</span>)</span><br><span class="line">plt.plot(x_test, sine_model_predictions, <span class="string">'bx'</span>, label=<span class="string">'Lite predictions'</span>)</span><br><span class="line">plt.plot(x_test, sine_model_quantized_predictions, <span class="string">'gx'</span>, label=<span class="string">'Lite quantized predictions'</span>)</span><br><span class="line">plt.legend()</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+<p><img src="/2020/05/09/TFLite-Micro-Hello-World/images/12.png" alt></p>
+<p>从图中我们可以看出，对原始模型、转换模型和量化模型的预测都非常接近，无法区分。这意味着我们的量化模型已经可以使用了！</p>
+<h2 id="使用C-程序执行推断"><a href="#使用C-程序执行推断" class="headerlink" title="使用C++程序执行推断"></a>使用C++程序执行推断</h2><p>这里使用C++程序需要依赖TFLite Micro动态链接库，参见<a href></a></p>
+<p>通过xxd命令将模型文件转换为C++源文件</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xxd -i sine_model_quantized.tflite &gt; sine_model_quantized.cc</span><br></pre></td></tr></table></figure>
+<p>可以看到生成的C++文件中，模型是以字节序列存放的，并通过sine_model_quantized.h文件向外暴露模型地址和长度</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">unsigned</span> <span class="keyword">char</span> sine_model_quantized_tflite[] = &#123;</span><br><span class="line">  <span class="number">0x18</span>, <span class="number">0x00</span>, <span class="number">0x00</span>, <span class="number">0x00</span>, <span class="number">0x54</span>, <span class="number">0x46</span>, <span class="number">0x4c</span>, <span class="number">0x33</span>, <span class="number">0x00</span>, <span class="number">0x00</span>, <span class="number">0x0e</span>, <span class="number">0x00</span>,</span><br><span class="line">  <span class="number">0x18</span>, <span class="number">0x00</span>, <span class="number">0x04</span>, <span class="number">0x00</span>, <span class="number">0x08</span>, <span class="number">0x00</span>, <span class="number">0x0c</span>, <span class="number">0x00</span>, <span class="number">0x10</span>, <span class="number">0x00</span>, <span class="number">0x14</span>, <span class="number">0x00</span>,</span><br><span class="line">  ......</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">unsigned</span> <span class="keyword">int</span> sine_model_quantized_tflite_len = <span class="number">2640</span>;</span><br></pre></td></tr></table></figure>
+<p>我们创建一个main.cc源文件，用来加载模型并循环执行推断，将模型输出导出到csv文件中，最后用python绘图呈现模型的预测效果</p>
+<h3 id="引用一些头文件"><a href="#引用一些头文件" class="headerlink" title="引用一些头文件"></a>引用一些头文件</h3><p>TFLite Micro程序需要引用一些必要的头文件</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"tensorflow/lite/micro/kernels/all_ops_resolver.h"</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"tensorflow/lite/micro/micro_error_reporter.h"</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"tensorflow/lite/micro/micro_interpreter.h"</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"tensorflow/lite/micro/debug_log.h"</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"tensorlfow/lite/version.h"</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"sine_model_data.h"</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;fstream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sstream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br></pre></td></tr></table></figure>
+<p>all_ops_resolver.h文件中定义了一些优化器相关的运算组建，例如全连接(Full Connected, FC)、柔性最大化函数Softmax、卷积conv</p>
+<p>micro_error_reporter.h文件中定义了调试方法</p>
+<p>micro_interpreter.h文件中是解释器的定义</p>
+<p>sin_model_data.h引用模型文件</p>
+<h3 id="加载模型"><a href="#加载模型" class="headerlink" title="加载模型"></a>加载模型</h3><p>首先创建一个调试器reporter</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">tflite::MicroErrorReporter micro_error_reporter;</span><br><span class="line">tflite::ErrorReporter* error_reporter = &amp; micro_error_reporter;</span><br></pre></td></tr></table></figure>
+<p>调用GetModel()方法加载模型</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> tflite::Model* model = ::tflite::GetModel(g_sine_model_data);</span><br><span class="line"><span class="keyword">if</span> (model-&gt;version() != TFLITE_SCHEMA_VERSION) &#123;</span><br><span class="line">    error_reporter-&gt;Report(</span><br><span class="line">        <span class="string">"Model provided is schema version %d not equal "</span></span><br><span class="line">        <span class="string">"to supported version %d.\n"</span>,</span><br><span class="line">        model-&gt;version(), TFLITE_SCHEMA_VERSION);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>创建一个运算器</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tflite::ops::micro::AllOpsResolver resolver;</span><br></pre></td></tr></table></figure>
+<p>创建解释器，并为模型推断分配内存空间</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> tensor_arena_size = <span class="number">10</span> * <span class="number">1024</span>;</span><br><span class="line"><span class="keyword">uint8_t</span> tensor_arena[tensor_arena_size];</span><br><span class="line">tflite::<span class="function">MicroInterpreter <span class="title">interpreter</span><span class="params">(model, resolver,tensor_arena,</span></span></span><br><span class="line"><span class="function"><span class="params">                                     tensor_arena_size, error_reporter)</span></span>;</span><br><span class="line"></span><br><span class="line">    TfLiteStatus alloc_status = interpreter.AllocateTensors();</span><br><span class="line"><span class="keyword">if</span> (alloc_status != kTfLiteOk) &#123;</span><br><span class="line">    error_reporter-&gt;Report(<span class="string">"Alloc tensors Error:%d"</span>, alloc_status);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>创建指针指向模型输入和输出</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">tflite::MicroInterpreter *inter = &amp;interpreter;</span><br><span class="line">TfLiteTensor* input = interpreter.input(<span class="number">0</span>);</span><br><span class="line">TfLiteTensor* output = interpreter.output(<span class="number">0</span>);</span><br></pre></td></tr></table></figure>
+<p>创建csv文件”data.csv”</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ofstream outFile;</span><br><span class="line">outFile.open(<span class="string">"data.csv"</span>, ios::out);</span><br></pre></td></tr></table></figure>
+<p>以下循环，产生1000个输入，执行模型推断，并将输入和输出保存到csv文件，并打印到屏幕</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> kInferencesPerCycle = <span class="number">1000</span>;</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">float</span> kXrange = <span class="number">2.f</span> * <span class="number">3.14159265359f</span>;</span><br><span class="line"><span class="keyword">int</span> inference_count = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">while</span> (<span class="literal">true</span>) &#123;</span><br><span class="line">    <span class="keyword">float</span> position = <span class="keyword">static_cast</span>&lt;<span class="keyword">float</span>&gt;(inference_count) /</span><br><span class="line">                     <span class="keyword">static_cast</span>&lt;<span class="keyword">float</span>&gt;(kInferencesPerCycle);</span><br><span class="line">    <span class="keyword">float</span> x_val = position * kXrange;</span><br><span class="line">    <span class="comment">//error_reporter-&gt;Report("x_val:%f", x_val);</span></span><br><span class="line">    input-&gt;data.f[<span class="number">0</span>] = x_val;</span><br><span class="line">    TfLiteStatus invoke_status = inter-&gt;Invoke();</span><br><span class="line">    <span class="keyword">if</span> (invoke_status != kTfLiteOk) &#123;</span><br><span class="line">        error_reporter-&gt;Report(<span class="string">"Invoke Error:%d"</span>, invoke_status);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">float</span> y_val = output-&gt;data.f[<span class="number">0</span>];</span><br><span class="line"></span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"x:%f, y:%f\r\n"</span>,x_val, y_val);</span><br><span class="line">    outFile&lt;&lt;x_val&lt;&lt;<span class="string">','</span>&lt;&lt;y_val&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line"></span><br><span class="line">    inference_count += <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">if</span> (inference_count &gt;= kInferencesPerCycle) <span class="keyword">break</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">outFile.close();</span><br></pre></td></tr></table></figure>
+<h3 id="运行结果"><a href="#运行结果" class="headerlink" title="运行结果"></a>运行结果</h3><p>编译程序并运行，数据保存到了”data.csv”文件中，查看其内容</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">cat data.csv | head -n 20</span><br><span class="line">0,0.0486171</span><br><span class="line">0.00628319,0.0537117</span><br><span class="line">0.0125664,0.0588063</span><br><span class="line">0.0188496,0.0639008</span><br><span class="line">0.0251327,0.0689952</span><br><span class="line">0.0314159,0.0740901</span><br><span class="line">0.0376991,0.0791845</span><br><span class="line">0.0439823,0.0842792</span><br><span class="line">0.0502655,0.0893737</span><br><span class="line">0.0565487,0.0944682</span><br><span class="line">0.0628319,0.0995628</span><br><span class="line">0.069115,0.104657</span><br><span class="line">0.0753982,0.109752</span><br><span class="line">0.0816814,0.114847</span><br><span class="line">0.0879646,0.119941</span><br><span class="line">0.0942478,0.125036</span><br><span class="line">0.100531,0.13013</span><br><span class="line">0.106814,0.135225</span><br><span class="line">0.113097,0.14032</span><br><span class="line">0.119381,0.145414</span><br></pre></td></tr></table></figure>
+<p>编写python脚本draw.py读取data.csv文件并将数值绘制出来</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">import</span> csv</span><br><span class="line"></span><br><span class="line">X = []</span><br><span class="line">Y = []</span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> open(<span class="string">'data.csv'</span>,<span class="string">'r'</span>) <span class="keyword">as</span> myFile:</span><br><span class="line">    lines=csv.reader(myFile)</span><br><span class="line">    <span class="keyword">for</span> line <span class="keyword">in</span> lines:</span><br><span class="line">        x = float(line[<span class="number">0</span>])</span><br><span class="line">        y = float(line[<span class="number">1</span>])</span><br><span class="line">        X.append(x)</span><br><span class="line">        Y.append(y)</span><br><span class="line"></span><br><span class="line">plt.plot(X, Y)</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+<p>执行脚本</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python draw.py</span><br></pre></td></tr></table></figure>
+<p>结果如图</p>
+<p><img src="/2020/05/09/TFLite-Micro-Hello-World/images/13.png" alt></p>
+<p>可见模型输出的结果准确</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Tensorflow/" rel="tag"># Tensorflow</a>
+          
+            <a href="/tags/嵌入式/" rel="tag"># 嵌入式</a>
+          
+        </div>
+      
+
+      
+      
+        <div class="post-widgets">
+        
+
+        
+
+        
+          
+          <div id="needsharebutton-postbottom">
+            <span class="btn">
+              <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </span>
+          </div>
+        
+        </div>
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/04/21/每月见闻202004/" rel="next" title="每月见闻202004">
+                <i class="fa fa-chevron-left"></i> 每月见闻202004
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/05/09/每月见闻202005/" rel="prev" title="每月见闻202005">
+                每月见闻202005 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/../image/avatar.png" alt="awokezhou">
+            
+              <p class="site-author-name" itemprop="name">awokezhou</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">89</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">56</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">73</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/awokezhou" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="awokezhou@gmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                Links
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://www.ruanyifeng.com/blog/" title="阮一峰" target="_blank">阮一峰</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://dave.cheney.net/about/" title="Dave Cheney" target="_blank">Dave Cheney</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://codingsans.com/" title="codingsans" target="_blank">codingsans</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://www.openai.com/" title="openAI" target="_blank">openAI</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://www.wowotech.net/author/3/" title="linuxer - 蜗窝科技" target="_blank">linuxer - 蜗窝科技</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://www.iii.run/" title="mmmwhy" target="_blank">mmmwhy</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://www.jasongj.com/" title="技术世界" target="_blank">技术世界</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://machinelearningmastery.com/" title="Jason Brownlee" target="_blank">Jason Brownlee</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://www.jeremyjordan.me/" title="Jeremy Jordan" target="_blank">Jeremy Jordan</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://towardsdatascience.com/" title="Towards Data Science" target="_blank">Towards Data Science</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://colah.github.io/" title="colah" target="_blank">colah</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://www.cnblogs.com/popsuper1982/" title="网易云计算架构师刘超" target="_blank">网易云计算架构师刘超</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://biscuitos.github.io/" title="Biscuitos" target="_blank">Biscuitos</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#生成数据"><span class="nav-number">1.</span> <span class="nav-text">生成数据</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#添加噪声"><span class="nav-number">2.</span> <span class="nav-text">添加噪声</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#拆分数据"><span class="nav-number">3.</span> <span class="nav-text">拆分数据</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#设计模型"><span class="nav-number">4.</span> <span class="nav-text">设计模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#训练模型"><span class="nav-number">5.</span> <span class="nav-text">训练模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#模型评估"><span class="nav-number">6.</span> <span class="nav-text">模型评估</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#改变模型"><span class="nav-number">7.</span> <span class="nav-text">改变模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#再次评估模型"><span class="nav-number">8.</span> <span class="nav-text">再次评估模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#转换模型到TFLite"><span class="nav-number">9.</span> <span class="nav-text">转换模型到TFLite</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#测试转换后的模型"><span class="nav-number">10.</span> <span class="nav-text">测试转换后的模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用C-程序执行推断"><span class="nav-number">11.</span> <span class="nav-text">使用C++程序执行推断</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#引用一些头文件"><span class="nav-number">11.1.</span> <span class="nav-text">引用一些头文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#加载模型"><span class="nav-number">11.2.</span> <span class="nav-text">加载模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#运行结果"><span class="nav-number">11.3.</span> <span class="nav-text">运行结果</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">awokezhou</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+      <div id="needsharebutton-float">
+        <span class="btn">
+          <i class="fa fa-share-alt" aria-hidden="true"></i>
+        </span>
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+  
+  <script type="text/javascript">
+    var GUEST = ['nick','mail','link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item=>{
+      return GUEST.indexOf(item)>-1;
+    });
+    new Valine({
+        el: '#comments' ,
+        verify: false,
+        notify: false,
+        appId: 'fRviEm3V5t70yJuO2anF9b3q-gzGzoHsz',
+        appKey: 'hWNhMYbcRQVolyrvqSI7fVgz',
+        placeholder: '快来吐槽吧',
+        avatar:'mm',
+        guest_info:guest,
+        pageSize:'10' || 10,
+    });
+  </script>
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+  
+  <link rel="stylesheet" href="/lib/needsharebutton/needsharebutton.css">
+
+  
+  
+  <script src="/lib/needsharebutton/needsharebutton.js"></script>
+
+  <script>
+    
+      pbOptions = {};
+      
+          pbOptions.iconStyle = "box";
+      
+          pbOptions.boxForm = "horizontal";
+      
+          pbOptions.position = "bottomCenter";
+      
+          pbOptions.networks = "Weibo,Wechat,Douban,QQZone,Twitter,Facebook";
+      
+      new needShareButton('#needsharebutton-postbottom', pbOptions);
+    
+    
+      flOptions = {};
+      
+          flOptions.iconStyle = "box";
+      
+          flOptions.boxForm = "horizontal";
+      
+          flOptions.position = "middleRight";
+      
+          flOptions.networks = "Weibo,Wechat,Douban,QQZone,Twitter,Facebook";
+      
+      new needShareButton('#needsharebutton-float', flOptions);
+    
+  </script>
+
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

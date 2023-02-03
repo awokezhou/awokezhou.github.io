@@ -1,0 +1,1408 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/../image/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/../image/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Tensorflow,deeplearning.ai,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="经过一个多月工作之余的研究和编码调试，终于将触发词检测的完整方案实现并验证有效，能够在PC端进行独立的实时触发词检测，开源代码见我的开源repo。该project来源于deeplearning.ai的Deep Learning Specialization课程中的”Sequence Models”序列模型，课程中完整介绍了如何搭建一个基于神经网络的触发词检测模型 本文首先对deeplearning">
+<meta name="keywords" content="Tensorflow,deeplearning.ai">
+<meta property="og:type" content="article">
+<meta property="og:title" content="触发词检测">
+<meta property="og:url" content="http://yoursite.com/2020/06/28/触发词检测/index.html">
+<meta property="og:site_name" content="awokezhou&#39;s blog">
+<meta property="og:description" content="经过一个多月工作之余的研究和编码调试，终于将触发词检测的完整方案实现并验证有效，能够在PC端进行独立的实时触发词检测，开源代码见我的开源repo。该project来源于deeplearning.ai的Deep Learning Specialization课程中的”Sequence Models”序列模型，课程中完整介绍了如何搭建一个基于神经网络的触发词检测模型 本文首先对deeplearning">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://yoursite.com/2020/06/28/触发词检测/images/01.png">
+<meta property="og:image" content="http://yoursite.com/2020/06/28/触发词检测/images/02.png">
+<meta property="og:image" content="http://yoursite.com/2020/06/28/触发词检测/images/03.png">
+<meta property="og:image" content="http://yoursite.com/2020/06/28/触发词检测/images/04.png">
+<meta property="og:updated_time" content="2021-08-13T02:24:21.850Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="触发词检测">
+<meta name="twitter:description" content="经过一个多月工作之余的研究和编码调试，终于将触发词检测的完整方案实现并验证有效，能够在PC端进行独立的实时触发词检测，开源代码见我的开源repo。该project来源于deeplearning.ai的Deep Learning Specialization课程中的”Sequence Models”序列模型，课程中完整介绍了如何搭建一个基于神经网络的触发词检测模型 本文首先对deeplearning">
+<meta name="twitter:image" content="http://yoursite.com/2020/06/28/触发词检测/images/01.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"hide","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/06/28/触发词检测/">
+
+
+
+
+
+  <title>触发词检测 | awokezhou's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">awokezhou's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-message">
+          <a href="/message/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br>
+            
+            message
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/06/28/触发词检测/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="awokezhou">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/../image/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="awokezhou's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">触发词检测</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-06-28T09:27:18+08:00">
+                2020-06-28
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/ML/" itemprop="url" rel="index">
+                    <span itemprop="name">ML</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/ML/project/" itemprop="url" rel="index">
+                    <span itemprop="name">project</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2020/06/28/触发词检测/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2020/06/28/触发词检测/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>经过一个多月工作之余的研究和编码调试，终于将触发词检测的完整方案实现并验证有效，能够在PC端进行独立的实时触发词检测，开源代码见<a href="https://github.com/awokezhou/TriggerWordDetect" target="_blank" rel="noopener">我的开源repo</a>。该project来源于deeplearning.ai的<a href="[https://www.deeplearning.ai/deep-learning-specialization/](https://www.deeplearning.ai/deep-learning-specialization/">Deep Learning Specialization</a>课程中的”Sequence Models”序列模型，课程中完整介绍了如何搭建一个基于神经网络的触发词检测模型</p>
+<p>本文首先对deeplearning.ai的触发词检测课程内容进行介绍，然后对我自己的实现方案进行了介绍说明，最后总结了整个研究过程中的知识点和经验</p>
+<h2 id="deeplearning-ai触发词检测"><a href="#deeplearning-ai触发词检测" class="headerlink" title="deeplearning.ai触发词检测"></a>deeplearning.ai触发词检测</h2><p>目前很多智能产品上都带有触发词检测功能，例如苹果Siri、百度小度、小米的小爱同学等。触发词检测(Trigger word detect)也叫做关键字检测(keyword detect)或者唤醒词检测(wakeword detect)，能够让设备在听到某个特定单词后自动唤醒。该课程介绍了一个触发词检测的通用模型，能够基于该模型训练自己的触发词，并在不同的设备上部署</p>
+<h3 id="设计思想"><a href="#设计思想" class="headerlink" title="设计思想"></a>设计思想</h3><p>设定一个10秒的检测窗口detect window，将音频内容划分为以下3种类型</p>
+<ul>
+<li><p>background：背景音</p>
+</li>
+<li><p>activate：激活词，也就是要检测的触发词</p>
+</li>
+<li><p>negative：负面词，不同于激活词的说话声</p>
+</li>
+</ul>
+<p>10秒的检测窗口中，背景音一直存在，激活词和负面词可以在任意位置出现</p>
+<p><img src="/2020/06/28/触发词检测/images/01.png" alt></p>
+<p>将10秒的检测窗口划分为若干个检测单元，未出现触发词的检测单元，将其标签设置为0，出现触发词的检测单元，将其标签设置为1</p>
+<p><img src="/2020/06/28/触发词检测/images/02.png" alt></p>
+<p>标签1与触发词的出现时间需要有一定的滞后性，因为必须先检测到完整的触发词，才能输出检测到的结果</p>
+<h3 id="生成数据集"><a href="#生成数据集" class="headerlink" title="生成数据集"></a>生成数据集</h3><p>首先需要为触发词检测算法构建一个数据集。理想情况下，最终的模型应该尽可能的在各种场景下都能够进行检测。因此，你需要在不同的背景声音中创建一段录音，例如图书馆、家中、办公室、户外、咖啡厅等等。另外，为了数据和模型有更好的泛化效果，采集的所有样本中，应该将激活次和负面词的出现频率和位置尽可能分布均匀。另外，如果你想要能够识别不同口音，那么需要采集更多样本，包括不同年龄、性别、体重、籍贯等</p>
+<h4 id="程序化生成样本"><a href="#程序化生成样本" class="headerlink" title="程序化生成样本"></a>程序化生成样本</h4><p>数据集的来源可能是你去收集不同人的录音。如果以10秒的窗口为样本，那么你需要拿着一个录音设备采集多组10秒的音频，以1000个样本数量为例，总的样本时间为10000秒大概是2.7个小时，再加上寻找不同的人和沟通的时间，总的时间成本可能很长</p>
+<p>可以使用一个程序化生成样本的方法，将收集的数据分为background、activate和negative三类。background表示在各种环境中采集若干个10秒的背景声音，activate表示采集不同人只说激活词的声音，negative表示不同人只说负面词的声音。采集完成后，将activate和negative样本随机的插入background中，这样能够更加快速的生成更多样本</p>
+<p><img src="/2020/06/28/触发词检测/images/03.png" alt></p>
+<h4 id="录音转换为频谱"><a href="#录音转换为频谱" class="headerlink" title="录音转换为频谱"></a>录音转换为频谱</h4><p>录音本质上是麦克风记录下气压的微小变化，而这种时域的录音信号，直接用来提取和分析特征，是非常困难的，通过转换到频域，能够更好地提取和利用特征</p>
+<p>在Python中，可以用<code>matplotlib.pyplot</code>包的<code>specgram</code>方法实现录音转换为频谱数据</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">specgram</span><span class="params">(filename)</span>:</span></span><br><span class="line">    rate, data = wavfile.read(filename)</span><br><span class="line">    nfft = <span class="number">200</span></span><br><span class="line">    fs = <span class="number">8000</span></span><br><span class="line">    noverlap = <span class="number">120</span></span><br><span class="line">    nchannels = data.ndim</span><br><span class="line">    <span class="keyword">if</span> nchannels == <span class="number">1</span>:</span><br><span class="line">        pxx, freqs, bins, im = plt.specgram(data, nfft, fs, noverlap)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        pxx, freqs, bins, im = plt.specgram(data[:,<span class="number">0</span>], nfft, fs, noverlap=noverlap)</span><br><span class="line">    <span class="keyword">return</span> pxx</span><br></pre></td></tr></table></figure>
+<p>以上代码，将一个10秒的录音文件转换为频谱数据pxx。这里需要注意一下录音数据和频谱数据的shape</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">from</span> scipy.io <span class="keyword">import</span> wavfile</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>rate, data = wavfile.read(<span class="string">'test.wav'</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>data.shape</span><br><span class="line">(<span class="number">441000</span>,)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>pxx = specgram(<span class="string">'test.wav'</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>pxx.shape</span><br><span class="line">(<span class="number">101</span>,<span class="number">5511</span>)</span><br></pre></td></tr></table></figure>
+<p>因为录音使用44100Hz的采样频率，因此1秒产生44100帧音频数据，10秒就是441000帧数据，音频数据是一维的序列。转化为频谱数据后，将10秒划分为了5511个片段，并提取了101个主要频率的窗口</p>
+<h4 id="创建一个训练样本"><a href="#创建一个训练样本" class="headerlink" title="创建一个训练样本"></a>创建一个训练样本</h4><p>创建训练样本的前提是，已经按照上文的要求，采集了若干数量的背景声、激活词和负面词的录音文件。生成一个训练样本，需要以下4个步骤</p>
+<ul>
+<li><p>随机选择一个背景录音</p>
+</li>
+<li><p>随机选择若干个激活词音频插入到背景的随机位置</p>
+</li>
+<li><p>随机选择若干个负面词音频插入到背景的随机位置</p>
+</li>
+<li><p>对生成的样本进行标记</p>
+</li>
+</ul>
+<p>这里需要注意，插入的过程，是音频数据的叠加操作，而不是追加，例如向一个10秒的背景音频中插入1秒的激活词片段，插入后得到的合成音频仍然是10秒，而不是11秒。在进行多次插入时，为了避免重复插入到相同的位置，需要记录已经插入的片段位置</p>
+<p>在进行标记时，将10秒的时长划分为1375，触发词后的50个片段被标记为1，这样做的好处是不需要人为的听取每一个合成音频再手动进行标记，标记过程可以自动进行。1375个片段长度是由模型决定的，后文介绍</p>
+<h3 id="模型"><a href="#模型" class="headerlink" title="模型"></a>模型</h3><p>使用的模型如图所示</p>
+<p><img src="/2020/06/28/触发词检测/images/04.png" alt></p>
+<p>模型的输入是合成音频转化成的频谱数据，shape为(5511,101)，输出shape为(1375,)。首先是经过一个一维卷积层，进行简单的特征提取，并减小数据大小到(1375,196)，然后数据经过两个GRU层，最后通过Sigmoid函数将输出归一化到0~1</p>
+<h4 id="评估和预测"><a href="#评估和预测" class="headerlink" title="评估和预测"></a>评估和预测</h4><p>该模型在dev数据集上获得了0.94的精度。在预测时，先将音频数据输入模型，得到模型输出，然后遍历1375个输出数据，如果有连续50个数据大小超过某个阈值(0.6)，认为检测到触发词</p>
+<h2 id="我的实现"><a href="#我的实现" class="headerlink" title="我的实现"></a>我的实现</h2><h3 id="数据集生成"><a href="#数据集生成" class="headerlink" title="数据集生成"></a>数据集生成</h3><p>实验环境为Linux，Linux系统为音频处理抽象了一个ALSA框架，包括声卡设备驱动、音频核心层和应用层的一些工具。录音使用”arecord”命令</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">arecord -xxxx</span><br></pre></td></tr></table></figure>
+<p>另外，还需要两个python音频处理包：pydub和alsaaudio。pydub用于处理音频插入合成，alsaaudio用于实时录音</p>
+<h4 id="DataLoader"><a href="#DataLoader" class="headerlink" title="DataLoader"></a>DataLoader</h4><p>抽象了<code>DataLoader</code>类来用于加载和生成数据集，代码位于DataLoader.py。设定两个根目录下和数据集相关路径：</p>
+<ul>
+<li><p>orig：表示原始录音数据</p>
+</li>
+<li><p>gen：表示生成的合成音频和数据集</p>
+</li>
+</ul>
+<p>orig路径下包括background、activate、negative三个文件夹，分别存放背景音、触发词和负面词。gen路径下包括train和dev两部分，分别存放训练集数据和验证集数据</p>
+<p>DataLoader主要实现load、info和generate三个方法</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">DataLoader</span><span class="params">(object)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, ...)</span>:</span></span><br><span class="line">        /*......*/</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">load</span><span class="params">(self, ...)</span>:</span></span><br><span class="line">        /*......*/</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">info</span><span class="params">(self)</span>:</span></span><br><span class="line">        /*......*/</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">generate</span><span class="params">(self, ...)</span>:</span></span><br><span class="line">        /*......*/</span><br></pre></td></tr></table></figure>
+<p>load主要完成从指定路径加载原始音频文件到内存，默认是从orig路径下加载，也可以从参数指定路径，路径下需要包含background、activate和negative三个子文件夹。info主要是显示loader相关信息，generate方法生成数据集文件，可通过target参数指定是生成训练集还是验证集</p>
+<h5 id="load"><a href="#load" class="headerlink" title="load"></a>load</h5><p>load方法会遍历远视音频路径下的文件，并按照子文件夹background、activate和negative将音频文件加载到loader的<code>ori_activate</code>、<code>ori_negative</code>和<code>ori_background</code>三个列表中，加载音频文件是调用<code>AudioSegment</code>的<code>from_wav()</code>方法</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">load</span><span class="params">(self, path=None)</span>:</span></span><br><span class="line"></span><br><span class="line">        oripath = <span class="literal">None</span></span><br><span class="line">        valnames = self.__dict__</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> path:</span><br><span class="line">            oripath = self.config[<span class="string">'ori_dir'</span>]</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            oripath = path</span><br><span class="line">            self.config[<span class="string">'ori_dir'</span>] = path</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> label <span class="keyword">in</span> self.config[<span class="string">'labels'</span>]:</span><br><span class="line">            dirname = os.path.join(oripath, label)</span><br><span class="line">            <span class="keyword">for</span> file <span class="keyword">in</span> os.listdir(dirname):</span><br><span class="line">                <span class="keyword">if</span> file[<span class="number">-4</span>:] == <span class="string">'.wav'</span>:</span><br><span class="line">                    data = AudioSegment.from_wav(os.path.join(dirname, file))</span><br><span class="line">                    valnames[<span class="string">'ori_'</span>+label].append(data)</span><br></pre></td></tr></table></figure>
+<h5 id="generate"><a href="#generate" class="headerlink" title="generate"></a>generate</h5><p>考虑到PC机内存问题，要生成大量数据集文件，使用了batch的方式，generate参数支持批量生成，参数batchs用于控制批次，默认为1，batch_size用于控制单次生成的数量大小</p>
+<p>在实现内部，使用<code>yield</code>抽象了一个生成器<code>_generator</code>来生成单个合成音频文件，一个批次的数据通过<code>numpy.save</code>导出为.npy文件</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">generate</span><span class="params">(self, dir=None, target=<span class="string">'train'</span>, batchs=<span class="number">1</span>, batch_size=<span class="number">100</span>)</span>:</span></span><br><span class="line"></span><br><span class="line">        target_dir = <span class="literal">None</span></span><br><span class="line">        target_path = <span class="literal">None</span></span><br><span class="line">        self.synthesis_count = <span class="number">0</span></span><br><span class="line"></span><br><span class="line">        np.random.seed(<span class="number">22</span>)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> self.is_loaded():</span><br><span class="line">            print(<span class="string">'not loaded'</span>)</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> dir:</span><br><span class="line">            target_dir = self.config[<span class="string">'gen_dir'</span>]</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            target_dir = dir</span><br><span class="line">            self.config[<span class="string">'gen_dir'</span>] = dir</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> target == <span class="string">'train'</span>:</span><br><span class="line">            target_path = os.path.join(target_dir,self.config[<span class="string">'gen_train_dir'</span>])</span><br><span class="line">        <span class="keyword">elif</span> target == <span class="string">'dev'</span>:</span><br><span class="line">            target_path = os.path.join(target_dir,self.config[<span class="string">'gen_dev_dir'</span>])</span><br><span class="line"></span><br><span class="line">        self.dataset_path = os.path.join(target_path, self.config[<span class="string">'gen_dataset_dir'</span>])</span><br><span class="line">        self.synthesis_path = os.path.join(target_path, self.config[<span class="string">'gen_synthesis_dir'</span>])</span><br><span class="line"></span><br><span class="line">        print(<span class="string">'target:&#123;&#125;'</span>.format(target))</span><br><span class="line">        print(<span class="string">'target dir:&#123;&#125; path:&#123;&#125;'</span>.format(target_dir, target_path))</span><br><span class="line">        print(<span class="string">'dataset path:&#123;&#125;'</span>.format(self.dataset_path))</span><br><span class="line">        print(<span class="string">'synthesis path:&#123;&#125;'</span>.format(self.synthesis_path))</span><br><span class="line"></span><br><span class="line">        self.gen_clean(target_path)</span><br><span class="line">        self.gen_mkdir(target_path)</span><br><span class="line"></span><br><span class="line">        self.gen_X = np.zeros((batch_size, <span class="number">5511</span>, <span class="number">101</span>))</span><br><span class="line">        self.gen_Y = np.zeros((batch_size, <span class="number">1375</span>, <span class="number">1</span>))</span><br><span class="line"></span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            <span class="keyword">for</span> i <span class="keyword">in</span> range(batchs):</span><br><span class="line"></span><br><span class="line">                self.synthesis_count = <span class="number">0</span></span><br><span class="line">                random_backgrounds = self.get_random_data(self.ori_background, </span><br><span class="line">                                                          size=batch_size,</span><br><span class="line">                                                          fixed_size=<span class="literal">True</span>)</span><br><span class="line">                <span class="comment">#print('random backgrounds number &#123;&#125;'.format(len(random_backgrounds)))</span></span><br><span class="line">                <span class="keyword">for</span> x, y <span class="keyword">in</span> self._generator(random_backgrounds, i):</span><br><span class="line">                    self.gen_X[self.synthesis_count] = x.transpose()</span><br><span class="line">                    self.gen_Y[self.synthesis_count] = y.transpose()</span><br><span class="line">                    self.synthesis_count += <span class="number">1</span></span><br><span class="line">                </span><br><span class="line">                np.save(<span class="string">'&#123;&#125;/X-&#123;&#125;.npy'</span>.format(self.dataset_path, i), self.gen_X)</span><br><span class="line">                np.save(<span class="string">'&#123;&#125;/Y-&#123;&#125;.npy'</span>.format(self.dataset_path, i), self.gen_Y)</span><br><span class="line">                print(<span class="string">'generated dataset batch&#123;&#125; to &#123;&#125;'</span>.format(</span><br><span class="line">                    i, self.dataset_path))</span><br><span class="line">        <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">            print(e)</span><br><span class="line">            <span class="keyword">return</span></span><br></pre></td></tr></table></figure>
+<p>单个生成数据的步骤为</p>
+<ul>
+<li><p>随机抽取一个背景音频</p>
+</li>
+<li><p>随机抽取几段actives音频，通过<code>AudioSegment</code>的<code>overlay</code>方法将active插入到background中，这里需要记录已插入的片段起始和结束时间，避免重复或覆盖</p>
+</li>
+<li><p>将插入了activate的位置，在同比例的Y数据中修改标记为1</p>
+</li>
+<li><p>随机抽取若干negative音频，插入背景中，同样要避免覆盖</p>
+</li>
+<li><p>将合成后的音频导出为.wav文件</p>
+</li>
+<li><p>读取.wav合成文件并转换为频谱数据</p>
+</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">from</span> DataLoader improt DataLoader</span><br><span class="line"><span class="comment"># 创建loader实例</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>loader = DataLoader()</span><br><span class="line"><span class="comment"># 查看loader，可以看到loader还未加载数据，已经有生成的训练数据集</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>loader.info()</span><br><span class="line">-- DataLoader info --</span><br><span class="line"><span class="keyword">not</span> load</span><br><span class="line">generated to gen</span><br><span class="line">generated train to gen/train</span><br><span class="line">	batchs:<span class="number">1</span> </span><br><span class="line">	batchsize:<span class="number">100</span> </span><br><span class="line">no dev</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 加载原始音频数据，可看到从orig加载了17个activates、30个negatives和30个背景</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>loader.load()</span><br><span class="line">data loaded <span class="keyword">from</span> ori, activate:<span class="number">17</span> negativa:<span class="number">30</span> background:<span class="number">30</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 按默认参数生成训练集</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>loader.generate()</span><br><span class="line">...</span><br><span class="line">synthesis:gen/train/synthesis/synthesis<span class="number">-0</span><span class="number">-94.</span>wav exportd</span><br><span class="line">(<span class="number">441000</span>, <span class="number">2</span>)</span><br><span class="line">synthesis:gen/train/synthesis/synthesis<span class="number">-0</span><span class="number">-95.</span>wav exportd</span><br><span class="line">(<span class="number">441000</span>, <span class="number">2</span>)</span><br><span class="line">synthesis:gen/train/synthesis/synthesis<span class="number">-0</span><span class="number">-96.</span>wav exportd</span><br><span class="line">(<span class="number">441000</span>, <span class="number">2</span>)</span><br><span class="line">synthesis:gen/train/synthesis/synthesis<span class="number">-0</span><span class="number">-97.</span>wav exportd</span><br><span class="line">(<span class="number">441000</span>, <span class="number">2</span>)</span><br><span class="line">synthesis:gen/train/synthesis/synthesis<span class="number">-0</span><span class="number">-98.</span>wav exportd</span><br><span class="line">(<span class="number">441000</span>, <span class="number">2</span>)</span><br><span class="line">synthesis:gen/train/synthesis/synthesis<span class="number">-0</span><span class="number">-99.</span>wav exportd</span><br><span class="line">(<span class="number">441000</span>, <span class="number">2</span>)</span><br><span class="line">generated dataset batch0 to gen/train/dataset</span><br><span class="line">&gt;&gt;&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="训练"><a href="#训练" class="headerlink" title="训练"></a>训练</h3><p>模型就和deeplearning.ai课程介绍的一致，一个一维卷积层+2个GRU层+一个sigmoid激活函数，网络输入为5511乘101，输出为1375乘1，优化器用Adam，学习速率为0.001，代码如下</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">build_model</span><span class="params">(input_shape=<span class="params">(<span class="number">5511</span>,<span class="number">101</span>)</span>, learn_rate=<span class="number">0.001</span>)</span>:</span></span><br><span class="line"></span><br><span class="line">    model = tf.keras.models.Sequential()</span><br><span class="line"></span><br><span class="line">    model.add(layers.Input(shape = input_shape))</span><br><span class="line"></span><br><span class="line">    model.add(layers.Conv1D(<span class="number">196</span>, kernel_size=<span class="number">15</span>, strides=<span class="number">4</span>))</span><br><span class="line">    model.add(layers.BatchNormalization())</span><br><span class="line">    model.add(layers.Activation(<span class="string">'relu'</span>))</span><br><span class="line">    model.add(layers.Dropout(<span class="number">0.8</span>))</span><br><span class="line"></span><br><span class="line">    model.add(layers.GRU(units = <span class="number">128</span>, return_sequences = <span class="literal">True</span>))</span><br><span class="line">    model.add(layers.Dropout(<span class="number">0.8</span>))</span><br><span class="line">    model.add(layers.BatchNormalization())</span><br><span class="line"></span><br><span class="line">    model.add(layers.GRU(units = <span class="number">128</span>, return_sequences = <span class="literal">True</span>))</span><br><span class="line">    model.add(layers.Dropout(<span class="number">0.8</span>))</span><br><span class="line">    model.add(layers.BatchNormalization())</span><br><span class="line">    model.add(layers.Dropout(<span class="number">0.8</span>))</span><br><span class="line"></span><br><span class="line">    model.add(layers.TimeDistributed(layers.Dense(<span class="number">1</span>, activation = <span class="string">"sigmoid"</span>)))</span><br><span class="line"></span><br><span class="line">    opt = tf.keras.optimizers.Adam(lr=learn_rate, beta_1=<span class="number">0.9</span>, beta_2=<span class="number">0.999</span>, decay=<span class="number">0.01</span>)</span><br><span class="line">    model.compile(optimizer=opt, loss=<span class="string">'binary_crossentropy'</span>, metrics=[<span class="string">"accuracy"</span>])</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> model</span><br></pre></td></tr></table></figure>
+<p>训练使用了GPU加速，在5000个生成数据上进行了训练，没有使用学习速率衰减</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">train</span><span class="params">(modelname, train_index=<span class="number">0</span>, batch_size=<span class="number">10</span>, epochs=<span class="number">30</span>, save=True, lr_reduce=False, use_gpu=True)</span>:</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> use_gpu:</span><br><span class="line">        gpu_setting()</span><br><span class="line"></span><br><span class="line">    start = time.time()</span><br><span class="line">    callback_list = []</span><br><span class="line">    model = load_model(modelname)</span><br><span class="line">    X = np.load(<span class="string">'record_data_gen/train/dataset/X-&#123;&#125;.npy'</span>.format(train_index))</span><br><span class="line">    Y = np.load(<span class="string">'record_data_gen/train/dataset/Y-&#123;&#125;.npy'</span>.format(train_index))</span><br><span class="line">    <span class="keyword">if</span> lr_reduce:</span><br><span class="line">        lr = ReduceLROnPlateau(monitor=<span class="string">'loss'</span>, patience=<span class="number">20</span>, verbose=<span class="number">1</span>, mode=<span class="string">'auto'</span>)</span><br><span class="line">        callback_list.append(lr)</span><br><span class="line">    history = model.fit(X,Y,batch_size=batch_size,epochs=epochs, callbacks=callback_list)</span><br><span class="line">    model.save(modelname)</span><br><span class="line">    end = time.time()</span><br><span class="line">    print(<span class="string">'train time:&#123;&#125; second'</span>.format(int(end-start)))</span><br><span class="line">    <span class="keyword">return</span> history</span><br></pre></td></tr></table></figure>
+<p>最终的精度达到0.975左右，loss在0.01以下</p>
+<h3 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h3><ul>
+<li>实时预测</li>
+</ul>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ul>
+<li><p>利用GRU模型处理时间序列</p>
+</li>
+<li><p>利用一维卷积预处理</p>
+</li>
+<li><p>利用GPU加速训练</p>
+</li>
+<li><p>Linux ALSA框架</p>
+</li>
+<li><p>train经验</p>
+<ul>
+<li><p>数据问题，数据一定要正确</p>
+</li>
+<li><p>训练速度问题，先用一个较大的学习速率验证自己数据是否正确，再降低速率进行正式学习</p>
+</li>
+</ul>
+</li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Tensorflow/" rel="tag"># Tensorflow</a>
+          
+            <a href="/tags/deeplearning-ai/" rel="tag"># deeplearning.ai</a>
+          
+        </div>
+      
+
+      
+      
+        <div class="post-widgets">
+        
+
+        
+
+        
+          
+          <div id="needsharebutton-postbottom">
+            <span class="btn">
+              <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </span>
+          </div>
+        
+        </div>
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/06/16/每月见闻202006/" rel="next" title="每月见闻202006">
+                <i class="fa fa-chevron-left"></i> 每月见闻202006
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/07/13/每月见闻202007/" rel="prev" title="每月见闻202007">
+                每月见闻202007 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/../image/avatar.png" alt="awokezhou">
+            
+              <p class="site-author-name" itemprop="name">awokezhou</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">89</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">56</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">73</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/awokezhou" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="awokezhou@gmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                Links
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://www.ruanyifeng.com/blog/" title="阮一峰" target="_blank">阮一峰</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://dave.cheney.net/about/" title="Dave Cheney" target="_blank">Dave Cheney</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://codingsans.com/" title="codingsans" target="_blank">codingsans</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://www.openai.com/" title="openAI" target="_blank">openAI</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://www.wowotech.net/author/3/" title="linuxer - 蜗窝科技" target="_blank">linuxer - 蜗窝科技</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://www.iii.run/" title="mmmwhy" target="_blank">mmmwhy</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://www.jasongj.com/" title="技术世界" target="_blank">技术世界</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://machinelearningmastery.com/" title="Jason Brownlee" target="_blank">Jason Brownlee</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://www.jeremyjordan.me/" title="Jeremy Jordan" target="_blank">Jeremy Jordan</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://towardsdatascience.com/" title="Towards Data Science" target="_blank">Towards Data Science</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://colah.github.io/" title="colah" target="_blank">colah</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://www.cnblogs.com/popsuper1982/" title="网易云计算架构师刘超" target="_blank">网易云计算架构师刘超</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://biscuitos.github.io/" title="Biscuitos" target="_blank">Biscuitos</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#deeplearning-ai触发词检测"><span class="nav-number">1.</span> <span class="nav-text">deeplearning.ai触发词检测</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#设计思想"><span class="nav-number">1.1.</span> <span class="nav-text">设计思想</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#生成数据集"><span class="nav-number">1.2.</span> <span class="nav-text">生成数据集</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#程序化生成样本"><span class="nav-number">1.2.1.</span> <span class="nav-text">程序化生成样本</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#录音转换为频谱"><span class="nav-number">1.2.2.</span> <span class="nav-text">录音转换为频谱</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#创建一个训练样本"><span class="nav-number">1.2.3.</span> <span class="nav-text">创建一个训练样本</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#模型"><span class="nav-number">1.3.</span> <span class="nav-text">模型</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#评估和预测"><span class="nav-number">1.3.1.</span> <span class="nav-text">评估和预测</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#我的实现"><span class="nav-number">2.</span> <span class="nav-text">我的实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#数据集生成"><span class="nav-number">2.1.</span> <span class="nav-text">数据集生成</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#DataLoader"><span class="nav-number">2.1.1.</span> <span class="nav-text">DataLoader</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#load"><span class="nav-number">2.1.1.1.</span> <span class="nav-text">load</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#generate"><span class="nav-number">2.1.1.2.</span> <span class="nav-text">generate</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#训练"><span class="nav-number">2.2.</span> <span class="nav-text">训练</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#测试"><span class="nav-number">2.3.</span> <span class="nav-text">测试</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">3.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">awokezhou</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+      <div id="needsharebutton-float">
+        <span class="btn">
+          <i class="fa fa-share-alt" aria-hidden="true"></i>
+        </span>
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+  
+  <script type="text/javascript">
+    var GUEST = ['nick','mail','link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item=>{
+      return GUEST.indexOf(item)>-1;
+    });
+    new Valine({
+        el: '#comments' ,
+        verify: false,
+        notify: false,
+        appId: 'fRviEm3V5t70yJuO2anF9b3q-gzGzoHsz',
+        appKey: 'hWNhMYbcRQVolyrvqSI7fVgz',
+        placeholder: '快来吐槽吧',
+        avatar:'mm',
+        guest_info:guest,
+        pageSize:'10' || 10,
+    });
+  </script>
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+  
+  <link rel="stylesheet" href="/lib/needsharebutton/needsharebutton.css">
+
+  
+  
+  <script src="/lib/needsharebutton/needsharebutton.js"></script>
+
+  <script>
+    
+      pbOptions = {};
+      
+          pbOptions.iconStyle = "box";
+      
+          pbOptions.boxForm = "horizontal";
+      
+          pbOptions.position = "bottomCenter";
+      
+          pbOptions.networks = "Weibo,Wechat,Douban,QQZone,Twitter,Facebook";
+      
+      new needShareButton('#needsharebutton-postbottom', pbOptions);
+    
+    
+      flOptions = {};
+      
+          flOptions.iconStyle = "box";
+      
+          flOptions.boxForm = "horizontal";
+      
+          flOptions.position = "middleRight";
+      
+          flOptions.networks = "Weibo,Wechat,Douban,QQZone,Twitter,Facebook";
+      
+      new needShareButton('#needsharebutton-float', flOptions);
+    
+  </script>
+
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

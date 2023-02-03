@@ -1,0 +1,1360 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/../image/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/../image/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="本文以自定义模型为例，对使用VitisAI进行模型量化部署的流程进行介绍 Workflow 数据集为fashion_mnist  使用Tensorflow2搭建一个简单分类网络并进行训练，导出模型文件  使用VitsiAI docker中的vai_q_tensorflow2工具进行模型量化和校准，得到校准模型文件  使用VitisAI docker中的vai_c_tensorflow2工具进行模型">
+<meta property="og:type" content="article">
+<meta property="og:title" content="VitisAI-07-模型部署">
+<meta property="og:url" content="http://yoursite.com/2022/08/27/VitisAI-07-模型部署/index.html">
+<meta property="og:site_name" content="awokezhou&#39;s blog">
+<meta property="og:description" content="本文以自定义模型为例，对使用VitisAI进行模型量化部署的流程进行介绍 Workflow 数据集为fashion_mnist  使用Tensorflow2搭建一个简单分类网络并进行训练，导出模型文件  使用VitsiAI docker中的vai_q_tensorflow2工具进行模型量化和校准，得到校准模型文件  使用VitisAI docker中的vai_c_tensorflow2工具进行模型">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://yoursite.com/2022/08/27/VitisAI-07-模型部署/01.png">
+<meta property="og:image" content="http://yoursite.com/2022/08/27/VitisAI-07-模型部署/02.png">
+<meta property="og:updated_time" content="2023-02-02T11:50:59.019Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="VitisAI-07-模型部署">
+<meta name="twitter:description" content="本文以自定义模型为例，对使用VitisAI进行模型量化部署的流程进行介绍 Workflow 数据集为fashion_mnist  使用Tensorflow2搭建一个简单分类网络并进行训练，导出模型文件  使用VitsiAI docker中的vai_q_tensorflow2工具进行模型量化和校准，得到校准模型文件  使用VitisAI docker中的vai_c_tensorflow2工具进行模型">
+<meta name="twitter:image" content="http://yoursite.com/2022/08/27/VitisAI-07-模型部署/01.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"hide","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2022/08/27/VitisAI-07-模型部署/">
+
+
+
+
+
+  <title>VitisAI-07-模型部署 | awokezhou's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">awokezhou's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-message">
+          <a href="/message/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br>
+            
+            message
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2022/08/27/VitisAI-07-模型部署/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="awokezhou">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/../image/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="awokezhou's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">VitisAI-07-模型部署</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2022-08-27T14:23:50+08:00">
+                2022-08-27
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/AI/" itemprop="url" rel="index">
+                    <span itemprop="name">AI</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2022/08/27/VitisAI-07-模型部署/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2022/08/27/VitisAI-07-模型部署/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>本文以自定义模型为例，对使用VitisAI进行模型量化部署的流程进行介绍</p>
+<h1 id="Workflow"><a href="#Workflow" class="headerlink" title="Workflow"></a>Workflow</h1><ul>
+<li><p>数据集为fashion_mnist</p>
+</li>
+<li><p>使用Tensorflow2搭建一个简单分类网络并进行训练，导出模型文件</p>
+</li>
+<li><p>使用VitsiAI docker中的vai_q_tensorflow2工具进行模型量化和校准，得到校准模型文件</p>
+</li>
+<li><p>使用VitisAI docker中的vai_c_tensorflow2工具进行模型编译，生成能够部署在DPU上的模型文件</p>
+</li>
+<li><p>编写模型推理程序(Python)，并将推理程序、编译后的模型文件以及测试图片导入设备中，运行推理程序进行图片分类</p>
+</li>
+</ul>
+<h1 id="Train"><a href="#Train" class="headerlink" title="Train"></a>Train</h1><p>keras内置了fashion_mnist数据集，该数据集是小尺寸商品分类数据集，由28x28的单通道灰度图构成，训练集为60000张图片，测试集为10000张图片</p>
+<p>导入包并加载数据集</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> cv2 <span class="keyword">as</span> cv</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"><span class="keyword">import</span> tensorflow <span class="keyword">as</span> tf</span><br><span class="line"><span class="keyword">from</span> tensorflow <span class="keyword">import</span> keras</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"></span><br><span class="line">fashion_mnist = keras.datasets.fashion_mnist</span><br><span class="line">(train_images, train_labels), (test_images, test_labels) = fashion_mnist.load_data()</span><br></pre></td></tr></table></figure>
+<p>查看数据集</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">print(train_images.shape)</span><br><span class="line">print(test_images.shape)</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">(60000, 28, 28)</span><br><span class="line">(10000, 28, 28)</span><br></pre></td></tr></table></figure>
+<p>保存一些测试数据为图片</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">test_image_save</span><span class="params">(images, num=<span class="number">32</span>)</span>:</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(num):</span><br><span class="line">        img = Image.fromarray(images[i])</span><br><span class="line">        img.save(<span class="string">'images/&#123;&#125;.jpg'</span>.format(i), quality=<span class="number">100</span>)</span><br><span class="line">test_image_save(test_images, num=<span class="number">32</span>)</span><br></pre></td></tr></table></figure>
+<p>构建模型并打印summary</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">train_images = train_images.reshape((<span class="number">60000</span>, <span class="number">28</span>,<span class="number">28</span>,<span class="number">1</span>))</span><br><span class="line">test_images = test_images.reshape((<span class="number">10000</span>, <span class="number">28</span>,<span class="number">28</span>,<span class="number">1</span>))</span><br><span class="line">np.save(<span class="string">'train_images'</span>, train_images)</span><br><span class="line">np.save(<span class="string">'test_images'</span>, test_images)</span><br><span class="line">np.save(<span class="string">'test_labels'</span>, test_labels)</span><br><span class="line">model = keras.Sequential([</span><br><span class="line">    keras.layers.Conv2D(<span class="number">16</span>, (<span class="number">3</span>,<span class="number">3</span>), activation=<span class="string">'relu'</span>, </span><br><span class="line">                        input_shape=(<span class="number">28</span>,<span class="number">28</span>,<span class="number">1</span>)),</span><br><span class="line">    keras.layers.Flatten(),</span><br><span class="line">    keras.layers.Dense(<span class="number">128</span>, activation=<span class="string">'relu'</span>),</span><br><span class="line">    keras.layers.Dense(<span class="number">10</span>)</span><br><span class="line">])</span><br><span class="line">model.summary()</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">Model: &quot;sequential&quot;</span><br><span class="line">_________________________________________________________________</span><br><span class="line">Layer (type)                 Output Shape              Param #   </span><br><span class="line">=================================================================</span><br><span class="line">conv2d (Conv2D)              (None, 26, 26, 16)        160       </span><br><span class="line">_________________________________________________________________</span><br><span class="line">flatten (Flatten)            (None, 10816)             0         </span><br><span class="line">_________________________________________________________________</span><br><span class="line">dense (Dense)                (None, 128)               1384576   </span><br><span class="line">_________________________________________________________________</span><br><span class="line">dense_1 (Dense)              (None, 10)                1290      </span><br><span class="line">=================================================================</span><br><span class="line">Total params: 1,386,026</span><br><span class="line">Trainable params: 1,386,026</span><br><span class="line">Non-trainable params: 0</span><br><span class="line">_________________________________________________________________</span><br></pre></td></tr></table></figure>
+<p>编译并训练模型</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">model.compile(optimizer=<span class="string">'adam'</span>,</span><br><span class="line">              loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=<span class="literal">True</span>),</span><br><span class="line">              metrics=[<span class="string">'accuracy'</span>])</span><br><span class="line">model.fit(train_images, train_labels, epochs=<span class="number">10</span>)</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">Epoch 1/20</span><br><span class="line">1875/1875 [==============================] - 13s 7ms/step - loss: 1.9238 - accuracy: 0.8173</span><br><span class="line">Epoch 2/20</span><br><span class="line">1875/1875 [==============================] - 13s 7ms/step - loss: 0.3347 - accuracy: 0.8827</span><br><span class="line">Epoch 3/20</span><br><span class="line">1875/1875 [==============================] - 13s 7ms/step - loss: 0.2755 - accuracy: 0.8995</span><br><span class="line">Epoch 4/20</span><br><span class="line">1875/1875 [==============================] - 13s 7ms/step - loss: 0.2399 - accuracy: 0.9123 0s -</span><br><span class="line">Epoch 5/20</span><br><span class="line">1875/1875 [==============================] - 14s 7ms/step - loss: 0.2122 - accuracy: 0.9227</span><br><span class="line">Epoch 6/20</span><br><span class="line">1875/1875 [==============================] - 13s 7ms/step - loss: 0.1852 - accuracy: 0.9323 0s -</span><br><span class="line">Epoch 7/20</span><br><span class="line">1875/1875 [==============================] - 13s 7ms/step - loss: 0.1617 - accuracy: 0.9408</span><br><span class="line">Epoch 8/20</span><br><span class="line">1875/1875 [==============================] - 13s 7ms/step - loss: 0.1429 - accuracy: 0.9478</span><br><span class="line">Epoch 9/20</span><br><span class="line">1875/1875 [==============================] - 13s 7ms/step - loss: 0.1321 - accuracy: 0.9518</span><br><span class="line">Epoch 10/20</span><br><span class="line">1875/1875 [==============================] - 13s 7ms/step - loss: 0.1153 - accuracy: 0.9586</span><br><span class="line">Epoch 11/20</span><br><span class="line">1875/1875 [==============================] - 13s 7ms/step - loss: 0.1039 - accuracy: 0.9626</span><br><span class="line">Epoch 12/20</span><br><span class="line">1875/1875 [==============================] - 13s 7ms/step - loss: 0.0935 - accuracy: 0.9658</span><br><span class="line">Epoch 13/20</span><br><span class="line">...</span><br><span class="line">Epoch 19/20</span><br><span class="line">1875/1875 [==============================] - 13s 7ms/step - loss: 0.0579 - accuracy: 0.9800</span><br><span class="line">Epoch 20/20</span><br><span class="line">1875/1875 [==============================] - 13s 7ms/step - loss: 0.0550 - accuracy: 0.9805</span><br></pre></td></tr></table></figure>
+<p>在测试集验证精度并保存模型为.h5文件</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">test_loss, test_acc = model.evaluate(test_images,  test_labels, verbose=<span class="number">2</span>)</span><br><span class="line">print(<span class="string">'\nTest accuracy:'</span>, test_acc)</span><br><span class="line">model.save(<span class="string">'tf2_fmnist_model.h5'</span>)</span><br></pre></td></tr></table></figure>
+<p>精度还可以吧，毕竟只是随便搭个模型验证流程用的</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">313/313 - 1s - loss: 1.0434 - accuracy: 0.8792</span><br><span class="line">Test accuracy: 0.8791999816894531</span><br></pre></td></tr></table></figure>
+<h1 id="Quantization-and-Compile"><a href="#Quantization-and-Compile" class="headerlink" title="Quantization and Compile"></a>Quantization and Compile</h1><p>VitisAI的量化和编译工具在docker中。VAI(VitisAi)量化器以一个浮点模型作为输入，这个浮点模型可以是Tensorflow1.x/2.x、Caffe或者PyTorch生成的模型文件，在量化器中会进行一些预处理，例如折叠BN、删除不需要的节点等，然后对权重、偏置和激活函数量化到指定的位宽(目前仅支持INT8)<br>为了抓取激活函数的统计信息并提高量化模型的准确性，VAI量化器必须运行多次推理来进行校准。校准需要一个100~1000个样本的数据作为输入，这个过程只需要unlabel的图片就可以<br>校准完成后生成量化过的定点模型，该模型还必须经过编译，以生成可以部署在DPU上的模型</p>
+<h2 id="Quantization-the-model"><a href="#Quantization-the-model" class="headerlink" title="Quantization the model"></a>Quantization the model</h2><p>由于训练模型使用的是Tensorflow2，因此这里必须使用docker的vai_q_tensorflow2来进行量化，读者如果使用的是其他框架，请使用对应的量化工具。请注意这里的vai_q_tensorflow2等量化工具并非是Tensorflow提供的，而是VitisAI为不同的深度学习框架定制的量化工具，请勿混淆</p>
+<p>VitisAI中共支持以下4种量化方式</p>
+<ul>
+<li>vai_q_tensorflow：用于量化Tensorflow1.x训练的模型</li>
+<li>vai_q_tensorflow2：用于量化Tensorflow2.x训练的模型</li>
+<li>vai_q_pytorch：用于量化Pytorch训练的模型</li>
+<li>vai_q_caffe：用于量化caffe训练的模型</li>
+</ul>
+<p>这四种量化工具都在docker中，但是在不同的conda虚拟环境中，因此启动进入docker后需要先激活对应的conda环境</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">./docker_run.sh xilinx/vitis-ai</span><br><span class="line">conda activate vitis-ai-tensorflow2</span><br></pre></td></tr></table></figure>
+<p>vai_q_tensorflow2支持两种不同的方法来量化模型</p>
+<ul>
+<li>Post-training quantization (PTQ)：PTQ是一种将预先训练好的浮点模型转换为量化模型的技术，模型精度几乎没有降低。需要一个具有代表性的数据集对浮点模型进行batch推断，以获得激活函数的分布。这个过程也叫量化校准</li>
+<li>Quantization aware training(QAT)：QAT在模型量化期间对前向和后向过程中的量化误差进行建模，对于QAT，建议从精度良好的浮点预训练模型开始，而不是从头开始</li>
+</ul>
+<p>本文选用的是PTQ方式。在VitisAI/models路径下创建文件夹mymodel，将以下文件放入其中</p>
+<ul>
+<li>训练生成的tf2_fmnist_model.h5文件</li>
+<li>训练集train_images.npy用于校准</li>
+<li>测试集test_images.npy、测试标签test_labels用于校准后的评估</li>
+</ul>
+<p>编写quantization.py量化脚本</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> tensorflow <span class="keyword">as</span> tf</span><br><span class="line"><span class="keyword">from</span> tensorflow <span class="keyword">import</span> keras</span><br><span class="line"><span class="keyword">from</span> tensorflow_model_optimization.quantization.keras <span class="keyword">import</span> vitis_quantize</span><br><span class="line"></span><br><span class="line">train_images = np.load(<span class="string">'train_images.npy'</span>)</span><br><span class="line">test_images = np.load(<span class="string">'test_images.npy'</span>)</span><br><span class="line">test_labels = np.load(<span class="string">'test_labels.npy'</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># load float model</span></span><br><span class="line">float_model = tf.keras.models.load_model(<span class="string">'tf2_fmnist_model.h5'</span>)</span><br><span class="line"></span><br><span class="line">quantizer = vitis_quantize.VitisQuantizer(float_model)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Set calibration dataset to train_images, save quantized model to quantized.h5</span></span><br><span class="line">quantized_model = quantizer.quantize_model(</span><br><span class="line">    calib_dataset=train_images[<span class="number">0</span>:<span class="number">10</span>],</span><br><span class="line">    include_cle=<span class="literal">True</span>,</span><br><span class="line">    cle_steps=<span class="number">10</span>,</span><br><span class="line">    include_fast_ft=<span class="literal">True</span></span><br><span class="line">)</span><br><span class="line">quantized_model.save(<span class="string">'quantized.h5'</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Load quantized model</span></span><br><span class="line">quantized_model = keras.models.load_model(<span class="string">'quantized.h5'</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Evaluate quantized model</span></span><br><span class="line">quantized_model.compile(</span><br><span class="line">    loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=<span class="literal">True</span>),</span><br><span class="line">    metrics=[<span class="string">'sparse_categorical_accuracy'</span>]</span><br><span class="line">)</span><br><span class="line">quantized_model.evaluate(test_images, test_labels, batch_size=<span class="number">500</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Dump quantized model</span></span><br><span class="line">quantizer.dump_model(</span><br><span class="line">    quantized_model, dataset=train_images[<span class="number">0</span>:<span class="number">1</span>], dump_float=<span class="literal">True</span>)</span><br></pre></td></tr></table></figure>
+<p>运行该脚本<br><img src="/2022/08/27/VitisAI-07-模型部署/01.png"></p>
+<p>在目录下生成了quantized.h5量化模型文件，可以看到量化后的模型在测试集上评估精度为0.8797</p>
+<h2 id="Compile-the-model"><a href="#Compile-the-model" class="headerlink" title="Compile the model"></a>Compile the model</h2><p>编译模型需要准备以下文件</p>
+<ul>
+<li><p>quantized.h5：量化生成的模型文件</p>
+</li>
+<li><p>arch.json：DPU描述文件，在vitis项目中，dpu_trd_system_hw_link/Hardware/dpu.build/link/vivado/vpl/prj/prj.gen/sources_1/bd/design_1/ip/design_1_DPUCZDX8G_1_0/arch.json<br>将arch.json拷贝到本目录下，运行以下命令进行编译</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vai_c_tensorflow2 -m quantized.h5 -a arch.json -o ./ -n tf2_cnn_fmnist</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<img src="/2022/08/27/VitisAI-07-模型部署/02.png">
+<p>在目录下生成了tf2_cnn_fmnist.xmodel</p>
+<h1 id="Inference"><a href="#Inference" class="headerlink" title="Inference"></a>Inference</h1><p>首先在设备上需要安装VART相关工具，安装脚本在VitisAI仓库的setup/mpsoc/VART中，将该目录下的target_vart_setup.sh拷贝到设备上运行</p>
+<p>编写推理Python程序</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">import</span> cv2</span><br><span class="line"><span class="keyword">import</span> xir</span><br><span class="line"><span class="keyword">import</span> vart</span><br><span class="line"><span class="keyword">import</span> math</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_graph_from_model</span><span class="params">(path)</span>:</span></span><br><span class="line">    graph = xir.Graph.deserialize(path)</span><br><span class="line">    root = graph.get_root_subgraph()</span><br><span class="line">    <span class="keyword">if</span> root.is_leaf:</span><br><span class="line">        <span class="keyword">return</span> []</span><br><span class="line">    cs = root.toposort_child_subgraph()</span><br><span class="line">    <span class="keyword">return</span> [</span><br><span class="line">        c <span class="keyword">for</span> c <span class="keyword">in</span> cs</span><br><span class="line">        <span class="keyword">if</span> cc.has_attr(<span class="string">"device"</span>) <span class="keyword">and</span> c.get_attr(<span class="string">"device"</span>).upper() == <span class="string">"DPU"</span></span><br><span class="line">    ]</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">image_preprocess</span><span class="params">(path, input_scale)</span>:</span></span><br><span class="line">    print(<span class="string">'input_scale:&#123;&#125;'</span>.format(input_scale))</span><br><span class="line">    image = cv2.imread(path, <span class="number">0</span>)</span><br><span class="line">    image = image / <span class="number">2</span></span><br><span class="line">    image = image.astype(np.int8)</span><br><span class="line">    <span class="keyword">return</span> image</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">model_run</span><span class="params">(runner, img)</span>:</span></span><br><span class="line">    input_tensors = runner.get_input_tensors()</span><br><span class="line">    output_tensors = runner.get_output_tensors()</span><br><span class="line">    print(<span class="string">'input tensor type:&#123;&#125;'</span>.format(input_tensors))</span><br><span class="line">    input_ndim = tuple(input_tensors[<span class="number">0</span>].dims)</span><br><span class="line">    print(<span class="string">'input_ndim:&#123;&#125;'</span>.format(input_ndim))</span><br><span class="line">    output_ndim = tuple(output_tensors[<span class="number">0</span>].dims)</span><br><span class="line">    print(<span class="string">'output_ndim:&#123;&#125;'</span>.format(output_ndim))</span><br><span class="line">    input_data = [np.empty(input_ndim, dtype=np.int8, order=<span class="string">"C"</span>)]</span><br><span class="line">    output_data = [np.empty(output_ndim, dtype=np.int8, order=<span class="string">"C"</span>)]</span><br><span class="line">    print(<span class="string">'image shape:&#123;&#125;'</span>.format(img.shape))</span><br><span class="line">    <span class="comment">#input_data[0] = img.reshape(input_ndim[1:])</span></span><br><span class="line">    job_id = runner.execute_async(img.reshape((<span class="number">1</span>,<span class="number">28</span>,<span class="number">28</span>,<span class="number">1</span>)), output_data)</span><br><span class="line">    runner.wait(job_id)</span><br><span class="line">    print(output_data)</span><br><span class="line">    <span class="keyword">return</span> np.argmax(output_data[<span class="number">0</span>])</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span><span class="params">(argv)</span>:</span></span><br><span class="line">    image_path = argv[<span class="number">1</span>]</span><br><span class="line">    model_path = argv[<span class="number">2</span>]</span><br><span class="line">    print(<span class="string">'image path:&#123;&#125;\nmodel path:&#123;&#125;'</span>.format(</span><br><span class="line">        image_path, model_path))</span><br><span class="line"></span><br><span class="line">    graph = get_graph_from_model(model_path)</span><br><span class="line">    dpu_runner = vart.Runner.create_runner(graph[<span class="number">0</span>], <span class="string">"run"</span>)</span><br><span class="line">    input_fixpos = dpu_runner.get_input_tensors()[<span class="number">0</span>].get_attr(<span class="string">"fix_point"</span>)</span><br><span class="line">    input_scale = <span class="number">2</span>**input_fixpos</span><br><span class="line">    image_data = image_preprocess(image_path, input_scale)</span><br><span class="line">    print(<span class="string">'image shape:&#123;&#125;'</span>.format(image_data.shape))</span><br><span class="line">    print(<span class="string">'&#123;&#125;'</span>.format(image_data.reshape((<span class="number">28</span>,<span class="number">28</span>,<span class="number">1</span>))))</span><br><span class="line">    time_start = time.time()</span><br><span class="line">    pred = model_run(dpu_runner, image_data)</span><br><span class="line">    print(<span class="string">'pred:&#123;&#125;'</span>.format(pred))</span><br><span class="line">    time_end = time.time()</span><br><span class="line"></span><br><span class="line">    timetotal = time_end - time_start</span><br><span class="line">    print(<span class="string">'total time:&#123;&#125;'</span>.format(timetotal))</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">"__main__"</span>:</span><br><span class="line">    main(sys.argv)</span><br></pre></td></tr></table></figure>
+<p>将推理程序、编译后的xmodel模型文件以及测试图片拷贝到设备中，运行推理程序，传入测试图片路径和模型文件路径进行推理，会打印出预测结果</p>
+<p>推理代码主要使用了VART API，主要步骤为</p>
+<ul>
+<li>加载模型并转换为计算图graph</li>
+<li>根据计算图生成DPU Runner</li>
+<li>加载输入图片预处理，并构建输入输出Tensor，需要注意各Tensor的shape和dtype</li>
+<li>输入输出Tensor传入DPU Runner，异步执行，并同步等待结果</li>
+<li>输出Tensor转换为期望的预测数据格式</li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+        <div class="post-widgets">
+        
+
+        
+
+        
+          
+          <div id="needsharebutton-postbottom">
+            <span class="btn">
+              <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </span>
+          </div>
+        
+        </div>
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2022/07/31/VitisAI-06-DPU-Configuration/" rel="next" title="VitisAI-06-DPU-Configuration">
+                <i class="fa fa-chevron-left"></i> VitisAI-06-DPU-Configuration
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2022/11/11/Mosica数据增强/" rel="prev" title="Mosica数据增强">
+                Mosica数据增强 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/../image/avatar.png" alt="awokezhou">
+            
+              <p class="site-author-name" itemprop="name">awokezhou</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">89</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">56</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">73</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/awokezhou" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="awokezhou@gmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                Links
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://www.ruanyifeng.com/blog/" title="阮一峰" target="_blank">阮一峰</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://dave.cheney.net/about/" title="Dave Cheney" target="_blank">Dave Cheney</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://codingsans.com/" title="codingsans" target="_blank">codingsans</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://www.openai.com/" title="openAI" target="_blank">openAI</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://www.wowotech.net/author/3/" title="linuxer - 蜗窝科技" target="_blank">linuxer - 蜗窝科技</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://www.iii.run/" title="mmmwhy" target="_blank">mmmwhy</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://www.jasongj.com/" title="技术世界" target="_blank">技术世界</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://machinelearningmastery.com/" title="Jason Brownlee" target="_blank">Jason Brownlee</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://www.jeremyjordan.me/" title="Jeremy Jordan" target="_blank">Jeremy Jordan</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://towardsdatascience.com/" title="Towards Data Science" target="_blank">Towards Data Science</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://colah.github.io/" title="colah" target="_blank">colah</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://www.cnblogs.com/popsuper1982/" title="网易云计算架构师刘超" target="_blank">网易云计算架构师刘超</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://biscuitos.github.io/" title="Biscuitos" target="_blank">Biscuitos</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Workflow"><span class="nav-number">1.</span> <span class="nav-text">Workflow</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Train"><span class="nav-number">2.</span> <span class="nav-text">Train</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Quantization-and-Compile"><span class="nav-number">3.</span> <span class="nav-text">Quantization and Compile</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Quantization-the-model"><span class="nav-number">3.1.</span> <span class="nav-text">Quantization the model</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Compile-the-model"><span class="nav-number">3.2.</span> <span class="nav-text">Compile the model</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Inference"><span class="nav-number">4.</span> <span class="nav-text">Inference</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">awokezhou</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+      <div id="needsharebutton-float">
+        <span class="btn">
+          <i class="fa fa-share-alt" aria-hidden="true"></i>
+        </span>
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+  
+  <script type="text/javascript">
+    var GUEST = ['nick','mail','link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item=>{
+      return GUEST.indexOf(item)>-1;
+    });
+    new Valine({
+        el: '#comments' ,
+        verify: false,
+        notify: false,
+        appId: 'fRviEm3V5t70yJuO2anF9b3q-gzGzoHsz',
+        appKey: 'hWNhMYbcRQVolyrvqSI7fVgz',
+        placeholder: '快来吐槽吧',
+        avatar:'mm',
+        guest_info:guest,
+        pageSize:'10' || 10,
+    });
+  </script>
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+  
+  <link rel="stylesheet" href="/lib/needsharebutton/needsharebutton.css">
+
+  
+  
+  <script src="/lib/needsharebutton/needsharebutton.js"></script>
+
+  <script>
+    
+      pbOptions = {};
+      
+          pbOptions.iconStyle = "box";
+      
+          pbOptions.boxForm = "horizontal";
+      
+          pbOptions.position = "bottomCenter";
+      
+          pbOptions.networks = "Weibo,Wechat,Douban,QQZone,Twitter,Facebook";
+      
+      new needShareButton('#needsharebutton-postbottom', pbOptions);
+    
+    
+      flOptions = {};
+      
+          flOptions.iconStyle = "box";
+      
+          flOptions.boxForm = "horizontal";
+      
+          flOptions.position = "middleRight";
+      
+          flOptions.networks = "Weibo,Wechat,Douban,QQZone,Twitter,Facebook";
+      
+      new needShareButton('#needsharebutton-float', flOptions);
+    
+  </script>
+
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

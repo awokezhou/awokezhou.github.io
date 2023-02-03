@@ -1,0 +1,1426 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/../image/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/../image/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Deep Learning,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="梯度下降(GD, Gradient Descent)和反向传播(BP, Back Propagation)是理解神经网络学习原理的核心，本文试图从数学原理、实例来分析梯度下降和反向传播在神经网络中是如何工作的 数学原理为了理解梯度下降算法和反向传播算法的工作原理，需要理解以下数学知识  方向导数和梯度 链式法则  方向导数梯度在数学中的概念，源于方向导数。在一元函数中，我们用导数来描述和分析函数的">
+<meta name="keywords" content="Deep Learning">
+<meta property="og:type" content="article">
+<meta property="og:title" content="梯度下降和反向传播">
+<meta property="og:url" content="http://yoursite.com/2019/09/30/梯度下降和反向传播/index.html">
+<meta property="og:site_name" content="awokezhou&#39;s blog">
+<meta property="og:description" content="梯度下降(GD, Gradient Descent)和反向传播(BP, Back Propagation)是理解神经网络学习原理的核心，本文试图从数学原理、实例来分析梯度下降和反向传播在神经网络中是如何工作的 数学原理为了理解梯度下降算法和反向传播算法的工作原理，需要理解以下数学知识  方向导数和梯度 链式法则  方向导数梯度在数学中的概念，源于方向导数。在一元函数中，我们用导数来描述和分析函数的">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://yoursite.com/2019/09/30/梯度下降和反向传播/image/sgd-01.webp">
+<meta property="og:image" content="http://yoursite.com/2019/09/30/梯度下降和反向传播/image/BP-01.jpg">
+<meta property="og:image" content="http://yoursite.com/2019/09/30/梯度下降和反向传播/image/BP-02.jpg">
+<meta property="og:image" content="http://yoursite.com/2019/09/30/梯度下降和反向传播/image/BP-03.jpg">
+<meta property="og:updated_time" content="2021-08-13T02:24:21.772Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="梯度下降和反向传播">
+<meta name="twitter:description" content="梯度下降(GD, Gradient Descent)和反向传播(BP, Back Propagation)是理解神经网络学习原理的核心，本文试图从数学原理、实例来分析梯度下降和反向传播在神经网络中是如何工作的 数学原理为了理解梯度下降算法和反向传播算法的工作原理，需要理解以下数学知识  方向导数和梯度 链式法则  方向导数梯度在数学中的概念，源于方向导数。在一元函数中，我们用导数来描述和分析函数的">
+<meta name="twitter:image" content="http://yoursite.com/2019/09/30/梯度下降和反向传播/image/sgd-01.webp">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"hide","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/09/30/梯度下降和反向传播/">
+
+
+
+
+
+  <title>梯度下降和反向传播 | awokezhou's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">awokezhou's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-message">
+          <a href="/message/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br>
+            
+            message
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/09/30/梯度下降和反向传播/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="awokezhou">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/../image/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="awokezhou's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">梯度下降和反向传播</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-09-30T14:37:52+08:00">
+                2019-09-30
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/ML/" itemprop="url" rel="index">
+                    <span itemprop="name">ML</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/ML/理论/" itemprop="url" rel="index">
+                    <span itemprop="name">理论</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/ML/理论/DeepLearning/" itemprop="url" rel="index">
+                    <span itemprop="name">DeepLearning</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2019/09/30/梯度下降和反向传播/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2019/09/30/梯度下降和反向传播/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>梯度下降(GD, Gradient Descent)和反向传播(BP, Back Propagation)是理解神经网络学习原理的核心，本文试图从数学原理、实例来分析梯度下降和反向传播在神经网络中是如何工作的</p>
+<h2 id="数学原理"><a href="#数学原理" class="headerlink" title="数学原理"></a>数学原理</h2><p>为了理解梯度下降算法和反向传播算法的工作原理，需要理解以下数学知识</p>
+<ul>
+<li>方向导数和梯度</li>
+<li>链式法则</li>
+</ul>
+<h3 id="方向导数"><a href="#方向导数" class="headerlink" title="方向导数"></a>方向导数</h3><p>梯度在数学中的概念，源于方向导数。在一元函数中，我们用导数来描述和分析函数的变化趋势，二元函数或多元函数我们用偏导数来分析函数变化情况。但是一旦变成多元，偏导数只能反应在坐标轴方向的变化情况，如果想要知道函数在任意方向上的变化情况，偏导数是无法做到的。因此引入了方向导数的概念</p>
+<p>$l$ 是 $xOy$ 平面上以 $P<em>{0}(x</em>{0},y<em>{0})$ 为起点的一条射线，$e</em>{l}=(\cos{\alpha},\cos{\beta})$ 是与 $l$ 同方向的单位向量，$P$ 为射线上另一点。如果函数 $z = f(x,y)$ 的增量 $f(x<em>{0}+t\cos{\alpha}, y</em>{0}+t\cos{\beta})$ 与 $P$ 到 $P<em>{0}$ 的距离 $\left|PP</em>{0}\right| = t$ 比值 </p>
+<script type="math/tex; mode=display">
+\frac{f(x_{0}+t\cos{\alpha}, y_{0}+t\cos{\beta}) - f(x_{0}, y_{0})}{t}</script><p>当 $P$ 趋于 $P<em>{0}$ 时的极限存在，则称此极限为函数在点 $P</em>{0}$ 沿着射线 $l$ 的方向导数。简单来说，方向导数就是函数在某一点上(当然这一点必须是在函数上的)，沿着某一个方向的变化率，但是方向导数并不是在任何方向上都存在，有定理：</p>
+<ul>
+<li>如果函数在某一点可微，函数在该点的任何方向的方向导数存在 </li>
+</ul>
+<h3 id="梯度"><a href="#梯度" class="headerlink" title="梯度"></a>梯度</h3><p>函数在很多方向上都有方向导数，那么在哪个方向上变化率最大呢？</p>
+<p>如果函数在点 $P<em>{0}$ 可微，$e</em>{l} = (cos\alpha, cos\beta)$ 是与方向 $l$ 同方向的单位向量，则方向导数可以写成如下形式</p>
+<script type="math/tex; mode=display">
+\frac{\partial f}{\partial l} = \nabla f\left ( x_{0}, y_{0} \right ) \cdot e_{l} = \left | \nabla f\left ( x_{0}, y_{0} \right ) \right |cos\theta</script><p>其中 $\nabla f\left ( x<em>{0},y</em>{0} \right )$ 就是梯度，$\theta$ 是梯度与单位向量的夹角。反过来，可以将方向导数看做梯度在任意方向上的投影，当这个夹角 $\theta$ 为0时，表示方向导数与梯度同方向，函数增长速度最快，当夹角 $\theta$ 为180度时，方向导数与梯度方向相反，函数减小最快 </p>
+<p>梯度的表达式为</p>
+<script type="math/tex; mode=display">
+\nabla{f} = [\frac{\partial f}{\partial x}, \frac{\partial f}{\partial y}]</script><p>本质上是函数的各个偏导数合成的向量</p>
+<h3 id="链式法则"><a href="#链式法则" class="headerlink" title="链式法则"></a>链式法则</h3><p>微积分中的链式法则用于计算复合函数的导数。设$x$为实数，$f$和$g$是从实数映射到实数的函数，假设$y=g(x)$且$z=f(g(x))=f(y)$，那么链式法则为</p>
+<script type="math/tex; mode=display">
+\frac{\partial z}{\partial x} = \frac{\partial z}{\partial y}\frac{\partial y}{\partial x}</script><p>扩展到向量，假设$\boldsymbol{x} \in \mathbb{R}^{m}$，$\boldsymbol{y} \in \mathbb{R}^{n}$，$g$是从$\mathbb{R}^{m}$到$\mathbb{R}^{n}$的映射，$f$是从$\mathbb{R}^{n}$到$\mathbb{R}$的映射，如果$\boldsymbol{y}=g(\boldsymbol{x})$且$z=f(\boldsymbol{y})$。那么</p>
+<script type="math/tex; mode=display">
+\frac{\partial z}{\partial x_{i}} = \sum_{j}\frac{\partial z}{\partial y_{i}}\frac{\partial y_{i}}{\partial x_{i}}</script><p>使用向量写法，可等价为</p>
+<script type="math/tex; mode=display">
+\nabla_{x}{z} = \left(\frac{\partial \boldsymbol{y}}{\partial \boldsymbol{x}}\right)^{T}\nabla_{y}{z}</script><p>其中$\frac{\partial \boldsymbol{y}}{\partial \boldsymbol{x}}$是$g$的$n \times m$的Jacobian矩阵</p>
+<h2 id="梯度下降"><a href="#梯度下降" class="headerlink" title="梯度下降"></a>梯度下降</h2><p>梯度下降属于神经网络中优化器的一种，另外还有AdaGrad、RMSProp、Adam等。由于梯度永远指向函数增长最快的方向，那么函数下降最快的方向就是负梯度$-\nabla{f}$。梯度下降算法的思想是构造一个迭代过程，每次都使得损失函数$L$在负梯度的方向步进一点，经过若干次迭代后，函数值最终会逼近极值，这时网络学习收敛</p>
+<p>设$\Delta{f}$为每次迭代时函数的变化量，可设置为</p>
+<script type="math/tex; mode=display">
+\Delta{f} = -\eta{\nabla{f}}</script><p>其中$\eta$是一个很小的正数，称为<em>学习速率</em></p>
+<p>在每次迭代时$\omega$按照如下规则更新</p>
+<script type="math/tex; mode=display">
+\omega -> \acute{\omega} = \omega - \eta{\nabla{f}}</script><p>$b$的更新规则同上。整个迭代过程可以想象为在山谷中下落的小球，小球从山顶会沿着最短路径慢慢滚到谷底，如下图所示<br><img src="/2019/09/30/梯度下降和反向传播/image/sgd-01.webp" alt></p>
+<h2 id="反向传播"><a href="#反向传播" class="headerlink" title="反向传播"></a>反向传播</h2><p>反向传播这个术语经常被误认为只是用于神经网络的整个学习算法中，实际上反向传播算法只是用于计算梯度的方法，它可以用来计算任何函数的导数。由于按照梯度的定义直接求解是非常复杂的，反向传播能够使用非常简单的计算步骤来求解梯度</p>
+<h3 id="链式法则求复合函数的导数"><a href="#链式法则求复合函数的导数" class="headerlink" title="链式法则求复合函数的导数"></a>链式法则求复合函数的导数</h3><p>反向传播的核心在于运用链式法则，以下使用函数$f(x,y,z) = (x+y)*z$来说明整个过程。可将公式拆分为两部分$q=x+y$和$f=qz$</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># input value</span></span><br><span class="line">x = <span class="number">-2</span></span><br><span class="line">y = <span class="number">5</span></span><br><span class="line">z = <span class="number">-4</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># forward propagation</span></span><br><span class="line">q = x + y           <span class="comment"># q become 3</span></span><br><span class="line">f = q*z             <span class="comment"># f become -12</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># back propagation</span></span><br><span class="line">dfdz = q            <span class="comment"># q=3, dfdz = 3</span></span><br><span class="line">dfdq = z            <span class="comment"># z=-4, dfdq = -4</span></span><br><span class="line">dfdx = <span class="number">1.0</span> * dfdq   <span class="comment"># dqdx=1, dfdq=-4, dfdx=-4</span></span><br><span class="line">dfdy = <span class="number">1.0</span> * dfdq   <span class="comment"># dqdy=1, dfdq=-4, dfdy=-4</span></span><br></pre></td></tr></table></figure>
+<p>对于输入<code>x=-2, y=5, z=-4</code>先进行前向传播，依次向后计算，最后得出函数值为-12，前向传播的方向为从输入到输出(绿色)。反向传播(红色)是从输出开始，根据链式法则递归的向前计算梯度，梯度在链路中回流。最终计算得到梯度<code>[dfdx, dfdy, dfdz]</code>为<code>[-4,-4,3]</code>，如图所示<br><img src="/2019/09/30/梯度下降和反向传播/image/BP-01.jpg" alt></p>
+<h3 id="反向传播的直观理解——门单元间梯度的传递"><a href="#反向传播的直观理解——门单元间梯度的传递" class="headerlink" title="反向传播的直观理解——门单元间梯度的传递"></a>反向传播的直观理解——门单元间梯度的传递</h3><p>任何可微的函数都可以看做若干个门单元的组合形式，例如加法门、乘法门、除法门、取最大值门等</p>
+<script type="math/tex; mode=display">
+\begin{align*}
+f(x) &= \frac{1}{x} \to \frac{df}{dx} = -\frac{1}{x^{2}} \\
+f(x) &= a + x \to \frac{df}{dx} = 1 \\
+f(x) &= e^{x} \to \frac{df}{dx} = e^{x} \\
+f(x) &= ax \to \frac{df}{dx} = a \\
+\end{align*}</script><p>在整个计算图过程中，每个单元门都会得到一些输入，并计算两个东西：</p>
+<ul>
+<li>这个门的输出</li>
+<li>其输出值关于输入值的局部梯度$\nabla{a}$</li>
+</ul>
+<p>在反向传播过程中，门单元会获得整个网络输出值在自己的输出值上的梯度$\nabla{b}$，由链式法则可知，将$\nabla{b}$乘以$\nabla{a}$可得到整个网络的输出对于该门的每个输入的梯度</p>
+<p>在梯度的回流中，不同的门单元有不同的作用。下图展示了一个反向传播的例子，加法操作将梯度相等地分发给它的输入。取最大操作将梯度路由给更大的输入。乘法门拿取输入激活数据，对它们进行交换，然后乘以梯度<br><img src="/2019/09/30/梯度下降和反向传播/image/BP-02.jpg" alt></p>
+<h3 id="神经网络中的反向传播"><a href="#神经网络中的反向传播" class="headerlink" title="神经网络中的反向传播"></a>神经网络中的反向传播</h3><p>在神经网络中，反向传播是对权重和偏置变化影响代价函数$C$过程的理解，最终目的是为了计算偏导数$\frac{\partial C}{\partial \boldsymbol{\omega}}$和$\frac{\partial C}{\partial \boldsymbol{b}}$。定义网络中第$l$层第$j$个神经元上的误差$\delta_{j}^{l}$为</p>
+<script type="math/tex; mode=display">
+\delta_{j}^{l} = \frac{\partial C}{\partial z_{j}^{l}}</script><p>其中$z_{j}^{l}$是第$l$层第$j$个神经元的输出。向量化第$l$层的误差向量为$\boldsymbol{\delta}^{l}$。反向传播提供一种计算每层误差的方法，并将这些误差关联到$\frac{\partial C}{\partial \boldsymbol{\omega}}$和$\frac{\partial C}{\partial \boldsymbol{b}}$上</p>
+<h4 id="反向传播的四个基本方程"><a href="#反向传播的四个基本方程" class="headerlink" title="反向传播的四个基本方程"></a>反向传播的四个基本方程</h4><p>定义$\boldsymbol{\delta}^{L}$表示输出层误差，对于每个元素，其误差为</p>
+<script type="math/tex; mode=display">
+\begin{align*}
+\delta_{j}^{L} &= \frac{\partial C}{\partial z_{j}^{L}} \\
+               &= \frac{\partial C}{\partial a_{j}^{L}}\sigma'(z_{j}^{L})
+\end{align*}</script><p>其向量形式为公式(BP1)</p>
+<script type="math/tex; mode=display">
+\boldsymbol{\delta}^{L} = \nabla_{a}{C}\ \odot sigma'(\boldsymbol{z}^{L}) \tag{BP1}</script><p>使用下一层误差$\boldsymbol{\delta}^{l+1}$表示当前层误差$\boldsymbol{\delta}^{l}$</p>
+<script type="math/tex; mode=display">
+\boldsymbol{\delta}^{l} = \left((\boldsymbol{\omega}^{l+1})^{T}\boldsymbol{\delta}^{l+1} \right) \odot \sigma'(\boldsymbol{z}^{l}) \tag{BP2}</script><p>其中$\odot$表示Hadamard乘积。通过公式BP1和(BP2)可以计算任意层的误差$\boldsymbol{\delta}^{l}$，首先使用公式BP1计算输出层误差$\boldsymbol{\delta}^{L}$，然后应用BP2计算$\boldsymbol{\delta}^{L-1}$，然后依次计算完整个网络</p>
+<p>代价函数关于网络中任意偏置的改变率为</p>
+<script type="math/tex; mode=display">
+\frac{\partial C}{\partial b_{j}^{l}} = \delta_{j}^{l}</script><p>这表示误差就是偏置的偏导数，向量形式为</p>
+<script type="math/tex; mode=display">
+\frac{\partial C}{\partial \boldsymbol{b}^{l}} = \boldsymbol{\delta}^{l} \tag{BP3}</script><p>代价函数关于权重的改变率为</p>
+<script type="math/tex; mode=display">
+\frac{\partial C}{\partial \omega_{jk}^{l}} = a_{k}^{l-1}\delta_{j}^{l}</script><p>向量形式为</p>
+<script type="math/tex; mode=display">
+\frac{\partial C}{\partial \boldsymbol{\omega}^{l}} = \boldsymbol{a}^{l-1}\boldsymbol{\delta}^{l} \tag{BP4}</script><p>显示的描述反向传播的步骤</p>
+<ol>
+<li><strong>输入</strong>$\boldsymbol{x}$：为输入层设置对应的激活值$\boldsymbol{a}^{1}$</li>
+<li><strong>前向传播</strong>：对每个层，计算相应的$\boldsymbol{z}^{l}=\boldsymbol{\omega}\boldsymbol{a}^{l-1}$和$\boldsymbol{a^{l}}=\sigma(\boldsymbol{z}^{l})$</li>
+<li><strong>输出层误差</strong>$\boldsymbol{\delta}^{L}$：通过BP1计算</li>
+<li><strong>反向传播误差</strong>：通过BP2计算</li>
+<li><strong>更新</strong>$\boldsymbol{\omega}和\boldsymbol{b}$：通过BP3和BP4计算</li>
+</ol>
+<h2 id="实例"><a href="#实例" class="headerlink" title="实例"></a>实例</h2><p>以下图网络结构举例来说明反向传播算法是如何工作的<br><img src="/2019/09/30/梯度下降和反向传播/image/BP-03.jpg" alt></p>
+<h3 id="初始化参数"><a href="#初始化参数" class="headerlink" title="初始化参数"></a>初始化参数</h3><p>网络中由输入层、1层隐藏层和输出层共3层构成，按照以下参数初始化网络</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 初始化输入输出</span></span><br><span class="line">i = [<span class="number">0.1</span>, <span class="number">0.2</span>]</span><br><span class="line">o = [<span class="number">0.01</span>, <span class="number">0.99</span>]</span><br><span class="line"></span><br><span class="line"><span class="comment"># 初始化权重和偏置</span></span><br><span class="line">w = [<span class="number">0.1</span>, <span class="number">0.2</span>, <span class="number">0.3</span>, <span class="number">0.4</span>, <span class="number">0.5</span>, <span class="number">0.6</span>, <span class="number">0.7</span>, <span class="number">0.8</span>]</span><br><span class="line">b = [<span class="number">0.55</span>, <span class="number">0.56</span>, <span class="number">0.66</span>, <span class="number">0.67</span>]</span><br></pre></td></tr></table></figure>
+<h3 id="正向传播"><a href="#正向传播" class="headerlink" title="正向传播"></a>正向传播</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 计算隐藏层神经元 h1 的输入加权和</span></span><br><span class="line">h1_in = w[<span class="number">0</span>]*i[<span class="number">0</span>] + w[<span class="number">1</span>]*i[<span class="number">1</span>] + b[<span class="number">0</span>] <span class="comment"># h1_in = 0.1*0.1+0.2*0.2+0.55 = 0.6000000000000001</span></span><br><span class="line"><span class="comment"># 计算隐藏层神经元 h1 的输出</span></span><br><span class="line">h1_out = sigmoid(h1_in) <span class="comment"># h1_out = 0.6456563062257954</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 计算隐藏层神经元 h2 的输入加权和</span></span><br><span class="line">h2_in = w[<span class="number">2</span>]*i[<span class="number">0</span>] + w[<span class="number">3</span>]*i[<span class="number">1</span>] + b[<span class="number">1</span>] <span class="comment"># h2_in = 0.3*0.1+0.4*0.2+0.56 = 0.67</span></span><br><span class="line"><span class="comment"># 计算隐藏层神经元 h1 的输出</span></span><br><span class="line">h2_out = sigmoid(h2_in) <span class="comment"># h2_out = 0.6615031592029524</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 计算输出层神经元 o1 的输入加权和</span></span><br><span class="line">o1_in = w[<span class="number">4</span>]*h1_out + w[<span class="number">5</span>]*h2_out + b[<span class="number">2</span>] <span class="comment"># o1_in = 0.5*0.6456563062257954 + 0.6*0.6615031592029524 + 0.66 = 1.379730048634669</span></span><br><span class="line"><span class="comment"># 计算输出层神经元 o1 的输出</span></span><br><span class="line">o1_out = sigmoid(o1_in) <span class="comment"># o1_out = 0.7989476413779711</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 计算输出层神经元 o2 的输入加权和</span></span><br><span class="line">o2_in = w[<span class="number">6</span>]*h1_out + w[<span class="number">7</span>]*h2_out + b[<span class="number">3</span>] <span class="comment"># o2_in = 0.7*0.6456563062257954 + 0.8*0.6615031592029524 + 0.67 = 1.6511619417204186</span></span><br><span class="line"><span class="comment"># 计算输出层神经元 o2 的输出</span></span><br><span class="line">o2_out = sigmoid(o2_in) <span class="comment"># o2_out = 0.8390480283342561</span></span><br></pre></td></tr></table></figure>
+<p>正向传播结束后的输出结果为<code>[0.7989476413779711, 0.8390480283342561]</code>，但是希望的输出是<code>[0.01, 0.99]</code>，因此利用反向传播更新权重和偏置，然后重新计算输出</p>
+<h3 id="反向传播-1"><a href="#反向传播-1" class="headerlink" title="反向传播"></a>反向传播</h3><p>代价函数使用</p>
+<script type="math/tex; mode=display">
+C = \frac{1}{2}\sum_{j}\left(y_{j} - a_{j}^{l} \right)</script><p>其导数为</p>
+<script type="math/tex; mode=display">
+\frac{\partial C}{\partial a_{j}^{l}} = a_{j} - y_{j}</script><p>根据BP1，输出层神经元的误差$\delta_{j}^{3}$计算方法为</p>
+<script type="math/tex; mode=display">
+\begin{align*}
+\delta_{j}^{3} &= \nabla_{a}{C}*\sigma'(z_{j}^{3}) \\
+               &= (a_{j}^{3} - y_{j})*(a_{j}^{3}*(1-a_{j}^{3}))
+\end{align*}</script><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 计算输出层神经元 o1 的误差</span></span><br><span class="line">o1_err = (o1_out - o[<span class="number">0</span>])*(o1_out*(<span class="number">1</span>-o1_out)) <span class="comment"># o1_err = 0.12672890240521031</span></span><br><span class="line"><span class="comment"># 计算输出层神经元 o2 的误差</span></span><br><span class="line">o2_err = (o2_out - o[<span class="number">1</span>])*(o2_out*(<span class="number">1</span>-o2_out)) <span class="comment"># o2_err = -0.020385525551585255</span></span><br></pre></td></tr></table></figure>
+<p>根据BP2，隐藏层神经元的误差$\delta_{j}^{2}$计算方法为</p>
+<script type="math/tex; mode=display">
+\delta_{j}^{2} = ((\boldsymbol{\omega}^{3})^{T}\boldsymbol{\delta}^{3}) \odot \sigma'(z_{j}^{2})</script><p>在计算时只需要计算与该神经元相关的连接，例如计算隐藏层神经元<code>h1</code>时，只需要计算权重<code>w5</code>和<code>w7</code>，设$\omega_{jk}^{l}$表示从$(l-1)$层第$k$个神经元到第$l$层第$j$个神经元的权重</p>
+<script type="math/tex; mode=display">
+\delta_{1}^{2} = (\omega_{11}^{3}*\delta_{1}^{3} + \omega_{12}^{3}*\delta_{1}^{3})*(a_{1}^{2}*(1-a_{1}^{2}))</script><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 计算隐藏层神经元 h1 的误差</span></span><br><span class="line">h1_err = (w[<span class="number">4</span>]*o1_err + w[<span class="number">6</span>]*o2_err)*(h1_out*(<span class="number">1</span>-h1_out)) <span class="comment"># h1_err = 0.011232066954600498</span></span><br><span class="line"><span class="comment"># 计算隐藏层神经元 h2 的误差</span></span><br><span class="line">h2_err = (w[<span class="number">5</span>]*o1_err + w[<span class="number">7</span>]*o2_err)*(h2_out*(<span class="number">1</span>-h2_out)) <span class="comment"># h2_err = 0.013374304651329562</span></span><br></pre></td></tr></table></figure>
+<p>根据BP4可计算某个权重的偏导数，例如<code>w5</code>，其偏导数为</p>
+<script type="math/tex; mode=display">
+\frac{\partial C}{\partial \omega_{11}^{3}} = a_{1}^{2}*\delta_{1}^{3}</script><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 计算权重 w5 的偏导数</span></span><br><span class="line">d_w5 = o1_err*h1_out <span class="comment"># d_w5 = 0.08182331501899741</span></span><br><span class="line"><span class="comment"># 计算权重 w1 的偏导数</span></span><br><span class="line">d_w1 = h1_err*i[<span class="number">0</span>] <span class="comment"># d_w1 = 0.0011232066954600499</span></span><br></pre></td></tr></table></figure>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li><a href="https://zhuanlan.zhihu.com/p/38525412" target="_blank" rel="noopener">知乎-梯度的方向为什么是函数值增加最快的方向？</a></li>
+<li><a href="https://www.zhihu.com/question/36301367/answer/156102040" target="_blank" rel="noopener">知乎-如何直观形象的理解方向导数与梯度以及它们之间的关系？</a></li>
+<li><a href="https://www.cnblogs.com/pinard/p/5970503.html" target="_blank" rel="noopener">博客园-刘建平Pinard-梯度下降（Gradient Descent）小结</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/38006693" target="_blank" rel="noopener">知乎-AI从入门到放弃：BP神经网络算法推导及代码实现笔记</a></li>
+<li><a href="http://cs231n.github.io/optimization-2/#backprop" target="_blank" rel="noopener">CS231n-Backpropagation, Intuitions</a></li>
+<li><a href="http://cs231n.github.io/optimization-1/" target="_blank" rel="noopener">CS231n-Optimization: Stochastic Gradient Descent</a></li>
+<li><a href="http://www.deeplearningbook.org/" target="_blank" rel="noopener">MIT Press book:Deep Learning</a></li>
+<li><a href="http://neuralnetworksanddeeplearning.com/" target="_blank" rel="noopener">Michael Nielsen:Neural Networks and Deep Learning</a></li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Deep-Learning/" rel="tag"># Deep Learning</a>
+          
+        </div>
+      
+
+      
+      
+        <div class="post-widgets">
+        
+
+        
+
+        
+          
+          <div id="needsharebutton-postbottom">
+            <span class="btn">
+              <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </span>
+          </div>
+        
+        </div>
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/09/29/Deep-Learning-Overview/" rel="next" title="Deep Learning Overview">
+                <i class="fa fa-chevron-left"></i> Deep Learning Overview
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/10/08/每月见闻201910/" rel="prev" title="每月见闻201910">
+                每月见闻201910 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/../image/avatar.png" alt="awokezhou">
+            
+              <p class="site-author-name" itemprop="name">awokezhou</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">89</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">56</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">73</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/awokezhou" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="awokezhou@gmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                Links
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://www.ruanyifeng.com/blog/" title="阮一峰" target="_blank">阮一峰</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://dave.cheney.net/about/" title="Dave Cheney" target="_blank">Dave Cheney</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://codingsans.com/" title="codingsans" target="_blank">codingsans</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://www.openai.com/" title="openAI" target="_blank">openAI</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://www.wowotech.net/author/3/" title="linuxer - 蜗窝科技" target="_blank">linuxer - 蜗窝科技</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://www.iii.run/" title="mmmwhy" target="_blank">mmmwhy</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://www.jasongj.com/" title="技术世界" target="_blank">技术世界</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://machinelearningmastery.com/" title="Jason Brownlee" target="_blank">Jason Brownlee</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://www.jeremyjordan.me/" title="Jeremy Jordan" target="_blank">Jeremy Jordan</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://towardsdatascience.com/" title="Towards Data Science" target="_blank">Towards Data Science</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://colah.github.io/" title="colah" target="_blank">colah</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://www.cnblogs.com/popsuper1982/" title="网易云计算架构师刘超" target="_blank">网易云计算架构师刘超</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://biscuitos.github.io/" title="Biscuitos" target="_blank">Biscuitos</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#数学原理"><span class="nav-number">1.</span> <span class="nav-text">数学原理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#方向导数"><span class="nav-number">1.1.</span> <span class="nav-text">方向导数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#梯度"><span class="nav-number">1.2.</span> <span class="nav-text">梯度</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#链式法则"><span class="nav-number">1.3.</span> <span class="nav-text">链式法则</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#梯度下降"><span class="nav-number">2.</span> <span class="nav-text">梯度下降</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#反向传播"><span class="nav-number">3.</span> <span class="nav-text">反向传播</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#链式法则求复合函数的导数"><span class="nav-number">3.1.</span> <span class="nav-text">链式法则求复合函数的导数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#反向传播的直观理解——门单元间梯度的传递"><span class="nav-number">3.2.</span> <span class="nav-text">反向传播的直观理解——门单元间梯度的传递</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#神经网络中的反向传播"><span class="nav-number">3.3.</span> <span class="nav-text">神经网络中的反向传播</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#反向传播的四个基本方程"><span class="nav-number">3.3.1.</span> <span class="nav-text">反向传播的四个基本方程</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实例"><span class="nav-number">4.</span> <span class="nav-text">实例</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#初始化参数"><span class="nav-number">4.1.</span> <span class="nav-text">初始化参数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#正向传播"><span class="nav-number">4.2.</span> <span class="nav-text">正向传播</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#反向传播-1"><span class="nav-number">4.3.</span> <span class="nav-text">反向传播</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考"><span class="nav-number">5.</span> <span class="nav-text">参考</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">awokezhou</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+      <div id="needsharebutton-float">
+        <span class="btn">
+          <i class="fa fa-share-alt" aria-hidden="true"></i>
+        </span>
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+  
+  <script type="text/javascript">
+    var GUEST = ['nick','mail','link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item=>{
+      return GUEST.indexOf(item)>-1;
+    });
+    new Valine({
+        el: '#comments' ,
+        verify: false,
+        notify: false,
+        appId: 'fRviEm3V5t70yJuO2anF9b3q-gzGzoHsz',
+        appKey: 'hWNhMYbcRQVolyrvqSI7fVgz',
+        placeholder: '快来吐槽吧',
+        avatar:'mm',
+        guest_info:guest,
+        pageSize:'10' || 10,
+    });
+  </script>
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+  
+  <link rel="stylesheet" href="/lib/needsharebutton/needsharebutton.css">
+
+  
+  
+  <script src="/lib/needsharebutton/needsharebutton.js"></script>
+
+  <script>
+    
+      pbOptions = {};
+      
+          pbOptions.iconStyle = "box";
+      
+          pbOptions.boxForm = "horizontal";
+      
+          pbOptions.position = "bottomCenter";
+      
+          pbOptions.networks = "Weibo,Wechat,Douban,QQZone,Twitter,Facebook";
+      
+      new needShareButton('#needsharebutton-postbottom', pbOptions);
+    
+    
+      flOptions = {};
+      
+          flOptions.iconStyle = "box";
+      
+          flOptions.boxForm = "horizontal";
+      
+          flOptions.position = "middleRight";
+      
+          flOptions.networks = "Weibo,Wechat,Douban,QQZone,Twitter,Facebook";
+      
+      new needShareButton('#needsharebutton-float', flOptions);
+    
+  </script>
+
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,1589 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/../image/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/../image/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="3GPP,NB-IoT,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="本文翻译自twilio网站文章Narrowband Power Optimizations for Massive IoT: eDRX and PSM) NB-IoT(Narrowband IoT, 窄带物联网)蜂窝技术是为低功耗设备而设计的。它包含了大量物联网设备开发人员可以使用的功能，例如位置跟踪器、低成本传感器网络、公用电表和预防性维护监视器，以将产品的电力消耗降到最低 本指南描述了其中的两">
+<meta name="keywords" content="3GPP,NB-IoT">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Narrowband Power Optimizations for Massive IoT: eDRX and PSM[译]">
+<meta property="og:url" content="http://yoursite.com/2020/04/17/Narrowband-Power-Optimizations-for-Massive-IoT-eDRX-and-PSM-译/index.html">
+<meta property="og:site_name" content="awokezhou&#39;s blog">
+<meta property="og:description" content="本文翻译自twilio网站文章Narrowband Power Optimizations for Massive IoT: eDRX and PSM) NB-IoT(Narrowband IoT, 窄带物联网)蜂窝技术是为低功耗设备而设计的。它包含了大量物联网设备开发人员可以使用的功能，例如位置跟踪器、低成本传感器网络、公用电表和预防性维护监视器，以将产品的电力消耗降到最低 本指南描述了其中的两">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://yoursite.com/2020/04/17/Narrowband-Power-Optimizations-for-Massive-IoT-eDRX-and-PSM-译/image/01.png">
+<meta property="og:image" content="http://yoursite.com/2020/04/17/Narrowband-Power-Optimizations-for-Massive-IoT-eDRX-and-PSM-译/image/02.png">
+<meta property="og:updated_time" content="2021-08-13T02:24:21.640Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Narrowband Power Optimizations for Massive IoT: eDRX and PSM[译]">
+<meta name="twitter:description" content="本文翻译自twilio网站文章Narrowband Power Optimizations for Massive IoT: eDRX and PSM) NB-IoT(Narrowband IoT, 窄带物联网)蜂窝技术是为低功耗设备而设计的。它包含了大量物联网设备开发人员可以使用的功能，例如位置跟踪器、低成本传感器网络、公用电表和预防性维护监视器，以将产品的电力消耗降到最低 本指南描述了其中的两">
+<meta name="twitter:image" content="http://yoursite.com/2020/04/17/Narrowband-Power-Optimizations-for-Massive-IoT-eDRX-and-PSM-译/image/01.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"hide","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/04/17/Narrowband-Power-Optimizations-for-Massive-IoT-eDRX-and-PSM-译/">
+
+
+
+
+
+  <title>Narrowband Power Optimizations for Massive IoT: eDRX and PSM[译] | awokezhou's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">awokezhou's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-message">
+          <a href="/message/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br>
+            
+            message
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/04/17/Narrowband-Power-Optimizations-for-Massive-IoT-eDRX-and-PSM-译/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="awokezhou">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/../image/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="awokezhou's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Narrowband Power Optimizations for Massive IoT: eDRX and PSM[译]</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-04-17T10:47:50+08:00">
+                2020-04-17
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/协议/" itemprop="url" rel="index">
+                    <span itemprop="name">协议</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/协议/3GPP/" itemprop="url" rel="index">
+                    <span itemprop="name">3GPP</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/协议/3GPP/NB-IoT/" itemprop="url" rel="index">
+                    <span itemprop="name">NB-IoT</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2020/04/17/Narrowband-Power-Optimizations-for-Massive-IoT-eDRX-and-PSM-译/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2020/04/17/Narrowband-Power-Optimizations-for-Massive-IoT-eDRX-and-PSM-译/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>本文翻译自twilio网站文章<a href="[https://www.twilio.com/docs/wireless/nb/nb-iot-power-optimizations-edrx-psm](https://www.twilio.com/docs/wireless/nb/nb-iot-power-optimizations-edrx-psm">Narrowband Power Optimizations for Massive IoT: eDRX and PSM</a>)</p>
+<p>NB-IoT(Narrowband IoT, 窄带物联网)蜂窝技术是为低功耗设备而设计的。它包含了大量物联网设备开发人员可以使用的功能，例如位置跟踪器、低成本传感器网络、公用电表和预防性维护监视器，以将产品的电力消耗降到最低</p>
+<p>本指南描述了其中的两个优化特性，即PSM(省电模式, Power Save Mode)和eDRX(扩展不连续接收, Extended Discontinuous Reception)，以帮助您评估它们如何为您的大规模物联网应用程序带来好处，以及如何利用它们</p>
+<h2 id="PSM"><a href="#PSM" class="headerlink" title="PSM"></a>PSM</h2><p>通常，大多数物联网设备间歇性地发送或接收数据。在数据的发送和接收之间，可以让设备处于休眠状态，以最大限度的降低功耗，最大化电池能量</p>
+<p>PSM是蜂窝调制解调器的一种特性，它可以关闭设备无线电并使设备进入休眠状态，而无需在下次醒来时re-attach(重新附着)到网络。虽然re-attach过程只消耗少量的能量，但是在设备的整个生命周期中，re-attach的累积能量消耗可能变得非常大。因此，如果可以避免re-attach，可使得电池寿命延长。PSM刚好提供了这一点</p>
+<ul>
+<li><p>PSM是一种降低无线电能量消耗的设备端机制。设备报告网络自己需要多频繁和多长时间处于活跃状态，以便传输和接收数据。然而，最终的值是由网络决定的</p>
+</li>
+<li><p>PSM模式类似于断电，但是设备在网络中的状态仍然保持为已注册。当设备再次活跃时，没有必要re-attach或re-establish(重新建立)PDN(数据包数据网络, Packet Data Network)连接</p>
+</li>
+<li><p>PSM特性是在3GPP Release 12 中引入的，适用于所有LTE设备类别。设备请求PSM只需在attach、TAU(跟踪区域更新, tracking area udpate)或者路由区域更新中包含一个带有所需值的计时器</p>
+</li>
+</ul>
+<p><img src="/2020/04/17/Narrowband-Power-Optimizations-for-Massive-IoT-eDRX-and-PSM-译/image/01.png" alt></p>
+<h3 id="PSM-FAQS"><a href="#PSM-FAQS" class="headerlink" title="PSM FAQS"></a>PSM FAQS</h3><h4 id="它如何工作？"><a href="#它如何工作？" class="headerlink" title="它如何工作？"></a>它如何工作？</h4><p>当设备通过网络初始化PSM时，它提供两个首选计时器(T3324和T3412)；PSM时间是这两个计时器的差值(T3412减去T3324)。网络可以接受这些值，也可以设置不同的值。然后网络保留状态信息，设备保持在网络上注册。如果设备在它与网络约定的时间间隔到期之前唤醒并发送数据，则不需要re-attach过程</p>
+<h4 id="当设备处于活跃PSM周期时，它可以接收消息吗"><a href="#当设备处于活跃PSM周期时，它可以接收消息吗" class="headerlink" title="当设备处于活跃PSM周期时，它可以接收消息吗?"></a>当设备处于活跃PSM周期时，它可以接收消息吗?</h4><p>不能，在活跃PSM周期时无法访问设备</p>
+<h4 id="当设备处于活跃PSM周期时，是否可以通过NIDD-非ip数据传递-Non-IP-Data-Delivery-访问它"><a href="#当设备处于活跃PSM周期时，是否可以通过NIDD-非ip数据传递-Non-IP-Data-Delivery-访问它" class="headerlink" title="当设备处于活跃PSM周期时，是否可以通过NIDD(非ip数据传递, Non-IP Data Delivery)访问它?"></a>当设备处于活跃PSM周期时，是否可以通过NIDD(非ip数据传递, Non-IP Data Delivery)访问它?</h4><p>不能，NIDD通过寻呼信道工作(paging channel)，该信道利用无线电。在活跃PSM周期中，无线电完全关闭，无法访问设备</p>
+<h4 id="在活跃PSM周期中发送到设备的数据包会发生什么"><a href="#在活跃PSM周期中发送到设备的数据包会发生什么" class="headerlink" title="在活跃PSM周期中发送到设备的数据包会发生什么?"></a>在活跃PSM周期中发送到设备的数据包会发生什么?</h4><p>3GPP要求必须由网络存储数据包。建议网络操作员至少为最后一个100字节的数据包留出存储空间</p>
+<h4 id="一个设备可以在PSM周期中停留多久？"><a href="#一个设备可以在PSM周期中停留多久？" class="headerlink" title="一个设备可以在PSM周期中停留多久？"></a>一个设备可以在PSM周期中停留多久？</h4><p>在T-Mobile的NB-IoT网络上，一个设备可以在PSM循环中最多停留12小时</p>
+<h2 id="使用PSM"><a href="#使用PSM" class="headerlink" title="使用PSM"></a>使用PSM</h2><p>蜂窝模块必须支持PSM。可以使用设备上的AT命令来启用它</p>
+<p>例如，如果你使用的是Quectel BG96调制解调器，你可以发送以下命令</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">AT+QCFG="psm/urc"[enable]</span><br><span class="line"></span><br><span class="line">AT+QPSMTIMER: &lt;tau_timer&gt;,&lt;T3324_timer&gt;</span><br></pre></td></tr></table></figure>
+<p>不需要用户进行网络配置；在设备上启用PSM就足够了</p>
+<p>根据GPRS Timer 3规范(见3GPP TS 24.008第<a href="[https://www.etsi.org/deliver/etsi_ts/124000_124099/124008/13.07.00_60/ts_124008v130700p.pdf](https://www.etsi.org/deliver/etsi_ts/124000_124099/124008/13.07.00_60/ts_124008v130700p.pdf">10.5.7.4a</a>)节)，要求的周期TAU定时器值编码如下：</p>
+<p>第5位到第1位表示二进制编码的定时器值。第6位到第8位定义计时器的计时器值单元，如下所示</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>Timer 3 value</th>
+<th>Timer value is incremented in multiples of</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>000xxxxx</td>
+<td>10 minutes</td>
+</tr>
+<tr>
+<td>001xxxxx</td>
+<td>1 hour</td>
+</tr>
+<tr>
+<td>010xxxxx</td>
+<td>10 hours</td>
+</tr>
+<tr>
+<td>011xxxxx</td>
+<td>2 seconds</td>
+</tr>
+<tr>
+<td>100xxxxx</td>
+<td>30 seconds</td>
+</tr>
+<tr>
+<td>101xxxxx</td>
+<td>1 minute</td>
+</tr>
+<tr>
+<td>110xxxxx</td>
+<td>320 hours*</td>
+</tr>
+<tr>
+<td>111xxxxx</td>
+<td>Timer is deactivated</td>
+</tr>
+</tbody>
+</table>
+</div>
+<blockquote>
+<p>参见3GPP <a href="[https://www.etsi.org/deliver/etsi_ts/124000_124099/124008/13.07.00_60/ts_124008v130700p.pdf](https://www.etsi.org/deliver/etsi_ts/124000_124099/124008/13.07.00_60/ts_124008v130700p.pdf">TS 24.008</a>)规范中的说明，表10.5.163a提供了关于这个值的更多信息</p>
+</blockquote>
+<p>请求的活跃时间是由GPRS Timer 2规范的octet 3定义的一个二进制字符串字节值(见3GPP <a href="[https://www.etsi.org/deliver/etsi_ts/124000_124099/124008/13.07.00_60/ts_124008v130700p.pdf]](https://www.etsi.org/deliver/etsi_ts/124000_124099/124008/13.07.00_60/ts_124008v130700p.pdf%5D">TS 24.008</a>(<a href="https://www.etsi.org/deliver/etsi_ts/124000_124099/124008/13.07.00_60/ts_124008v130700p.pdf" target="_blank" rel="noopener">https://www.etsi.org/deliver/etsi_ts/124000_124099/124008/13.07.00_60/ts_124008v130700p.pdf</a>)的10.5.7.4节)，如下所示：</p>
+<p>bi5到1表示二进制编码计时器值。第6到8位定义计时器的定时器如下</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>Timer 3 value</th>
+<th>Timer value is incremented in multiples of</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>000xxxxx</td>
+<td>2 seconds</td>
+</tr>
+<tr>
+<td>001xxxxx</td>
+<td>1 minute</td>
+</tr>
+<tr>
+<td>010xxxxx</td>
+<td>1 decihour (6 minutes)</td>
+</tr>
+<tr>
+<td>111xxxxx</td>
+<td>Timer is deactivated</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h4 id="例子"><a href="#例子" class="headerlink" title="例子"></a>例子</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">AT+CPSMS=1,,,"01000011","01000011"</span><br></pre></td></tr></table></figure>
+<p>以上命令使得PSM周期TAU值变为30小时，请求的活动时间为18分钟</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">AT+CPSMS=0</span><br></pre></td></tr></table></figure>
+<p>以上命令禁用PSM</p>
+<h2 id="eDRX"><a href="#eDRX" class="headerlink" title="eDRX"></a>eDRX</h2><p>eDRX是现有LTE功能的扩展，可以被物联网设备用来降低功耗。eDRX可以在没有PSM的情况下使用，也可以与PSM结合使用，以获得额外的电能节省</p>
+<p>eDRX允许大大扩展设备不监听网络的时间间隔。对于一个大规模的物联网应用程序，设备在几秒钟或更长时间内无法访问是完全可以接受的。虽然eDX不能提供与PSM相同的功耗降低级别，但它可以在设备可达性和某些应用程序的功耗之间提供一个很好的折衷。网络和设备在设备可以睡眠时进行协商。设备在规定的周期内保持其接收电路关闭，在此期间，设备不侦听寻呼或下行控制信道。当设备醒来时，接收器将监听物理控制通道</p>
+<p><img src="/2020/04/17/Narrowband-Power-Optimizations-for-Massive-IoT-eDRX-and-PSM-译/image/02.png" alt></p>
+<p>eDRX只允许在一定期限内使用；以下列出了这些项目：</p>
+<ul>
+<li><p>20.48 seconds</p>
+</li>
+<li><p>40.96 seconds</p>
+</li>
+<li><p>81.92 seconds (~1 minute)</p>
+</li>
+<li><p>163.84 seconds (~ 3 min)</p>
+</li>
+<li><p>327.68 seconds (~ 5 min)</p>
+</li>
+<li><p>655.36 seconds (~ 11 min)</p>
+</li>
+<li><p>1310.72 seconds (~22 min)</p>
+</li>
+<li><p>2621.44 seconds (~44 min)</p>
+</li>
+<li><p>5242.88 seconds (~87 min)</p>
+</li>
+<li><p>10485.76 seconds (~175 min)</p>
+</li>
+</ul>
+<h3 id="使用eDRX"><a href="#使用eDRX" class="headerlink" title="使用eDRX"></a>使用eDRX</h3><p>eDRX的支持因运营商而异。设备向网络请求一个给定的eDRX周期；网络使用实际使用的eDRX周期和PTW(巡护时间窗口)应答</p>
+<p>启用eDRX不会对模块发送数据的能力产生负面影响，但是会关闭对所配置的周期间隔的接收，从而节约电能</p>
+<p>T-Mobile支持所有文档(见表10.5.5.32 3GPP TS 24.008)值的窄带eDRX循环，NB-S1模式，范围从~20s (20.48s)到~3hrs (10485.76s)。值由表单的位串表示：</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>“0010”</td>
+<td>20.48s</td>
+</tr>
+<tr>
+<td>“0011”</td>
+<td>40.96s</td>
+</tr>
+<tr>
+<td>“0101”</td>
+<td>81.92s</td>
+</tr>
+<tr>
+<td>“1001”</td>
+<td>163.84s</td>
+</tr>
+<tr>
+<td>“1010”</td>
+<td>327.68s</td>
+</tr>
+<tr>
+<td>“1011”</td>
+<td>655.36s</td>
+</tr>
+<tr>
+<td>“1100”</td>
+<td>1310.72s</td>
+</tr>
+<tr>
+<td>“1101”</td>
+<td>2621.44s</td>
+</tr>
+<tr>
+<td>“1101”</td>
+<td>2621.44s</td>
+</tr>
+<tr>
+<td>“1110”</td>
+<td>5242.88s</td>
+</tr>
+<tr>
+<td>“1111”</td>
+<td>10485.76s (~175min)</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>根据您的产品使用的NB-IoT模块，请求的eDRX周期可以存储在非易失性内存中，并在会话之间保持。模块通常支持禁用eDRX和一个后续的AT命令，以及一个恢复默认值的选项</p>
+<p>要在u-blox SARA-N410-02b和Quectel BG96上为NB模块配置eDRX，可以使用AT+CEDRXS命令，如下所示：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">AT+CEDRXS=2,5,"1001"</span><br></pre></td></tr></table></figure>
+<p>这要求在窄带(5)的URC反馈(2)和163.84s(“1001”)的eDRX循环时间下启用eDRX</p>
+<p>如果配置了URC，网络将通过重复请求的周期间隔以及实际有效的周期间隔和网络指定的PTW时间来响应。上述命令的一个URC示例是</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">+CEDRXP: [5,"1001","1001","0111"]</span><br></pre></td></tr></table></figure>
+<p>为NB-S1返回的PTW值对应于以下时间：</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>“0000”</td>
+<td>2.56s</td>
+</tr>
+<tr>
+<td>“0001”</td>
+<td>5.12s</td>
+</tr>
+<tr>
+<td>“0010”</td>
+<td>7.68s</td>
+</tr>
+<tr>
+<td>“0011”</td>
+<td>10.24s</td>
+</tr>
+<tr>
+<td>“0100”</td>
+<td>12.8s</td>
+</tr>
+<tr>
+<td>“0101”</td>
+<td>15.36s</td>
+</tr>
+<tr>
+<td>“0110”</td>
+<td>17.92s</td>
+</tr>
+<tr>
+<td>“0111”</td>
+<td>20.48s</td>
+</tr>
+<tr>
+<td>“1000”</td>
+<td>23.04s</td>
+</tr>
+<tr>
+<td>“1001”</td>
+<td>25.6s</td>
+</tr>
+<tr>
+<td>“1010”</td>
+<td>28.16s</td>
+</tr>
+<tr>
+<td>“1011”</td>
+<td>30.72s</td>
+</tr>
+<tr>
+<td>“1100”</td>
+<td>33.28s</td>
+</tr>
+<tr>
+<td>“1101”</td>
+<td>35.84s</td>
+</tr>
+<tr>
+<td>“1110”</td>
+<td>38.4s</td>
+</tr>
+<tr>
+<td>“1111”</td>
+<td>40.96s</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>以下命令用于禁用eDRX的窄带</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">AT+CEDRXS=0,5</span><br></pre></td></tr></table></figure>
+<p>eDRX被0标记，而窄带被5标记</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/3GPP/" rel="tag"># 3GPP</a>
+          
+            <a href="/tags/NB-IoT/" rel="tag"># NB-IoT</a>
+          
+        </div>
+      
+
+      
+      
+        <div class="post-widgets">
+        
+
+        
+
+        
+          
+          <div id="needsharebutton-postbottom">
+            <span class="btn">
+              <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </span>
+          </div>
+        
+        </div>
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/12/20/每月见闻201912/" rel="next" title="每月见闻201912">
+                <i class="fa fa-chevron-left"></i> 每月见闻201912
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/04/21/每月见闻202004/" rel="prev" title="每月见闻202004">
+                每月见闻202004 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/../image/avatar.png" alt="awokezhou">
+            
+              <p class="site-author-name" itemprop="name">awokezhou</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">89</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">56</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">73</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/awokezhou" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="awokezhou@gmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                Links
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://www.ruanyifeng.com/blog/" title="阮一峰" target="_blank">阮一峰</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://dave.cheney.net/about/" title="Dave Cheney" target="_blank">Dave Cheney</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://codingsans.com/" title="codingsans" target="_blank">codingsans</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://www.openai.com/" title="openAI" target="_blank">openAI</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://www.wowotech.net/author/3/" title="linuxer - 蜗窝科技" target="_blank">linuxer - 蜗窝科技</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://www.iii.run/" title="mmmwhy" target="_blank">mmmwhy</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://www.jasongj.com/" title="技术世界" target="_blank">技术世界</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://machinelearningmastery.com/" title="Jason Brownlee" target="_blank">Jason Brownlee</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://www.jeremyjordan.me/" title="Jeremy Jordan" target="_blank">Jeremy Jordan</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://towardsdatascience.com/" title="Towards Data Science" target="_blank">Towards Data Science</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://colah.github.io/" title="colah" target="_blank">colah</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://www.cnblogs.com/popsuper1982/" title="网易云计算架构师刘超" target="_blank">网易云计算架构师刘超</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://biscuitos.github.io/" title="Biscuitos" target="_blank">Biscuitos</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#PSM"><span class="nav-number">1.</span> <span class="nav-text">PSM</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#PSM-FAQS"><span class="nav-number">1.1.</span> <span class="nav-text">PSM FAQS</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#它如何工作？"><span class="nav-number">1.1.1.</span> <span class="nav-text">它如何工作？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#当设备处于活跃PSM周期时，它可以接收消息吗"><span class="nav-number">1.1.2.</span> <span class="nav-text">当设备处于活跃PSM周期时，它可以接收消息吗?</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#当设备处于活跃PSM周期时，是否可以通过NIDD-非ip数据传递-Non-IP-Data-Delivery-访问它"><span class="nav-number">1.1.3.</span> <span class="nav-text">当设备处于活跃PSM周期时，是否可以通过NIDD(非ip数据传递, Non-IP Data Delivery)访问它?</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#在活跃PSM周期中发送到设备的数据包会发生什么"><span class="nav-number">1.1.4.</span> <span class="nav-text">在活跃PSM周期中发送到设备的数据包会发生什么?</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#一个设备可以在PSM周期中停留多久？"><span class="nav-number">1.1.5.</span> <span class="nav-text">一个设备可以在PSM周期中停留多久？</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用PSM"><span class="nav-number">2.</span> <span class="nav-text">使用PSM</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#例子"><span class="nav-number">2.0.1.</span> <span class="nav-text">例子</span></a></li></ol></li></ol><li class="nav-item nav-level-2"><a class="nav-link" href="#eDRX"><span class="nav-number">3.</span> <span class="nav-text">eDRX</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#使用eDRX"><span class="nav-number">3.1.</span> <span class="nav-text">使用eDRX</span></a></li></ol></li></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">awokezhou</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+      <div id="needsharebutton-float">
+        <span class="btn">
+          <i class="fa fa-share-alt" aria-hidden="true"></i>
+        </span>
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+  
+  <script type="text/javascript">
+    var GUEST = ['nick','mail','link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item=>{
+      return GUEST.indexOf(item)>-1;
+    });
+    new Valine({
+        el: '#comments' ,
+        verify: false,
+        notify: false,
+        appId: 'fRviEm3V5t70yJuO2anF9b3q-gzGzoHsz',
+        appKey: 'hWNhMYbcRQVolyrvqSI7fVgz',
+        placeholder: '快来吐槽吧',
+        avatar:'mm',
+        guest_info:guest,
+        pageSize:'10' || 10,
+    });
+  </script>
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+  
+  <link rel="stylesheet" href="/lib/needsharebutton/needsharebutton.css">
+
+  
+  
+  <script src="/lib/needsharebutton/needsharebutton.js"></script>
+
+  <script>
+    
+      pbOptions = {};
+      
+          pbOptions.iconStyle = "box";
+      
+          pbOptions.boxForm = "horizontal";
+      
+          pbOptions.position = "bottomCenter";
+      
+          pbOptions.networks = "Weibo,Wechat,Douban,QQZone,Twitter,Facebook";
+      
+      new needShareButton('#needsharebutton-postbottom', pbOptions);
+    
+    
+      flOptions = {};
+      
+          flOptions.iconStyle = "box";
+      
+          flOptions.boxForm = "horizontal";
+      
+          flOptions.position = "middleRight";
+      
+          flOptions.networks = "Weibo,Wechat,Douban,QQZone,Twitter,Facebook";
+      
+      new needShareButton('#needsharebutton-float', flOptions);
+    
+  </script>
+
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

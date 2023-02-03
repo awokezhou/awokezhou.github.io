@@ -1,0 +1,1401 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/../image/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/../image/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Xilinx,Vitis AI,DPU,PetaLinux,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="本文承接VitisAI-04-PetaLinux Flow，介绍使用Xilinx的Vitis工具利用Vivado生成的design_1_wrapper.xsa文件以及PetaLinux编译的rootfs和内核镜像，生成制作好的SD卡镜像文件sd_card.img PetaLinux工程准备编译好的各文件PetaLinux编译成功后的输出文件在PetaLinux工程的image/linux下，进入此">
+<meta name="keywords" content="Xilinx,Vitis AI,DPU,PetaLinux">
+<meta property="og:type" content="article">
+<meta property="og:title" content="VitisAI-05-Vitis Flow">
+<meta property="og:url" content="http://yoursite.com/2022/07/06/VitisAI-05-Vitis-Flow/index.html">
+<meta property="og:site_name" content="awokezhou&#39;s blog">
+<meta property="og:description" content="本文承接VitisAI-04-PetaLinux Flow，介绍使用Xilinx的Vitis工具利用Vivado生成的design_1_wrapper.xsa文件以及PetaLinux编译的rootfs和内核镜像，生成制作好的SD卡镜像文件sd_card.img PetaLinux工程准备编译好的各文件PetaLinux编译成功后的输出文件在PetaLinux工程的image/linux下，进入此">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://yoursite.com/2022/07/06/VitisAI-05-Vitis-Flow/01.png">
+<meta property="og:image" content="http://yoursite.com/2022/07/06/VitisAI-05-Vitis-Flow/02.png">
+<meta property="og:image" content="http://yoursite.com/2022/07/06/VitisAI-05-Vitis-Flow/03.png">
+<meta property="og:image" content="http://yoursite.com/2022/07/06/VitisAI-05-Vitis-Flow/04.png">
+<meta property="og:image" content="http://yoursite.com/2022/07/06/VitisAI-05-Vitis-Flow/05.png">
+<meta property="og:image" content="http://yoursite.com/2022/07/06/VitisAI-05-Vitis-Flow/06.png">
+<meta property="og:image" content="http://yoursite.com/2022/07/06/VitisAI-05-Vitis-Flow/07.png">
+<meta property="og:image" content="http://yoursite.com/2022/07/06/VitisAI-05-Vitis-Flow/08.png">
+<meta property="og:image" content="http://yoursite.com/2022/07/06/VitisAI-05-Vitis-Flow/09.png">
+<meta property="og:image" content="http://yoursite.com/2022/07/06/VitisAI-05-Vitis-Flow/10.png">
+<meta property="og:image" content="http://yoursite.com/2022/07/06/VitisAI-05-Vitis-Flow/11.png">
+<meta property="og:image" content="http://yoursite.com/2022/07/06/VitisAI-05-Vitis-Flow/12.png">
+<meta property="og:image" content="http://yoursite.com/2022/07/06/VitisAI-05-Vitis-Flow/13.png">
+<meta property="og:image" content="http://yoursite.com/2022/07/06/VitisAI-05-Vitis-Flow/14.png">
+<meta property="og:image" content="http://yoursite.com/2022/07/06/VitisAI-05-Vitis-Flow/15.png">
+<meta property="og:image" content="http://yoursite.com/2022/07/06/VitisAI-05-Vitis-Flow/16.png">
+<meta property="og:image" content="http://yoursite.com/2022/07/06/VitisAI-05-Vitis-Flow/17.png">
+<meta property="og:image" content="http://yoursite.com/2022/07/06/VitisAI-05-Vitis-Flow/18.png">
+<meta property="og:updated_time" content="2023-02-02T11:48:30.782Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="VitisAI-05-Vitis Flow">
+<meta name="twitter:description" content="本文承接VitisAI-04-PetaLinux Flow，介绍使用Xilinx的Vitis工具利用Vivado生成的design_1_wrapper.xsa文件以及PetaLinux编译的rootfs和内核镜像，生成制作好的SD卡镜像文件sd_card.img PetaLinux工程准备编译好的各文件PetaLinux编译成功后的输出文件在PetaLinux工程的image/linux下，进入此">
+<meta name="twitter:image" content="http://yoursite.com/2022/07/06/VitisAI-05-Vitis-Flow/01.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"hide","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2022/07/06/VitisAI-05-Vitis-Flow/">
+
+
+
+
+
+  <title>VitisAI-05-Vitis Flow | awokezhou's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">awokezhou's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-message">
+          <a href="/message/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br>
+            
+            message
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2022/07/06/VitisAI-05-Vitis-Flow/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="awokezhou">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/../image/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="awokezhou's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">VitisAI-05-Vitis Flow</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2022-07-06T21:15:27+08:00">
+                2022-07-06
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/AI/" itemprop="url" rel="index">
+                    <span itemprop="name">AI</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/AI/VitisAI/" itemprop="url" rel="index">
+                    <span itemprop="name">VitisAI</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2022/07/06/VitisAI-05-Vitis-Flow/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2022/07/06/VitisAI-05-Vitis-Flow/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>本文承接VitisAI-04-PetaLinux Flow，介绍使用Xilinx的Vitis工具利用Vivado生成的design_1_wrapper.xsa文件以及PetaLinux编译的rootfs和内核镜像，生成制作好的SD卡镜像文件sd_card.img</p>
+<h1 id="PetaLinux工程准备编译好的各文件"><a href="#PetaLinux工程准备编译好的各文件" class="headerlink" title="PetaLinux工程准备编译好的各文件"></a>PetaLinux工程准备编译好的各文件</h1><p>PetaLinux编译成功后的输出文件在PetaLinux工程的image/linux下，进入此目录，并在其中创建pfm文件夹，并创建boot和sd_dir两个子目录，将Vitis工程需要的PetaLinux输出文件拷贝到新创建的文件夹下</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">cd image/linux</span><br><span class="line">mkdir pfm</span><br><span class="line">mkdir pfm/boot</span><br><span class="line">mkdir pfm/sd_dir</span><br></pre></td></tr></table></figure>
+<p>拷贝以下文件到pfm/boot</p>
+<ul>
+<li><p>bl31.elf</p>
+</li>
+<li><p>pmufw.elf</p>
+</li>
+<li><p>zynqmp_fsbl.elf</p>
+</li>
+<li><p>u-boot.elf</p>
+</li>
+<li><p>system.dtb</p>
+</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cp bl31.elf pmufw.elf zynqmp_fsbl.elf u-boot.elf system.dtb pfm/boot</span><br></pre></td></tr></table></figure>
+<p>拷贝以下文件到pfm/sd_dir</p>
+<ul>
+<li><p>boot.scr</p>
+</li>
+<li><p>system.dtb</p>
+</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cp boot.scr system.dtb pfm/sd_dir</span><br></pre></td></tr></table></figure>
+<h1 id="创建Vitis-Platform-Project"><a href="#创建Vitis-Platform-Project" class="headerlink" title="创建Vitis Platform Project"></a>创建Vitis Platform Project</h1><p>运行Vitis环境变量脚本</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">source ~/opt/pkg/xilinx/Vitis/2021.1/settings64.sh</span><br></pre></td></tr></table></figure>
+<p>在dpu_custom下创建dpu_vitis文件夹，并进入，打开vitis</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mkdir dpu_vitis</span><br><span class="line">cd dpu_vitis</span><br><span class="line">vitis</span><br></pre></td></tr></table></figure>
+<p>此时的各项目文件夹路径关系为</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">|--dpu_custom</span><br><span class="line">  |--dpu_vivado</span><br><span class="line">  |--dpu_plnx</span><br><span class="line">  |--dpu_vitis</span><br></pre></td></tr></table></figure>
+<p>选择workspace为dpu_vitis，选择File-&gt;New-&gt;Platform Project，创建一个平台项目，设置项目名为dpu_base，点击Next，选择dpu_vivado中的.xsa硬件描述文件，Operating system选linux，取消勾选Generate boot components，点击Finish</p>
+<img src="/2022/07/06/VitisAI-05-Vitis-Flow/01.png">
+<p>选中linux on psu_cortexa53，在Bif File处点击下三角生成Bif File文件，Boot Components Directory选择PetaLinux项目中创建的pfm/boot，FAT32 Partition Directory选择pfm/sd_dir</p>
+<p>右键工程编译工程，该编译过程很快(1分钟以内)</p>
+<h1 id="Vitis安装Vitis-AI"><a href="#Vitis安装Vitis-AI" class="headerlink" title="Vitis安装Vitis AI"></a>Vitis安装Vitis AI</h1><h2 id="克隆Vitis-AI仓库到本地"><a href="#克隆Vitis-AI仓库到本地" class="headerlink" title="克隆Vitis AI仓库到本地"></a>克隆Vitis AI仓库到本地</h2><p>在Vitis中添加DPU需要预先将Vitis AI仓库克隆到本地，使用如下命令</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git clone https://github.com/Xilinx/Vitis-AI</span><br></pre></td></tr></table></figure>
+<h2 id="安装Vitis-AI到Vitis"><a href="#安装Vitis-AI到Vitis" class="headerlink" title="安装Vitis AI到Vitis"></a>安装Vitis AI到Vitis</h2><p>在Vitis中选择Windows→Preferences</p>
+<img src="/2022/07/06/VitisAI-05-Vitis-Flow/02.png">
+<p>点击Add添加一个库</p>
+<img src="/2022/07/06/VitisAI-05-Vitis-Flow/03.png">
+<p>ID设置为vitis ai，Name设置为Vitis AI，Location设置为Vitis AI仓库路径</p>
+<img src="/2022/07/06/VitisAI-05-Vitis-Flow/04.png">
+<p>点击Apply and Close</p>
+<h1 id="安装交叉编译环境sdk"><a href="#安装交叉编译环境sdk" class="headerlink" title="安装交叉编译环境sdk"></a>安装交叉编译环境sdk</h1><p>点击<a href="https://www.xilinx.com/bin/public/openDownload?filename=sdk-2021.2.0.0.sh" target="_blank" rel="noopener">sdk-2021.2.0.0.sh</a>下载该sdk，运行以下命令，将其安装到PetaLinux路径下</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./sdk-2021.2.0.0.sh</span><br></pre></td></tr></table></figure>
+<p>安装完成后PetaLinux安装路径下会出现environment-setup-cortexa72-cortexa53-xilinx-linux的文件</p>
+<h1 id="创建Vitis-Application-工程"><a href="#创建Vitis-Application-工程" class="headerlink" title="创建Vitis Application 工程"></a>创建Vitis Application 工程</h1><p>File→New→Application Project，点击Next，上文创建的platform工程自动出现在选项中，选中并点击Next</p>
+<img src="/2022/07/06/VitisAI-05-Vitis-Flow/05.png">
+<p>设置项目名为dpu_trd，点击Next</p>
+<img src="/2022/07/06/VitisAI-05-Vitis-Flow/06.png">
+<p>设置sysroot path为安装的交叉编译链位置：~/opt/pkg/petalinux/2021.2/sysroots/cortexa72-cortexa53-xilinx-linux，Root FS为dpu_plnx/image/linux/rootfs.ext4，Kernel Image为dpu_plnx/image/linux/image</p>
+<img src="/2022/07/06/VitisAI-05-Vitis-Flow/07.png">
+<p>点击Next，在左侧选中dsa→DPU Kernel(RTL Kernel)，点击Finish(必须在Vitis中成功安装了VitisAi仓库，这一步中才会出现DPU Kernel选项)</p>
+<img src="/2022/07/06/VitisAI-05-Vitis-Flow/08.png">
+<p>将Emulation-SW修改为Hardware</p>
+<img src="/2022/07/06/VitisAI-05-Vitis-Flow/09.png">
+<p>选择dpu_trd_system→dpu_trd_kernel→src→prj→Vitsi→dpi_conf.vh，将B4096改为B1024，之所以改为B1024是因为本文实验环境使用的FPGA芯片资源有限，只能选择B1024的DPU，这里的B1024和B4096是DPU不同架构配置，越大的数字代表了越高的并行度和计算性能，但同时占用更多片上资源(LUT、RAM、DSP)，关于DPU相关的配置参数和资源占用，包括dpi_conf.vh文件中可选的参数含义，后续会专门出一片文章来介绍</p>
+<img src="/2022/07/06/VitisAI-05-Vitis-Flow/10.png">
+<p>选择dpu_trd_system→dpu_trd_system_hw_link→dpu_trd_system_hw_link.prj，去除sfm_xrt_top，减少DPU数量为1(将DPU数量减小到1也是由于本文使用的FPGA资源受限)</p>
+<img src="/2022/07/06/VitisAI-05-Vitis-Flow/11.png">
+<img src="/2022/07/06/VitisAI-05-Vitis-Flow/12.png">
+<p>在Assistant窗口双击dpu_trd_system，弹出窗口</p>
+<img src="/2022/07/06/VitisAI-05-Vitis-Flow/13.png">
+<p>选择dpu_trd_system→dpu_trd_system_hw_link→Hardware→dpu</p>
+<img src="/2022/07/06/VitisAI-05-Vitis-Flow/14.png">
+<p>点击V++configuration settings的省略号按钮，为其添加时钟配置</p>
+<img src="/2022/07/06/VitisAI-05-Vitis-Flow/15.png">
+<p>添加如下代码</p>
+<figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[clock]</span><br><span class="line">id=1:DPUCZDX8G_1.aclk</span><br><span class="line">id=2:DPUCZDX8G_1.ap_clk_2</span><br><span class="line"></span><br><span class="line">[connectivity]</span><br><span class="line">sp=DPUCZDX8G_1.M_AXI_GP0:HPC0</span><br><span class="line">sp=DPUCZDX8G_1.M_AXI_HP0:HP0</span><br><span class="line">sp=DPUCZDX8G_1.M_AXI_HP2:HP1</span><br></pre></td></tr></table></figure>
+<p>这里的时钟接口和vivado中配置的时钟一一对应</p>
+<img src="/2022/07/06/VitisAI-05-Vitis-Flow/16.png">
+<p>有些版本Vitis编译过程会出现找不到opencv库的error，点击Apply and Close，在dpu_trd_system→dpu_trd上右键选择C/C+= Build Settings</p>
+<img src="/2022/07/06/VitisAI-05-Vitis-Flow/17.png">
+<p>在includes中添加</p>
+<figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$&#123;SYSROOT&#125;/usr/<span class="keyword">include</span>/opencv4</span><br></pre></td></tr></table></figure>
+<p>点击Apply</p>
+<p>右键dpu_trd_system进行编译，该过程耗时较长，本机环境编译时长在20~30分钟。编译成功后，在vitis工程路径下的dpu_trd_system/Hardware/package路径下会生成sd_card.img</p>
+<img src="/2022/07/06/VitisAI-05-Vitis-Flow/18.png">
+<p>该文件是合并了linux内核镜像、uboot、dpu,xclbin二进制文件以及设备树文件的SD卡镜像文件，SD卡分区已经做好的，直接使用balenaEtcher将该文件烧写到SD卡中即可</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Xilinx/" rel="tag"># Xilinx</a>
+          
+            <a href="/tags/Vitis-AI/" rel="tag"># Vitis AI</a>
+          
+            <a href="/tags/DPU/" rel="tag"># DPU</a>
+          
+            <a href="/tags/PetaLinux/" rel="tag"># PetaLinux</a>
+          
+        </div>
+      
+
+      
+      
+        <div class="post-widgets">
+        
+
+        
+
+        
+          
+          <div id="needsharebutton-postbottom">
+            <span class="btn">
+              <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </span>
+          </div>
+        
+        </div>
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2022/06/30/VitisAI-04-PetaLinux-Flow/" rel="next" title="VitisAI-04-PetaLinux Flow">
+                <i class="fa fa-chevron-left"></i> VitisAI-04-PetaLinux Flow
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2022/07/16/每月见闻202207/" rel="prev" title="每月见闻202207">
+                每月见闻202207 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/../image/avatar.png" alt="awokezhou">
+            
+              <p class="site-author-name" itemprop="name">awokezhou</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">89</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">56</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">73</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/awokezhou" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="awokezhou@gmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                Links
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://www.ruanyifeng.com/blog/" title="阮一峰" target="_blank">阮一峰</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://dave.cheney.net/about/" title="Dave Cheney" target="_blank">Dave Cheney</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://codingsans.com/" title="codingsans" target="_blank">codingsans</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://www.openai.com/" title="openAI" target="_blank">openAI</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://www.wowotech.net/author/3/" title="linuxer - 蜗窝科技" target="_blank">linuxer - 蜗窝科技</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://www.iii.run/" title="mmmwhy" target="_blank">mmmwhy</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://www.jasongj.com/" title="技术世界" target="_blank">技术世界</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://machinelearningmastery.com/" title="Jason Brownlee" target="_blank">Jason Brownlee</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://www.jeremyjordan.me/" title="Jeremy Jordan" target="_blank">Jeremy Jordan</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://towardsdatascience.com/" title="Towards Data Science" target="_blank">Towards Data Science</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://colah.github.io/" title="colah" target="_blank">colah</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://www.cnblogs.com/popsuper1982/" title="网易云计算架构师刘超" target="_blank">网易云计算架构师刘超</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://biscuitos.github.io/" title="Biscuitos" target="_blank">Biscuitos</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#PetaLinux工程准备编译好的各文件"><span class="nav-number">1.</span> <span class="nav-text">PetaLinux工程准备编译好的各文件</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#创建Vitis-Platform-Project"><span class="nav-number">2.</span> <span class="nav-text">创建Vitis Platform Project</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Vitis安装Vitis-AI"><span class="nav-number">3.</span> <span class="nav-text">Vitis安装Vitis AI</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#克隆Vitis-AI仓库到本地"><span class="nav-number">3.1.</span> <span class="nav-text">克隆Vitis AI仓库到本地</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#安装Vitis-AI到Vitis"><span class="nav-number">3.2.</span> <span class="nav-text">安装Vitis AI到Vitis</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#安装交叉编译环境sdk"><span class="nav-number">4.</span> <span class="nav-text">安装交叉编译环境sdk</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#创建Vitis-Application-工程"><span class="nav-number">5.</span> <span class="nav-text">创建Vitis Application 工程</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">awokezhou</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+      <div id="needsharebutton-float">
+        <span class="btn">
+          <i class="fa fa-share-alt" aria-hidden="true"></i>
+        </span>
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+  
+  <script type="text/javascript">
+    var GUEST = ['nick','mail','link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item=>{
+      return GUEST.indexOf(item)>-1;
+    });
+    new Valine({
+        el: '#comments' ,
+        verify: false,
+        notify: false,
+        appId: 'fRviEm3V5t70yJuO2anF9b3q-gzGzoHsz',
+        appKey: 'hWNhMYbcRQVolyrvqSI7fVgz',
+        placeholder: '快来吐槽吧',
+        avatar:'mm',
+        guest_info:guest,
+        pageSize:'10' || 10,
+    });
+  </script>
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+  
+  <link rel="stylesheet" href="/lib/needsharebutton/needsharebutton.css">
+
+  
+  
+  <script src="/lib/needsharebutton/needsharebutton.js"></script>
+
+  <script>
+    
+      pbOptions = {};
+      
+          pbOptions.iconStyle = "box";
+      
+          pbOptions.boxForm = "horizontal";
+      
+          pbOptions.position = "bottomCenter";
+      
+          pbOptions.networks = "Weibo,Wechat,Douban,QQZone,Twitter,Facebook";
+      
+      new needShareButton('#needsharebutton-postbottom', pbOptions);
+    
+    
+      flOptions = {};
+      
+          flOptions.iconStyle = "box";
+      
+          flOptions.boxForm = "horizontal";
+      
+          flOptions.position = "middleRight";
+      
+          flOptions.networks = "Weibo,Wechat,Douban,QQZone,Twitter,Facebook";
+      
+      new needShareButton('#needsharebutton-float', flOptions);
+    
+  </script>
+
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

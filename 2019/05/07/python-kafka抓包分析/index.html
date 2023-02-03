@@ -1,0 +1,1367 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/../image/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/../image/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Python,Docker,Kafka,抓包,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="看源码看了一段时间了，发现很多协议上有些概念和流程理解的不到位，因此搭建环境来抓包分析一下整个消息交互的过程是怎么样的 环境介绍kafka的broker(只有一个)服务运行于虚拟机上的docker容器(dk-kafka-test-v2)中，虚拟机和容器都是centos7系统，宿主和容器之间网络模式为Bridge模式。环境示意图如下容器连接到宿主的docker0桥上，宿主地址172.18.0.1，容">
+<meta name="keywords" content="Python,Docker,Kafka,抓包">
+<meta property="og:type" content="article">
+<meta property="og:title" content="python-kafka抓包分析">
+<meta property="og:url" content="http://yoursite.com/2019/05/07/python-kafka抓包分析/index.html">
+<meta property="og:site_name" content="awokezhou&#39;s blog">
+<meta property="og:description" content="看源码看了一段时间了，发现很多协议上有些概念和流程理解的不到位，因此搭建环境来抓包分析一下整个消息交互的过程是怎么样的 环境介绍kafka的broker(只有一个)服务运行于虚拟机上的docker容器(dk-kafka-test-v2)中，虚拟机和容器都是centos7系统，宿主和容器之间网络模式为Bridge模式。环境示意图如下容器连接到宿主的docker0桥上，宿主地址172.18.0.1，容">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://yoursite.com/2019/05/07/python-kafka抓包分析/image/packet-capture-01.png">
+<meta property="og:image" content="http://yoursite.com/2019/05/07/python-kafka抓包分析/image/packet-capture-02.png">
+<meta property="og:image" content="http://yoursite.com/2019/05/07/python-kafka抓包分析/image/packet-capture-03.png">
+<meta property="og:image" content="http://yoursite.com/2019/05/07/python-kafka抓包分析/image/packet-capture-04.png">
+<meta property="og:image" content="http://yoursite.com/2019/05/07/python-kafka抓包分析/image/packet-capture-05.png">
+<meta property="og:image" content="http://yoursite.com/2019/05/07/python-kafka抓包分析/image/packet-capture-06.png">
+<meta property="og:image" content="http://yoursite.com/2019/05/07/python-kafka抓包分析/image/packet-capture-07.png">
+<meta property="og:image" content="http://yoursite.com/2019/05/07/python-kafka抓包分析/image/packet-capture-08.png">
+<meta property="og:image" content="http://yoursite.com/2019/05/07/python-kafka抓包分析/image/packet-capture-09.png">
+<meta property="og:image" content="http://yoursite.com/2019/05/07/python-kafka抓包分析/image/packet-capture-10.png">
+<meta property="og:image" content="http://yoursite.com/2019/05/07/python-kafka抓包分析/image/packet-capture-11.png">
+<meta property="og:image" content="http://yoursite.com/2019/05/07/python-kafka抓包分析/image/packet-capture-12.png">
+<meta property="og:image" content="http://yoursite.com/2019/05/07/python-kafka抓包分析/image/packet-capture-14.png">
+<meta property="og:image" content="http://yoursite.com/2019/05/07/python-kafka抓包分析/image/packet-capture-13.png">
+<meta property="og:image" content="http://yoursite.com/2019/05/07/python-kafka抓包分析/image/packet-capture-15.png">
+<meta property="og:image" content="http://yoursite.com/2019/05/07/python-kafka抓包分析/image/packet-capture-16.png">
+<meta property="og:updated_time" content="2021-08-13T02:24:21.729Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="python-kafka抓包分析">
+<meta name="twitter:description" content="看源码看了一段时间了，发现很多协议上有些概念和流程理解的不到位，因此搭建环境来抓包分析一下整个消息交互的过程是怎么样的 环境介绍kafka的broker(只有一个)服务运行于虚拟机上的docker容器(dk-kafka-test-v2)中，虚拟机和容器都是centos7系统，宿主和容器之间网络模式为Bridge模式。环境示意图如下容器连接到宿主的docker0桥上，宿主地址172.18.0.1，容">
+<meta name="twitter:image" content="http://yoursite.com/2019/05/07/python-kafka抓包分析/image/packet-capture-01.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"hide","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/05/07/python-kafka抓包分析/">
+
+
+
+
+
+  <title>python-kafka抓包分析 | awokezhou's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">awokezhou's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-message">
+          <a href="/message/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br>
+            
+            message
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/05/07/python-kafka抓包分析/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="awokezhou">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/../image/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="awokezhou's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">python-kafka抓包分析</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-05-07T13:56:57+08:00">
+                2019-05-07
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/源码分析/" itemprop="url" rel="index">
+                    <span itemprop="name">源码分析</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/源码分析/python-kafka/" itemprop="url" rel="index">
+                    <span itemprop="name">python-kafka</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2019/05/07/python-kafka抓包分析/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2019/05/07/python-kafka抓包分析/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>看源码看了一段时间了，发现很多协议上有些概念和流程理解的不到位，因此搭建环境来抓包分析一下整个消息交互的过程是怎么样的</p>
+<h2 id="环境介绍"><a href="#环境介绍" class="headerlink" title="环境介绍"></a>环境介绍</h2><p>kafka的broker(只有一个)服务运行于虚拟机上的docker容器(dk-kafka-test-v2)中，虚拟机和容器都是centos7系统，宿主和容器之间网络模式为Bridge模式。环境示意图如下<br><img src="/2019/05/07/python-kafka抓包分析/image/packet-capture-01.png" alt="回调上下文"><br>容器连接到宿主的docker0桥上，宿主地址172.18.0.1，容器地址172.18.0.2，在容器中使用tcpdump抓包</p>
+<h3 id="注意"><a href="#注意" class="headerlink" title="注意"></a>注意</h3><h4 id="环境安装问题"><a href="#环境安装问题" class="headerlink" title="环境安装问题"></a>环境安装问题</h4><p>需要安装以下内容</p>
+<ul>
+<li>jdk</li>
+<li>zookeeper</li>
+<li>kafka</li>
+</ul>
+<h4 id="docker的hostname问题"><a href="#docker的hostname问题" class="headerlink" title="docker的hostname问题"></a>docker的hostname问题</h4><p>在docker中运行kafka服务后，宿主运行load_example.py，会报<code>DNS lookup failed</code>错误，因为docker的hostname默认是一串数字，调用<code>socket.getaddrinfo()</code>函数解析不了该hostname，需手动修改/etc/hosts<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1       localhost</span><br><span class="line">::1     localhost ip6-localhost ip6-loopback</span><br><span class="line">fe00::0 ip6-localnet</span><br><span class="line">ff00::0 ip6-mcastprefix</span><br><span class="line">ff02::1 ip6-allnodes</span><br><span class="line">ff02::2 ip6-allrouters</span><br><span class="line">172.17.0.2      172.17.0.2</span><br><span class="line">172.18.0.2      172.18.0.2</span><br></pre></td></tr></table></figure></p>
+<h2 id="具体操作"><a href="#具体操作" class="headerlink" title="具体操作"></a>具体操作</h2><h3 id="broker启动"><a href="#broker启动" class="headerlink" title="broker启动"></a>broker启动</h3><p>容器中已经编写好shell脚本启动zookeeper和broker<br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">kafka_path=<span class="string">'kafka_broker'</span></span><br><span class="line">zookeeper_path=<span class="string">'zookeeper'</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">source</span> /etc/profile</span><br><span class="line"></span><br><span class="line">./<span class="variable">$zookeeper_path</span>/bin/zkServer.sh start</span><br><span class="line"></span><br><span class="line">./<span class="variable">$kafka_path</span>/bin/kafka-server-start.sh <span class="variable">$kafka_path</span>/config/server.properties</span><br></pre></td></tr></table></figure></p>
+<p>执行脚本，broker启动运行<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">[root@3b86889153b0 local]# ./kafka_broker_start.sh   </span><br><span class="line">ZooKeeper JMX enabled by default</span><br><span class="line">Using config: /usr/local/zookeeper/bin/../conf/zoo.cfg</span><br><span class="line">Starting zookeeper ... already running as process 84.</span><br><span class="line">[2019-05-07 12:33:13,714] INFO Registered kafka:type=kafka.Log4jController MBean (kafka.utils.Log4jControllerRegistration$)</span><br><span class="line">[2019-05-07 12:33:14,630] INFO starting (kafka.server.KafkaServer)</span><br><span class="line">[2019-05-07 12:33:14,632] INFO Connecting to zookeeper on localhost:2181 (kafka.server.KafkaServer)</span><br><span class="line">[2019-05-07 12:33:14,676] INFO [ZooKeeperClient] Initializing a new session to localhost:2181. (kafka.zookeeper.ZooKeeperClient)</span><br><span class="line">[2019-05-07 12:33:14,683] INFO Client environment:zookeeper.version=3.4.13-2d71af4dbe22557fda74f9a9b4309b15a7487f03, built on 06/29/2018 00:39 GMT (org.apache.zookeeper.ZooKeeper)</span><br><span class="line">[2019-05-07 12:33:14,684] INFO Client environment:host.name=3b86889153b0 (org.apache.zookeeper.ZooKeeper)</span><br><span class="line">[2019-05-07 12:33:14,684] INFO Client environment:java.version=12.0.1 (org.apache.zookeeper.ZooKeeper)</span><br><span class="line">[2019-05-07 12:33:14,684] INFO Client environment:java.vendor=Oracle Corporation (org.apache.zookeeper.ZooKeeper)</span><br><span class="line">[2019-05-07 12:33:14,684] INFO Client environment:java.home=/usr/local/java (org.apache.zookeeper.ZooKeeper)</span><br><span class="line">...</span><br></pre></td></tr></table></figure></p>
+<h3 id="启动抓包"><a href="#启动抓包" class="headerlink" title="启动抓包"></a>启动抓包</h3><p>抓包使用tcpdump工具，执行以下命令，指定截获eth1接口的端口号为9092的tcp包，保存到capture.cap文件<br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -i eth1 tcp port 9092 -w capture.cap</span><br></pre></td></tr></table></figure></p>
+<h3 id="宿主运行load-example-py"><a href="#宿主运行load-example-py" class="headerlink" title="宿主运行load_example.py"></a>宿主运行load_example.py</h3><p>宿主上运行python-kafka的load_example.py测试脚本，该脚本会启动一个生产者和一个消费者，生产者循环生产数据，消费者循环消费数据，需要先修改生产者和消费者配置的broker地址<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Producer</span><span class="params">(threading.Thread)</span>:</span></span><br><span class="line">    big_msg = <span class="string">b'1'</span> * msg_size</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">run</span><span class="params">(self)</span>:</span></span><br><span class="line">        producer = KafkaProducer(bootstrap_servers=<span class="string">'172.18.0.2:9092'</span>)</span><br><span class="line">        self.sent = <span class="number">0</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">while</span> <span class="keyword">not</span> producer_stop.is_set():</span><br><span class="line">            producer.send(<span class="string">'my-topic'</span>, self.big_msg)</span><br><span class="line">            self.sent += <span class="number">1</span></span><br><span class="line">        producer.flush()</span><br><span class="line">......</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Consumer</span><span class="params">(threading.Thread)</span>:</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">run</span><span class="params">(self)</span>:</span></span><br><span class="line">        consumer = KafkaConsumer(bootstrap_servers=<span class="string">'172.18.0.2:9092'</span>,</span><br><span class="line">                                 auto_offset_reset=<span class="string">'earliest'</span>)</span><br><span class="line">        consumer.subscribe([<span class="string">'my-topic'</span>])</span><br><span class="line">        self.valid = <span class="number">0</span></span><br><span class="line">        self.invalid = <span class="number">0</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> message <span class="keyword">in</span> consumer:</span><br><span class="line">            <span class="keyword">if</span> len(message.value) == msg_size:</span><br><span class="line">                self.valid += <span class="number">1</span></span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                self.invalid += <span class="number">1</span></span><br></pre></td></tr></table></figure></p>
+<p>执行脚本后，开始数据传输，打开了日志的DEBUG模式<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost kafka-python]# python benchmarks/load_example.py                        </span><br><span class="line">2019-05-07 22:34:07,437.437.673091888:kafka.producer.kafka:139872394159872:DEBUG:32192:Starting the Kafka producer</span><br><span class="line">2019-05-07 22:34:07,438.438.35401535:kafka.metrics.metrics:139872394159872:DEBUG:32192:Added sensor with name connections-closed</span><br><span class="line">2019-05-07 22:34:07,438.438.606977463:kafka.metrics.metrics:139872394159872:DEBUG:32192:Added sensor with name connections-created</span><br><span class="line">2019-05-07 22:34:07,438.438.797950745:kafka.metrics.metrics:139872394159872:DEBUG:32192:Added sensor with name select-time</span><br><span class="line">2019-05-07 22:34:07,439.439.13602829:kafka.metrics.metrics:139872394159872:DEBUG:32192:Added sensor with name io-time</span><br><span class="line">2019-05-07 22:34:07,439.439.702033997:kafka.metrics.metrics:139872385505024:DEBUG:32192:Added sensor with name connections-closed</span><br><span class="line">2019-05-07 22:34:07,440.440.099954605:kafka.client:139872394159872:INFO:32192:Bootstrapping cluster metadata from [(&apos;172.18.0.2&apos;, 9092, 2)]</span><br><span class="line">2019-05-07 22:34:07,440.440.378904343:kafka.metrics.metrics:139872385505024:DEBUG:32192:Added sensor with name connections-created</span><br><span class="line">2019-05-07 22:34:07,440.440.948963165:kafka.metrics.metrics:139872385505024:DEBUG:32192:Added sensor with name select-time</span><br><span class="line">2019-05-07 22:34:07,440.440.732955933:kafka.client:139872394159872:DEBUG:32192:Attempting to bootstrap via node at 172.18.0.2:9092</span><br><span class="line">2019-05-07 22:34:07,441.441.575050354:kafka.metrics.metrics:139872394159872:DEBUG:32192:Added sensor with name bytes-sent-received</span><br><span class="line">2019-05-07 22:34:07,441.441.804885864:kafka.metrics.metrics:139872394159872:DEBUG:32192:Added sensor with name bytes-sent</span><br><span class="line">2019-05-07 22:34:07,442.442.168951035:kafka.metrics.metrics:139872394159872:DEBUG:32192:Added sensor with name bytes-received</span><br><span class="line">2019-05-07 22:34:07,442.442.622900009:kafka.metrics.metrics:139872385505024:DEBUG:32192:Added sensor with name io-time</span><br><span class="line">2019-05-07 22:34:07,443.443.308115005:kafka.client:139872385505024:INFO:32192:Bootstrapping cluster metadata from [(&apos;172.18.0.2&apos;, 9092, 2)]</span><br><span class="line">2019-05-07 22:34:07,443.443.564891815:kafka.client:139872385505024:DEBUG:32192:Attempting to bootstrap via node at 172.18.0.2:9092</span><br><span class="line">2019-05-07 22:34:07,444.444.015979767:kafka.metrics.metrics:139872385505024:DEBUG:32192:Added sensor with name bytes-sent-received</span><br><span class="line">2019-05-07 22:34:07,444.444.26202774:kafka.metrics.metrics:139872385505024:DEBUG:32192:Added sensor with name bytes-sent</span><br><span class="line">......</span><br></pre></td></tr></table></figure></p>
+<h3 id="wireshark打开抓包文件"><a href="#wireshark打开抓包文件" class="headerlink" title="wireshark打开抓包文件"></a>wireshark打开抓包文件</h3><p>宿主上执行以下命令，将容器中的抓包文件拷贝到共享文件夹下<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker cp dk-kafka-v2:/usr/local/capture.cap /home/share/</span><br></pre></td></tr></table></figure></p>
+<p>wireshark(3.0.0)打开该文件，内容如下<br><img src="/2019/05/07/python-kafka抓包分析/image/packet-capture-02.png" alt="wireshark打开抓包文件"><br>会发现其中有很多SMPP类型的报文，这其实就是kafka协议报文，wireshark是支持kafka协议的(版本过低可能解析不了，因为kafka协议也是最新的)</p>
+<p>选中一包SMPP数据，右击选择解码为<br><img src="/2019/05/07/python-kafka抓包分析/image/packet-capture-03.png" alt="wireshark打开抓包文件"></p>
+<p>在弹出的对话框中将当前值选择为kafka<br><img src="/2019/05/07/python-kafka抓包分析/image/packet-capture-04.png" alt="wireshark打开抓包文件"></p>
+<p>确认后，显示的协议类型就是kafka了<br><img src="/2019/05/07/python-kafka抓包分析/image/packet-capture-05.png" alt="wireshark打开抓包文件"></p>
+<h2 id="报文分析"><a href="#报文分析" class="headerlink" title="报文分析"></a>报文分析</h2><ul>
+<li>抓包文件 <a href="/download/python-kafka抓包分析/capture.cap">capture.cap</a></li>
+<li>load_example.py运行日志 <a href="/download/python-kafka抓包分析/load_example_log.txt">load_example_log.txt</a></li>
+</ul>
+<h3 id="建立连接"><a href="#建立连接" class="headerlink" title="建立连接"></a>建立连接</h3><p>可看到前6个报文分别是生产者和消费者与broker的tcp三次握手，生产者源端口号为38212，消费者源端口号为38214</p>
+<h3 id="metadata请求"><a href="#metadata请求" class="headerlink" title="metadata请求"></a>metadata请求</h3><p>连接建立之后，生产者和消费者都向broker发起了metadata请求，报文结构如下图<br><img src="/2019/05/07/python-kafka抓包分析/image/packet-capture-06.png" alt="wireshark打开抓包文件"><br>该请求中API Key为3，还包含了API Version、Correlation ID等字段</p>
+<p>那么什么是metadata呢？由于kafka的broker是分布式集群，metadata记录了一些和集群有关的映射信息</p>
+<ul>
+<li>broker.id与node的对应关系</li>
+<li>topic与partition的对应关系</li>
+<li>node与partition的对应关系</li>
+</ul>
+<p>详细的metadata解释见<a href="https://www.jianshu.com/p/bb7c332eac25" target="_blank" rel="noopener">Kafka 源码之生产者 Metadata 更新机制（二）</a></p>
+<p>broker接收到该请求后，首先会回一个ack，然后回复一个metadata响应，报文结构如图<br><img src="/2019/05/07/python-kafka抓包分析/image/packet-capture-07.png" alt="wireshark打开抓包文件"></p>
+<p>返回的结构中，主要包含两大块信息：Broker Metadata和Topic Metadata。Broker Metadata中只有一个Broker，包含该broker的Node ID、Host和Port，因为本环境中只有一个broker，就是在容器中的broker。Topic Metadata共有3个，分别是my-topic、hellotopic和__consumer_offsets，因为load_example.py脚本创建的topic是my-topic，另外两个是做测试时创建的</p>
+<p>每隔topic结构中包含该topic的名字和一个partition，什么是partition呢？一个topic可以有多个partition，消息会被发送到不同的partition，每个partition其实就是broker下的一个log文件，存放消息。多个partition会有一个leader，负责备份和写入，Replicas就是备份信息</p>
+<h3 id="ApiVersion请求"><a href="#ApiVersion请求" class="headerlink" title="ApiVersion请求"></a>ApiVersion请求</h3><p>猜测可能各个版本的api有些差异，因此要对齐api版本</p>
+<p>请求报文结构如图，key为18<br><img src="/2019/05/07/python-kafka抓包分析/image/packet-capture-08.png" alt="wireshark打开抓包文件"></p>
+<p>响应报文结构如图<br><img src="/2019/05/07/python-kafka抓包分析/image/packet-capture-09.png" alt="wireshark打开抓包文件"><br>broker回返回自己支持的各部分api版本，包括Produce、Fetch、Offsets、Metadata、LeaderAndIsr、StopReplica等等</p>
+<h3 id="Offset请求"><a href="#Offset请求" class="headerlink" title="Offset请求"></a>Offset请求</h3><p>消费者会先请求一次Offset，Offset记录了broker当前消费位置信息</p>
+<p>请求报文结构如图，key为2<br><img src="/2019/05/07/python-kafka抓包分析/image/packet-capture-10.png" alt="wireshark打开抓包文件"><br>该报文中包含了要请求的topic和partition</p>
+<p>响应报文结构如图<br><img src="/2019/05/07/python-kafka抓包分析/image/packet-capture-11.png" alt="wireshark打开抓包文件"><br>可以看出my-topic的partition1的offset为12705</p>
+<h3 id="Produce请求"><a href="#Produce请求" class="headerlink" title="Produce请求"></a>Produce请求</h3><p>Porduce请求是生产者向broker发送的生产数据请求</p>
+<p>请求报文如图，key为0<br><img src="/2019/05/07/python-kafka抓包分析/image/packet-capture-12.png" alt="wireshark打开抓包文件"><br>其中Message Set Size字段告知了数据大小为15556，Message Set-&gt;Message是消息实体，包含了CRC校验头、Magic Byte等内容</p>
+<p>响应报文如图<br><img src="/2019/05/07/python-kafka抓包分析/image/packet-capture-14.png" alt="wireshark打开抓包文件"><br>返回的报文中包含一个offset</p>
+<h3 id="Fetch请求"><a href="#Fetch请求" class="headerlink" title="Fetch请求"></a>Fetch请求</h3><p>Fetch请求是消费者向broker发出的请求，向broker申请消费数据</p>
+<p>请求报文结构如图，key为1<br><img src="/2019/05/07/python-kafka抓包分析/image/packet-capture-13.png" alt="wireshark打开抓包文件"><br>其中告知了请求的topic、partition、offset和最大字节数Max bytes</p>
+<p>响应报文如图<br><img src="/2019/05/07/python-kafka抓包分析/image/packet-capture-15.png" alt="wireshark打开抓包文件"><br>响应报文不是kafka协议报文，而是直接tcp流，将数据发过来</p>
+<p>总结消息交过流程如图<br><img src="/2019/05/07/python-kafka抓包分析/image/packet-capture-16.png" alt="wireshark打开抓包文件"></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Python/" rel="tag"># Python</a>
+          
+            <a href="/tags/Docker/" rel="tag"># Docker</a>
+          
+            <a href="/tags/Kafka/" rel="tag"># Kafka</a>
+          
+            <a href="/tags/抓包/" rel="tag"># 抓包</a>
+          
+        </div>
+      
+
+      
+      
+        <div class="post-widgets">
+        
+
+        
+
+        
+          
+          <div id="needsharebutton-postbottom">
+            <span class="btn">
+              <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </span>
+          </div>
+        
+        </div>
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/05/07/docker基本操作/" rel="next" title="Docker基本操作">
+                <i class="fa fa-chevron-left"></i> Docker基本操作
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/05/09/linecache处理大文件时内存溢出/" rel="prev" title="linecache处理大文件时内存溢出">
+                linecache处理大文件时内存溢出 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/../image/avatar.png" alt="awokezhou">
+            
+              <p class="site-author-name" itemprop="name">awokezhou</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">89</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">56</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">73</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/awokezhou" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="awokezhou@gmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                Links
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://www.ruanyifeng.com/blog/" title="阮一峰" target="_blank">阮一峰</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://dave.cheney.net/about/" title="Dave Cheney" target="_blank">Dave Cheney</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://codingsans.com/" title="codingsans" target="_blank">codingsans</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://www.openai.com/" title="openAI" target="_blank">openAI</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://www.wowotech.net/author/3/" title="linuxer - 蜗窝科技" target="_blank">linuxer - 蜗窝科技</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://www.iii.run/" title="mmmwhy" target="_blank">mmmwhy</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://www.jasongj.com/" title="技术世界" target="_blank">技术世界</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://machinelearningmastery.com/" title="Jason Brownlee" target="_blank">Jason Brownlee</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://www.jeremyjordan.me/" title="Jeremy Jordan" target="_blank">Jeremy Jordan</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://towardsdatascience.com/" title="Towards Data Science" target="_blank">Towards Data Science</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://colah.github.io/" title="colah" target="_blank">colah</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://www.cnblogs.com/popsuper1982/" title="网易云计算架构师刘超" target="_blank">网易云计算架构师刘超</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://biscuitos.github.io/" title="Biscuitos" target="_blank">Biscuitos</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#环境介绍"><span class="nav-number">1.</span> <span class="nav-text">环境介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#注意"><span class="nav-number">1.1.</span> <span class="nav-text">注意</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#环境安装问题"><span class="nav-number">1.1.1.</span> <span class="nav-text">环境安装问题</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#docker的hostname问题"><span class="nav-number">1.1.2.</span> <span class="nav-text">docker的hostname问题</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#具体操作"><span class="nav-number">2.</span> <span class="nav-text">具体操作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#broker启动"><span class="nav-number">2.1.</span> <span class="nav-text">broker启动</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#启动抓包"><span class="nav-number">2.2.</span> <span class="nav-text">启动抓包</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#宿主运行load-example-py"><span class="nav-number">2.3.</span> <span class="nav-text">宿主运行load_example.py</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#wireshark打开抓包文件"><span class="nav-number">2.4.</span> <span class="nav-text">wireshark打开抓包文件</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#报文分析"><span class="nav-number">3.</span> <span class="nav-text">报文分析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#建立连接"><span class="nav-number">3.1.</span> <span class="nav-text">建立连接</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#metadata请求"><span class="nav-number">3.2.</span> <span class="nav-text">metadata请求</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ApiVersion请求"><span class="nav-number">3.3.</span> <span class="nav-text">ApiVersion请求</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Offset请求"><span class="nav-number">3.4.</span> <span class="nav-text">Offset请求</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Produce请求"><span class="nav-number">3.5.</span> <span class="nav-text">Produce请求</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Fetch请求"><span class="nav-number">3.6.</span> <span class="nav-text">Fetch请求</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">awokezhou</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+      <div id="needsharebutton-float">
+        <span class="btn">
+          <i class="fa fa-share-alt" aria-hidden="true"></i>
+        </span>
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+  
+  <script type="text/javascript">
+    var GUEST = ['nick','mail','link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item=>{
+      return GUEST.indexOf(item)>-1;
+    });
+    new Valine({
+        el: '#comments' ,
+        verify: false,
+        notify: false,
+        appId: 'fRviEm3V5t70yJuO2anF9b3q-gzGzoHsz',
+        appKey: 'hWNhMYbcRQVolyrvqSI7fVgz',
+        placeholder: '快来吐槽吧',
+        avatar:'mm',
+        guest_info:guest,
+        pageSize:'10' || 10,
+    });
+  </script>
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+  
+  <link rel="stylesheet" href="/lib/needsharebutton/needsharebutton.css">
+
+  
+  
+  <script src="/lib/needsharebutton/needsharebutton.js"></script>
+
+  <script>
+    
+      pbOptions = {};
+      
+          pbOptions.iconStyle = "box";
+      
+          pbOptions.boxForm = "horizontal";
+      
+          pbOptions.position = "bottomCenter";
+      
+          pbOptions.networks = "Weibo,Wechat,Douban,QQZone,Twitter,Facebook";
+      
+      new needShareButton('#needsharebutton-postbottom', pbOptions);
+    
+    
+      flOptions = {};
+      
+          flOptions.iconStyle = "box";
+      
+          flOptions.boxForm = "horizontal";
+      
+          flOptions.position = "middleRight";
+      
+          flOptions.networks = "Weibo,Wechat,Douban,QQZone,Twitter,Facebook";
+      
+      new needShareButton('#needsharebutton-float', flOptions);
+    
+  </script>
+
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

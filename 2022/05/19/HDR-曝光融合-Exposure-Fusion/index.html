@@ -1,0 +1,1373 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/../image/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/../image/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="DIP,CV,HDR,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="Tom Mertens、Jan Kautz等人在”Exposure Fusion”这篇paper中提出了一种简单有效的曝光融合方法，通过将一组不同曝光的图像序列进行直接融合得到一副高质量图像，而不需要先将这些图像序列转化为HDR。传统的HDR做法采用多重曝光获得图像序列，需要将其转换为辐照度估计的radiance map，也就是HDR格式的高动态范围图像，然后再进行tone mapping，将高动">
+<meta name="keywords" content="DIP,CV,HDR">
+<meta property="og:type" content="article">
+<meta property="og:title" content="HDR-曝光融合(Exposure Fusion)">
+<meta property="og:url" content="http://yoursite.com/2022/05/19/HDR-曝光融合-Exposure-Fusion/index.html">
+<meta property="og:site_name" content="awokezhou&#39;s blog">
+<meta property="og:description" content="Tom Mertens、Jan Kautz等人在”Exposure Fusion”这篇paper中提出了一种简单有效的曝光融合方法，通过将一组不同曝光的图像序列进行直接融合得到一副高质量图像，而不需要先将这些图像序列转化为HDR。传统的HDR做法采用多重曝光获得图像序列，需要将其转换为辐照度估计的radiance map，也就是HDR格式的高动态范围图像，然后再进行tone mapping，将高动">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://yoursite.com/2022/05/19/HDR-曝光融合-Exposure-Fusion/01.png">
+<meta property="og:image" content="http://yoursite.com/2022/05/19/HDR-曝光融合-Exposure-Fusion/02.png">
+<meta property="og:image" content="http://yoursite.com/2022/05/19/HDR-曝光融合-Exposure-Fusion/03.png">
+<meta property="og:image" content="http://yoursite.com/2022/05/19/HDR-曝光融合-Exposure-Fusion/04.png">
+<meta property="og:image" content="http://yoursite.com/2022/05/19/HDR-曝光融合-Exposure-Fusion/05.png">
+<meta property="og:image" content="http://yoursite.com/2022/05/19/HDR-曝光融合-Exposure-Fusion/06.png">
+<meta property="og:image" content="http://yoursite.com/2022/05/19/HDR-曝光融合-Exposure-Fusion/07.png">
+<meta property="og:image" content="http://yoursite.com/2022/05/19/HDR-曝光融合-Exposure-Fusion/08.png">
+<meta property="og:image" content="http://yoursite.com/2022/05/19/HDR-曝光融合-Exposure-Fusion/09.png">
+<meta property="og:updated_time" content="2023-02-02T11:41:40.376Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="HDR-曝光融合(Exposure Fusion)">
+<meta name="twitter:description" content="Tom Mertens、Jan Kautz等人在”Exposure Fusion”这篇paper中提出了一种简单有效的曝光融合方法，通过将一组不同曝光的图像序列进行直接融合得到一副高质量图像，而不需要先将这些图像序列转化为HDR。传统的HDR做法采用多重曝光获得图像序列，需要将其转换为辐照度估计的radiance map，也就是HDR格式的高动态范围图像，然后再进行tone mapping，将高动">
+<meta name="twitter:image" content="http://yoursite.com/2022/05/19/HDR-曝光融合-Exposure-Fusion/01.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"hide","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2022/05/19/HDR-曝光融合-Exposure-Fusion/">
+
+
+
+
+
+  <title>HDR-曝光融合(Exposure Fusion) | awokezhou's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">awokezhou's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-message">
+          <a href="/message/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br>
+            
+            message
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2022/05/19/HDR-曝光融合-Exposure-Fusion/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="awokezhou">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/../image/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="awokezhou's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">HDR-曝光融合(Exposure Fusion)</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2022-05-19T10:24:50+08:00">
+                2022-05-19
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/CV/" itemprop="url" rel="index">
+                    <span itemprop="name">CV</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/CV/HDR/" itemprop="url" rel="index">
+                    <span itemprop="name">HDR</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2022/05/19/HDR-曝光融合-Exposure-Fusion/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2022/05/19/HDR-曝光融合-Exposure-Fusion/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>Tom Mertens、Jan Kautz等人在”Exposure Fusion”这篇paper中提出了一种简单有效的曝光融合方法，通过将一组不同曝光的图像序列进行直接融合得到一副高质量图像，而不需要先将这些图像序列转化为HDR。传统的HDR做法采用多重曝光获得图像序列，需要将其转换为辐照度估计的radiance map，也就是HDR格式的高动态范围图像，然后再进行tone mapping，将高动态范围图像映射为低动态范围的显示设备能够显示的图像。本文对paper的方法进行介绍，并以python代码进行实作</p>
+<h1 id="paper介绍"><a href="#paper介绍" class="headerlink" title="paper介绍"></a>paper介绍</h1><h2 id="结果展示"><a href="#结果展示" class="headerlink" title="结果展示"></a>结果展示</h2><p>论文中以威尼斯水城的3张不同曝光图像序列作为输入，如下图所示</p>
+<img src="/2022/05/19/HDR-曝光融合-Exposure-Fusion/01.png">
+<p>处理后的图像如下</p>
+<img src="/2022/05/19/HDR-曝光融合-Exposure-Fusion/02.png">
+<p>输入序列中的3幅图像，第1幅曝光时间最短，天空和水面的纹理细节得以保留，而建筑物和船只的很多细节都丢失了。第2幅图像曝光时间适中，天空和水面仍有部分细节，建筑物细节和船只的细节增多。第3幅图曝光时间最长，天空过曝，水面有部分细节，建筑物和船只的细节最为充分。可以看出，经过融合之后的图像结合了3副图像各自的优势，每幅图像不同区域的细节都得以保留，而信息丢失的部分已经尽可能丢弃掉了，效果非常好</p>
+<h2 id="该方法的优势"><a href="#该方法的优势" class="headerlink" title="该方法的优势"></a>该方法的优势</h2><ul>
+<li><p>pipeline得以简化：通常的HDR做法需要从多张曝光图像序列中合成高动态范围图像，需要恢复相机特定的响应曲线。另外，由于大多数显示设备动态范围有限，不能直接显示HDR图像，需要通过tone mapping压缩动态范围以适应显示设备的动态范围。而本方法则简单很多</p>
+</li>
+<li><p>不需要担心相机的校准问题，也不需要记录每张照片的曝光时间(响应曲线的校准需要知道每张照片的曝光时间)</p>
+</li>
+<li><p>曝光序列中可以允许过度曝光的部分，传统HDR方法由于要恢复响应曲线，存在过曝的图像不能使用</p>
+</li>
+</ul>
+<h2 id="Exposure-Fusion"><a href="#Exposure-Fusion" class="headerlink" title="Exposure Fusion"></a>Exposure Fusion</h2><p>曝光融合通过只保留多次曝光图像序列中的“最佳”部分来计算所需的图像。什么是“最佳”是由一组质量度量指标来确定的，通过这些指标来对图像进行衡量并分配权重。最后合成的图像是利用拉普拉斯金字塔进行融合的。该paper中假定所有图像序列都是对齐的</p>
+<h3 id="质量衡量标准"><a href="#质量衡量标准" class="headerlink" title="质量衡量标准"></a>质量衡量标准</h3><p>由于曝光不足和过度曝光，序列中会包含很多平坦和无色的区域。这样的区域权重应该尽可能少，而颜色鲜艳和细节丰富的区域应该得到充分保留</p>
+<p>paper中提出了以下3种指标</p>
+<ul>
+<li><p>对比度(Contrast)：将拉普拉斯滤波器应用到每张图像，并取滤波器响应的绝对值，将其作为对比度的简单指标C。对比度越高表明纹理和边缘越多，这部分像素的权重应该更高</p>
+</li>
+<li><p>饱和度(Saturation)：在每个像素位置上进行饱和度测量S，计算方式为R、G、B三通道的标准差</p>
+</li>
+<li><p>良好曝光(Well-exposedness)：希望每个像素位置良好曝光(既不要曝光不足也不要曝光过度)，即认为像素值接近中间为最好，例如归一化的像素值为0~1，那么0.5为最好，使用一个均值为0.5的高斯曲线来衡量像素值离0.5的距离，越近代表越好，得到指标E</p>
+</li>
+</ul>
+<p>每个像素不同度量信息相乘，得到每张图像的权重，使用一个幂函数来控制每个指标的影响程度</p>
+<p>\begin{equation}<br>W<em>{ij,k} = (C</em>{IJ,K})^{\omega <em>{C}} \times (S</em>{ij,k})^{\omega<em>{S}} \times (E</em>{ij,k})^{\omega_{E}}<br>\end{equation}</p>
+<p>其中$k$表示曝光序列中的第$k$次曝光，$i,j$表示像素位置，$W_{ij,k}$表示第$k$次曝光图像的像素$i,j$处的权重</p>
+<h2 id="融合"><a href="#融合" class="headerlink" title="融合"></a>融合</h2><p>计算每个像素的加权平均值来融合N个图像。需要对权重进行正则化</p>
+<p>\begin{equation}<br>\hat(W<em>{ij,k}) = [\sum</em>{\acute{k}=1}^{N}W<em>{ij,\acute{k}}]^{-1}W</em>{ij,k}<br>\end{equation}</p>
+<p>paper中提到，如果使用简单的权重和图像进行加权平均，得到的融合图像并不让人满意，会在边界产生光晕和接缝问题。最终paper中选择拉普拉斯金字塔来进行多个图像的融合</p>
+<img src="/2022/05/19/HDR-曝光融合-Exposure-Fusion/03.png">
+<p>普拉斯金字塔的详细介绍见另一篇文章<a href="/2022/05/18/DIP-图像金字塔/" title="DIP-图像金字塔">DIP-图像金字塔</a></p>
+<h1 id="python实作"><a href="#python实作" class="headerlink" title="python实作"></a>python实作</h1><p>首先导入依赖库</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> cv2</span><br><span class="line"><span class="keyword">import</span> copy</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> matplotlib <span class="keyword">import</span> pyplot <span class="keyword">as</span> plt</span><br></pre></td></tr></table></figure>
+<p>读入图像并显示</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">image_list = [</span><br><span class="line">    <span class="string">'images/Balloon-01.jpg'</span>,</span><br><span class="line">    <span class="string">'images/Balloon-02.jpg'</span>,</span><br><span class="line">    <span class="string">'images/Balloon-03.jpg'</span>,</span><br><span class="line">    <span class="string">'images/Balloon-04.jpg'</span>,</span><br><span class="line">]</span><br><span class="line">images = np.stack([cv2.imread(name) <span class="keyword">for</span> name <span class="keyword">in</span> image_list])</span><br><span class="line"></span><br><span class="line"><span class="comment"># show sequence</span></span><br><span class="line">plt.figure(figsize=(<span class="number">16</span>, <span class="number">12</span>))</span><br><span class="line"><span class="keyword">for</span> i, im <span class="keyword">in</span> enumerate(images):</span><br><span class="line">    plt.subplot(<span class="number">2</span>,<span class="number">2</span>,i+<span class="number">1</span>)</span><br><span class="line">    im = cv2.cvtColor(im, cv2.COLOR_BGR2RGB)</span><br><span class="line">    plt.xticks([])</span><br><span class="line">    plt.yticks([])</span><br><span class="line">    plt.title(<span class="string">'image-0&#123;&#125;'</span>.format(i))</span><br><span class="line">    plt.imshow(im)</span><br></pre></td></tr></table></figure>
+<img src="/2022/05/19/HDR-曝光融合-Exposure-Fusion/04.png">
+<p>定义对比度、饱和度和良好曝光的权重函数</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">contrast_weights</span><span class="params">(im)</span>:</span></span><br><span class="line">    <span class="comment"># 转为灰度图</span></span><br><span class="line">    gray = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)</span><br><span class="line">    <span class="comment"># 进行拉普拉斯算子处理</span></span><br><span class="line">    contrast = cv2.Laplacian(gray, cv2.CV_32F)</span><br><span class="line">    <span class="comment"># 取绝对值   </span></span><br><span class="line">    weights = np.abs(contrast)</span><br><span class="line">    <span class="keyword">return</span> weights</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">saturation_weights</span><span class="params">(im)</span>:</span></span><br><span class="line">    <span class="comment"># 计算标准差</span></span><br><span class="line">    <span class="keyword">return</span> im.std(axis=<span class="number">2</span>, dtype=np.float32)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">well_exposedmess_weights</span><span class="params">(im, sigma=<span class="number">0.2</span>)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> np.prod(np.exp(-((im - <span class="number">0.5</span>)**<span class="number">2</span>)/(<span class="number">2</span>*sigma)), axis=<span class="number">2</span>, dtype=np.float32)</span><br></pre></td></tr></table></figure>
+<p>对图像序列进行权重计算并显示权重图片</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> i, im <span class="keyword">in</span> enumerate(images):</span><br><span class="line">    plt.figure(figsize=(<span class="number">12</span>, <span class="number">8</span>))</span><br><span class="line">    <span class="comment"># origin image</span></span><br><span class="line">    plt.subplot(<span class="number">2</span>,<span class="number">2</span>,<span class="number">1</span>)</span><br><span class="line">    im = cv2.cvtColor(im, cv2.COLOR_BGR2RGB)</span><br><span class="line">    plt.xticks([])</span><br><span class="line">    plt.yticks([])</span><br><span class="line">    plt.title(<span class="string">'origin'</span>)</span><br><span class="line">    plt.imshow(im)</span><br><span class="line">    c_weights = contrast_weights2(im)</span><br><span class="line">    s_weights = saturation_weights2(im)</span><br><span class="line">    e_weights = well_exposedmess_weights2(im)</span><br><span class="line">    plt.subplot(<span class="number">2</span>,<span class="number">2</span>,<span class="number">2</span>)</span><br><span class="line">    plt.xticks([])</span><br><span class="line">    plt.yticks([])</span><br><span class="line">    plt.title(<span class="string">'contrast'</span>)</span><br><span class="line">    plt.imshow(c_weights, cmap=<span class="string">'gray'</span>)</span><br><span class="line">    plt.subplot(<span class="number">2</span>,<span class="number">2</span>,<span class="number">3</span>)</span><br><span class="line">    plt.xticks([])</span><br><span class="line">    plt.yticks([])</span><br><span class="line">    plt.title(<span class="string">'saturation'</span>)</span><br><span class="line">    plt.imshow(s_weights, cmap=<span class="string">'gray'</span>)</span><br><span class="line">    plt.subplot(<span class="number">2</span>,<span class="number">2</span>,<span class="number">4</span>)</span><br><span class="line">    plt.xticks([])</span><br><span class="line">    plt.yticks([])</span><br><span class="line">    plt.title(<span class="string">'well-exposedmess'</span>)</span><br><span class="line">    plt.imshow(e_weights, cmap=<span class="string">'gray'</span>)</span><br></pre></td></tr></table></figure>
+<p>图像1的原图、对比度图、饱和度图以及曝光良好图</p>
+<img src="/2022/05/19/HDR-曝光融合-Exposure-Fusion/05.png">
+<p>图像2的原图、对比度图、饱和度图以及曝光良好图</p>
+<img src="/2022/05/19/HDR-曝光融合-Exposure-Fusion/06.png">
+<p>图像3的原图、对比度图、饱和度图以及曝光良好图</p>
+<img src="/2022/05/19/HDR-曝光融合-Exposure-Fusion/07.png">
+<p>图像4的原图、对比度图、饱和度图以及曝光良好图</p>
+<img src="/2022/05/19/HDR-曝光融合-Exposure-Fusion/08.png">
+<p>可以看到对比度图能够提取图像明显的边缘细节，对比度图能够踢球色彩艳丽的区域，曝光良好图能够提取亮度适中的区域</p>
+<p>定义曝光融合函数</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">exposure_fusion</span><span class="params">(images, measure_weights=<span class="params">(<span class="number">1.0</span>, <span class="number">1.0</span>, <span class="number">1.0</span>)</span>, best_expo=<span class="number">0.5</span>, sigma=<span class="number">0.2</span>, </span></span></span><br><span class="line"><span class="function"><span class="params">                   layers_nr=<span class="number">7</span>)</span>:</span></span><br><span class="line">    <span class="comment"># 图像转为float32，归一化</span></span><br><span class="line">    images = np.stack([im.astype(<span class="string">'float32'</span>)/<span class="number">255</span> <span class="keyword">for</span> im <span class="keyword">in</span> images], axis=<span class="number">0</span>)</span><br><span class="line">    <span class="comment"># 正则化函数</span></span><br><span class="line">    normalize = <span class="keyword">lambda</span> x: x / np.expand_dims(np.sum(x, axis=<span class="number">0</span>), axis=<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 权重计算</span></span><br><span class="line">    weights = []</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(len(images)):</span><br><span class="line">        <span class="comment"># 计算每幅图像的对比度</span></span><br><span class="line">        c_weights = contrast_weights2(images[i])</span><br><span class="line">        <span class="comment"># 计算每幅图像的饱和度</span></span><br><span class="line">        s_weights = saturation_weights2(images[i])</span><br><span class="line">        <span class="comment"># 计算每幅图像的曝光良好情况</span></span><br><span class="line">        e_weights = well_exposedmess_weights2(images[i])</span><br><span class="line">        <span class="comment"># 对比度、饱和度、曝光良好融合</span></span><br><span class="line">        weight = np.power(c_weights, measure_weights[<span class="number">0</span>]) * \</span><br><span class="line">                 np.power(s_weights, measure_weights[<span class="number">1</span>]) * \</span><br><span class="line">                 np.power(e_weights, measure_weights[<span class="number">2</span>])</span><br><span class="line">        <span class="comment">#print(weight)</span></span><br><span class="line">        weights.append(weight)</span><br><span class="line">    <span class="comment">#layers_show(weights)</span></span><br><span class="line">    weights = np.stack(weights, axis=<span class="number">0</span>)</span><br><span class="line">    weights += <span class="number">1e-12</span></span><br><span class="line">    <span class="comment"># 权重归一化</span></span><br><span class="line">    weights = normalize(weights)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 像素值恢复到0~255区间</span></span><br><span class="line">    images *= <span class="number">255</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 计算图像的拉普拉斯金字塔</span></span><br><span class="line">    images_LPyrs = []</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(len(images)):</span><br><span class="line">        LPyrs = laplace_pyramid(images[i], layers_nr)</span><br><span class="line">        images_LPyrs.append(LPyrs)</span><br><span class="line">    layers_info_print(images_LPyrs[<span class="number">0</span>], <span class="string">'images_LPyrs'</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 计算权重的高斯金字塔</span></span><br><span class="line">    weight_GPyrs = []</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(len(weights)):</span><br><span class="line">        GPyrs = gaussian_pyramid(weights[i], layers_nr)</span><br><span class="line">        weight_GPyrs.append(GPyrs)</span><br><span class="line">    layers_info_print(weight_GPyrs[<span class="number">0</span>], <span class="string">'weight_GPyrs'</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 计算融合的拉普拉斯金字塔</span></span><br><span class="line">    fused_LPyrs = [np.sum([images_LPyrs[k][n] * </span><br><span class="line">        np.atleast_3d(weight_GPyrs[k][layers_nr - n <span class="number">-1</span>]) <span class="keyword">for</span> k <span class="keyword">in</span> range(len(images))], axis=<span class="number">0</span>) <span class="keyword">for</span> n <span class="keyword">in</span> range(layers_nr)]</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 迭代融合</span></span><br><span class="line">    start = fused_LPyrs[<span class="number">0</span>]</span><br><span class="line">    <span class="comment">#print('start shape:&#123;&#125;'.format(start.shape))</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">1</span>, layers_nr):</span><br><span class="line">        upsample = cv2.resize(start, (fused_LPyrs[i].shape[<span class="number">1</span>], fused_LPyrs[i].shape[<span class="number">0</span>]))</span><br><span class="line">        start = fused_LPyrs[i] + upsample</span><br><span class="line">    start = np.clip(start, <span class="number">0</span>, <span class="number">255</span>).astype(<span class="string">"uint8"</span>)</span><br><span class="line">    plt.imshow(cv2.cvtColor(start, cv2.COLOR_BGR2RGB))</span><br></pre></td></tr></table></figure>
+<p>融合结果如下</p>
+<img src="/2022/05/19/HDR-曝光融合-Exposure-Fusion/09.png">
+<h1 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h1><ul>
+<li><p>Mertens, Tom, Jan Kautz, and Frank Van Reeth. “Exposure fusion.” Computer Graphics and Applications, 2007. PG’07. 15th Pacific Conference on. IEEE, 2007.</p>
+</li>
+<li><p><a href="https://zhuanlan.zhihu.com/p/455674916" target="_blank" rel="noopener">知乎-山与水你和我-exposure fusion 图像曝光融合</a></p>
+</li>
+<li><p><a href="https://mericam.github.io/" target="_blank" rel="noopener">Tom Mertens github</a></p>
+</li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/DIP/" rel="tag"># DIP</a>
+          
+            <a href="/tags/CV/" rel="tag"># CV</a>
+          
+            <a href="/tags/HDR/" rel="tag"># HDR</a>
+          
+        </div>
+      
+
+      
+      
+        <div class="post-widgets">
+        
+
+        
+
+        
+          
+          <div id="needsharebutton-postbottom">
+            <span class="btn">
+              <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </span>
+          </div>
+        
+        </div>
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2022/05/18/DIP-图像金字塔/" rel="next" title="DIP-图像金字塔">
+                <i class="fa fa-chevron-left"></i> DIP-图像金字塔
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2022/05/19/VS-CUDA开发环境搭建/" rel="prev" title="VS+CUDA开发环境搭建">
+                VS+CUDA开发环境搭建 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/../image/avatar.png" alt="awokezhou">
+            
+              <p class="site-author-name" itemprop="name">awokezhou</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">89</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">56</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">73</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/awokezhou" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="awokezhou@gmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                Links
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://www.ruanyifeng.com/blog/" title="阮一峰" target="_blank">阮一峰</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://dave.cheney.net/about/" title="Dave Cheney" target="_blank">Dave Cheney</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://codingsans.com/" title="codingsans" target="_blank">codingsans</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://www.openai.com/" title="openAI" target="_blank">openAI</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://www.wowotech.net/author/3/" title="linuxer - 蜗窝科技" target="_blank">linuxer - 蜗窝科技</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://www.iii.run/" title="mmmwhy" target="_blank">mmmwhy</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://www.jasongj.com/" title="技术世界" target="_blank">技术世界</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://machinelearningmastery.com/" title="Jason Brownlee" target="_blank">Jason Brownlee</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://www.jeremyjordan.me/" title="Jeremy Jordan" target="_blank">Jeremy Jordan</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://towardsdatascience.com/" title="Towards Data Science" target="_blank">Towards Data Science</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://colah.github.io/" title="colah" target="_blank">colah</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://www.cnblogs.com/popsuper1982/" title="网易云计算架构师刘超" target="_blank">网易云计算架构师刘超</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://biscuitos.github.io/" title="Biscuitos" target="_blank">Biscuitos</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#paper介绍"><span class="nav-number">1.</span> <span class="nav-text">paper介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#结果展示"><span class="nav-number">1.1.</span> <span class="nav-text">结果展示</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#该方法的优势"><span class="nav-number">1.2.</span> <span class="nav-text">该方法的优势</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Exposure-Fusion"><span class="nav-number">1.3.</span> <span class="nav-text">Exposure Fusion</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#质量衡量标准"><span class="nav-number">1.3.1.</span> <span class="nav-text">质量衡量标准</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#融合"><span class="nav-number">1.4.</span> <span class="nav-text">融合</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#python实作"><span class="nav-number">2.</span> <span class="nav-text">python实作</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Reference"><span class="nav-number">3.</span> <span class="nav-text">Reference</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">awokezhou</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+      <div id="needsharebutton-float">
+        <span class="btn">
+          <i class="fa fa-share-alt" aria-hidden="true"></i>
+        </span>
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+  
+  <script type="text/javascript">
+    var GUEST = ['nick','mail','link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item=>{
+      return GUEST.indexOf(item)>-1;
+    });
+    new Valine({
+        el: '#comments' ,
+        verify: false,
+        notify: false,
+        appId: 'fRviEm3V5t70yJuO2anF9b3q-gzGzoHsz',
+        appKey: 'hWNhMYbcRQVolyrvqSI7fVgz',
+        placeholder: '快来吐槽吧',
+        avatar:'mm',
+        guest_info:guest,
+        pageSize:'10' || 10,
+    });
+  </script>
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+  
+  <link rel="stylesheet" href="/lib/needsharebutton/needsharebutton.css">
+
+  
+  
+  <script src="/lib/needsharebutton/needsharebutton.js"></script>
+
+  <script>
+    
+      pbOptions = {};
+      
+          pbOptions.iconStyle = "box";
+      
+          pbOptions.boxForm = "horizontal";
+      
+          pbOptions.position = "bottomCenter";
+      
+          pbOptions.networks = "Weibo,Wechat,Douban,QQZone,Twitter,Facebook";
+      
+      new needShareButton('#needsharebutton-postbottom', pbOptions);
+    
+    
+      flOptions = {};
+      
+          flOptions.iconStyle = "box";
+      
+          flOptions.boxForm = "horizontal";
+      
+          flOptions.position = "middleRight";
+      
+          flOptions.networks = "Weibo,Wechat,Douban,QQZone,Twitter,Facebook";
+      
+      new needShareButton('#needsharebutton-float', flOptions);
+    
+  </script>
+
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

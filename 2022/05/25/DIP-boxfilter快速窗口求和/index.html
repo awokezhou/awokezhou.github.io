@@ -1,0 +1,1479 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/../image/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/../image/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="在很多图像处理任务中，需要对局部图像数据进行窗口运算，许多运算都需要获得局部区域像素的均值和方差，这些计算都离不开求和运算。我在研究引导滤波时，发现何凯明在其提供的引导滤波matlab参考代码中，使用了boxfilter的快速计算方法，能够以$O(1)$的时间复杂度对矩阵进行局部快速求和运算 本文对以python代码为例，对boxfilter的运算细节进行可视化分析，使读者对整个计算过程有一个直观">
+<meta property="og:type" content="article">
+<meta property="og:title" content="DIP-boxfilter快速窗口求和">
+<meta property="og:url" content="http://yoursite.com/2022/05/25/DIP-boxfilter快速窗口求和/index.html">
+<meta property="og:site_name" content="awokezhou&#39;s blog">
+<meta property="og:description" content="在很多图像处理任务中，需要对局部图像数据进行窗口运算，许多运算都需要获得局部区域像素的均值和方差，这些计算都离不开求和运算。我在研究引导滤波时，发现何凯明在其提供的引导滤波matlab参考代码中，使用了boxfilter的快速计算方法，能够以$O(1)$的时间复杂度对矩阵进行局部快速求和运算 本文对以python代码为例，对boxfilter的运算细节进行可视化分析，使读者对整个计算过程有一个直观">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://yoursite.com/2022/05/25/DIP-boxfilter快速窗口求和/01.png">
+<meta property="og:image" content="http://yoursite.com/2022/05/25/DIP-boxfilter快速窗口求和/02.png">
+<meta property="og:image" content="http://yoursite.com/2022/05/25/DIP-boxfilter快速窗口求和/03.png">
+<meta property="og:image" content="http://yoursite.com/2022/05/25/DIP-boxfilter快速窗口求和/04.png">
+<meta property="og:image" content="http://yoursite.com/2022/05/25/DIP-boxfilter快速窗口求和/05.png">
+<meta property="og:image" content="http://yoursite.com/2022/05/25/DIP-boxfilter快速窗口求和/06.png">
+<meta property="og:image" content="http://yoursite.com/2022/05/25/DIP-boxfilter快速窗口求和/07.png">
+<meta property="og:image" content="http://yoursite.com/2022/05/25/DIP-boxfilter快速窗口求和/08.png">
+<meta property="og:image" content="http://yoursite.com/2022/05/25/DIP-boxfilter快速窗口求和/09.png">
+<meta property="og:image" content="http://yoursite.com/2022/05/25/DIP-boxfilter快速窗口求和/10.png">
+<meta property="og:image" content="http://yoursite.com/2022/05/25/DIP-boxfilter快速窗口求和/11.png">
+<meta property="og:image" content="http://yoursite.com/2022/05/25/DIP-boxfilter快速窗口求和/12.png">
+<meta property="og:updated_time" content="2023-02-02T11:45:59.111Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="DIP-boxfilter快速窗口求和">
+<meta name="twitter:description" content="在很多图像处理任务中，需要对局部图像数据进行窗口运算，许多运算都需要获得局部区域像素的均值和方差，这些计算都离不开求和运算。我在研究引导滤波时，发现何凯明在其提供的引导滤波matlab参考代码中，使用了boxfilter的快速计算方法，能够以$O(1)$的时间复杂度对矩阵进行局部快速求和运算 本文对以python代码为例，对boxfilter的运算细节进行可视化分析，使读者对整个计算过程有一个直观">
+<meta name="twitter:image" content="http://yoursite.com/2022/05/25/DIP-boxfilter快速窗口求和/01.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"hide","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2022/05/25/DIP-boxfilter快速窗口求和/">
+
+
+
+
+
+  <title>DIP-boxfilter快速窗口求和 | awokezhou's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">awokezhou's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-message">
+          <a href="/message/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br>
+            
+            message
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2022/05/25/DIP-boxfilter快速窗口求和/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="awokezhou">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/../image/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="awokezhou's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">DIP-boxfilter快速窗口求和</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2022-05-25T15:43:45+08:00">
+                2022-05-25
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/CV/" itemprop="url" rel="index">
+                    <span itemprop="name">CV</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/CV/DIP/" itemprop="url" rel="index">
+                    <span itemprop="name">DIP</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2022/05/25/DIP-boxfilter快速窗口求和/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2022/05/25/DIP-boxfilter快速窗口求和/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>在很多图像处理任务中，需要对局部图像数据进行窗口运算，许多运算都需要获得局部区域像素的均值和方差，这些计算都离不开求和运算。我在研究引导滤波时，发现何凯明在其提供的引导滤波matlab参考代码中，使用了boxfilter的快速计算方法，能够以$O(1)$的时间复杂度对矩阵进行局部快速求和运算</p>
+<p>本文对以python代码为例，对boxfilter的运算细节进行可视化分析，使读者对整个计算过程有一个直观的感受，然后将正常的卷积局部求和操作与boxfilter进行性能比较</p>
+<h1 id="运算过程分析"><a href="#运算过程分析" class="headerlink" title="运算过程分析"></a>运算过程分析</h1><p>首先对boxfilter的输入和输出进行说明，boxfilter的输入是要计算局部窗口和的整幅图像$I$，输出是与输入图像尺寸相同的图像$F$，输出图像某个像素的值$F(x,y)$是以$I(x,y)$为中心的一个窗口内所有像素值的和，窗口在图像上滑动，与卷积操作类似，窗口大小也是一个输入参数，一般以窗口半径$r$来表示。下图是输入与输出关系的示意图</p>
+<img src="/2022/05/25/DIP-boxfilter快速窗口求和/01.png">
+<p>输出图像是将一个窗口的求和作用于输入图像的结果，上图中窗口半径为1，则窗口尺寸为3x3，图中输入图像中的黄色3x3区域即为一个窗口，该窗口内输入图像的像素之和对应于输出图像的黄色像素</p>
+<p>下面将详细介绍整个快速计算的过程，引入依赖库</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br></pre></td></tr></table></figure>
+<p>定义一个8x8的二维单位矩阵作为输入图像，定义窗口半径为1，则kernel size为3x3，创建一个与输入图像相同shape的0矩阵</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">r = <span class="number">1</span></span><br><span class="line">imSrc = np.ones((<span class="number">8</span>, <span class="number">8</span>))</span><br><span class="line">I = imSrc.copy()</span><br><span class="line">imDst = np.zeros(I.shape)</span><br><span class="line">h, w = I.shape</span><br></pre></td></tr></table></figure>
+<p>打印imSrc</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">print(imSrc)</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[[1. 1. 1. 1. 1. 1. 1. 1.]</span><br><span class="line"> [1. 1. 1. 1. 1. 1. 1. 1.]</span><br><span class="line"> [1. 1. 1. 1. 1. 1. 1. 1.]</span><br><span class="line"> [1. 1. 1. 1. 1. 1. 1. 1.]</span><br><span class="line"> [1. 1. 1. 1. 1. 1. 1. 1.]</span><br><span class="line"> [1. 1. 1. 1. 1. 1. 1. 1.]</span><br><span class="line"> [1. 1. 1. 1. 1. 1. 1. 1.]</span><br><span class="line"> [1. 1. 1. 1. 1. 1. 1. 1.]]</span><br></pre></td></tr></table></figure>
+<p>打印imDst</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">print(imDst)</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[[0. 0. 0. 0. 0. 0. 0. 0.]</span><br><span class="line"> [0. 0. 0. 0. 0. 0. 0. 0.]</span><br><span class="line"> [0. 0. 0. 0. 0. 0. 0. 0.]</span><br><span class="line"> [0. 0. 0. 0. 0. 0. 0. 0.]</span><br><span class="line"> [0. 0. 0. 0. 0. 0. 0. 0.]</span><br><span class="line"> [0. 0. 0. 0. 0. 0. 0. 0.]</span><br><span class="line"> [0. 0. 0. 0. 0. 0. 0. 0.]</span><br><span class="line"> [0. 0. 0. 0. 0. 0. 0. 0.]]</span><br></pre></td></tr></table></figure>
+<p>对输入图像进行行方向的累加求和，并打印</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">I = np.cumsum(I, <span class="number">0</span>)</span><br><span class="line">print(I)</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[[1. 1. 1. 1. 1. 1. 1. 1.]</span><br><span class="line"> [2. 2. 2. 2. 2. 2. 2. 2.]</span><br><span class="line"> [3. 3. 3. 3. 3. 3. 3. 3.]</span><br><span class="line"> [4. 4. 4. 4. 4. 4. 4. 4.]</span><br><span class="line"> [5. 5. 5. 5. 5. 5. 5. 5.]</span><br><span class="line"> [6. 6. 6. 6. 6. 6. 6. 6.]</span><br><span class="line"> [7. 7. 7. 7. 7. 7. 7. 7.]</span><br><span class="line"> [8. 8. 8. 8. 8. 8. 8. 8.]]</span><br></pre></td></tr></table></figure>
+<p>将累加求和后的矩阵2、3两行复制到imDst的第1、2行，并打印(本文中描述第n行，n从1开始)</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">imDst[:r+<span class="number">1</span>, :] = I[r:<span class="number">2</span>*r+<span class="number">1</span>, :]</span><br><span class="line">print(imDst)</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[[2. 2. 2. 2. 2. 2. 2. 2.]</span><br><span class="line"> [3. 3. 3. 3. 3. 3. 3. 3.]</span><br><span class="line"> [0. 0. 0. 0. 0. 0. 0. 0.]</span><br><span class="line"> [0. 0. 0. 0. 0. 0. 0. 0.]</span><br><span class="line"> [0. 0. 0. 0. 0. 0. 0. 0.]</span><br><span class="line"> [0. 0. 0. 0. 0. 0. 0. 0.]</span><br><span class="line"> [0. 0. 0. 0. 0. 0. 0. 0.]</span><br><span class="line"> [0. 0. 0. 0. 0. 0. 0. 0.]]</span><br></pre></td></tr></table></figure>
+<p>这一步的过程如下图所示</p>
+<img src="/2022/05/25/DIP-boxfilter快速窗口求和/02.png">
+<p>该操作的含义是当求和窗口未完全在图像内部时的图像边缘求和处理</p>
+<img src="/2022/05/25/DIP-boxfilter快速窗口求和/03.png">
+<p>然后将累加矩阵的第4到8行减去1到5行的结果复制到imDst的第3到7行，并打印</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">imDst[r+<span class="number">1</span>:h-r, :] = I[<span class="number">2</span>*r+<span class="number">1</span>:, :] - I[:h<span class="number">-2</span>*r<span class="number">-1</span>, :]</span><br><span class="line">print(imDst)</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[[2. 2. 2. 2. 2. 2. 2. 2.]</span><br><span class="line"> [3. 3. 3. 3. 3. 3. 3. 3.]</span><br><span class="line"> [3. 3. 3. 3. 3. 3. 3. 3.]</span><br><span class="line"> [3. 3. 3. 3. 3. 3. 3. 3.]</span><br><span class="line"> [3. 3. 3. 3. 3. 3. 3. 3.]</span><br><span class="line"> [3. 3. 3. 3. 3. 3. 3. 3.]</span><br><span class="line"> [3. 3. 3. 3. 3. 3. 3. 3.]</span><br><span class="line"> [0. 0. 0. 0. 0. 0. 0. 0.]]</span><br></pre></td></tr></table></figure>
+<p>示意图如下</p>
+<img src="/2022/05/25/DIP-boxfilter快速窗口求和/04.png">
+<p>然后将累加矩阵的最后一行与第6行相减，结果复制到imDst的第8行</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">imDst[h-r:,:]=np.matlib.repmat(I[h<span class="number">-1</span>,:],r,<span class="number">1</span>)-I[h<span class="number">-2</span>*r<span class="number">-1</span>:h-r<span class="number">-1</span>,:]</span><br><span class="line">print(imDst))</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[[2. 2. 2. 2. 2. 2. 2. 2.]</span><br><span class="line"> [3. 3. 3. 3. 3. 3. 3. 3.]</span><br><span class="line"> [3. 3. 3. 3. 3. 3. 3. 3.]</span><br><span class="line"> [3. 3. 3. 3. 3. 3. 3. 3.]</span><br><span class="line"> [3. 3. 3. 3. 3. 3. 3. 3.]</span><br><span class="line"> [3. 3. 3. 3. 3. 3. 3. 3.]</span><br><span class="line"> [3. 3. 3. 3. 3. 3. 3. 3.]</span><br><span class="line"> [2. 2. 2. 2. 2. 2. 2. 2.]]</span><br></pre></td></tr></table></figure>
+<p>示意图如下</p>
+<img src="/2022/05/25/DIP-boxfilter快速窗口求和/05.png">
+<p>这里使用的repmat含义是将累加矩阵的最后一行复制为一个r行的矩阵，因为r为1，因此不进行任何操作。如果r大于1时，在下边缘处的窗口计算，就需要补一行</p>
+<img src="/2022/05/25/DIP-boxfilter快速窗口求和/06.png">
+<p>至此，行处理完成，接下来进行列处理。首先是对输入图像进行列方向的累加求和，并打印</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">I = np.cumsum(imDst, <span class="number">1</span>)</span><br><span class="line">print(I)</span><br></pre></td></tr></table></figure>
+<p>注意列方向进行累加求和是在行方向累加求和基础上做的</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[[ 2.  4.  6.  8. 10. 12. 14. 16.]</span><br><span class="line"> [ 3.  6.  9. 12. 15. 18. 21. 24.]</span><br><span class="line"> [ 3.  6.  9. 12. 15. 18. 21. 24.]</span><br><span class="line"> [ 3.  6.  9. 12. 15. 18. 21. 24.]</span><br><span class="line"> [ 3.  6.  9. 12. 15. 18. 21. 24.]</span><br><span class="line"> [ 3.  6.  9. 12. 15. 18. 21. 24.]</span><br><span class="line"> [ 3.  6.  9. 12. 15. 18. 21. 24.]</span><br><span class="line"> [ 2.  4.  6.  8. 10. 12. 14. 16.]]</span><br></pre></td></tr></table></figure>
+<p>然后将累加和的前第2、3列拷贝到imDst的第1、2列</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">imDst[:,:r+<span class="number">1</span>] = I[:,r:<span class="number">2</span>*r+<span class="number">1</span>]</span><br><span class="line">print(imDst)</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[[4. 6. 2. 2. 2. 2. 2. 2.]</span><br><span class="line"> [6. 9. 3. 3. 3. 3. 3. 3.]</span><br><span class="line"> [6. 9. 3. 3. 3. 3. 3. 3.]</span><br><span class="line"> [6. 9. 3. 3. 3. 3. 3. 3.]</span><br><span class="line"> [6. 9. 3. 3. 3. 3. 3. 3.]</span><br><span class="line"> [6. 9. 3. 3. 3. 3. 3. 3.]</span><br><span class="line"> [6. 9. 3. 3. 3. 3. 3. 3.]</span><br><span class="line"> [4. 6. 2. 2. 2. 2. 2. 2.]]</span><br></pre></td></tr></table></figure>
+<p>示意图如下</p>
+<img src="/2022/05/25/DIP-boxfilter快速窗口求和/07.png">
+<p>然后将累加和的第4到8列减去1到5列，结果拷贝到imDst的第3到7列</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">imDst[:,r+<span class="number">1</span>:w-r] = I[:,<span class="number">2</span>*r+<span class="number">1</span>:]-I[:,:w<span class="number">-2</span>*r<span class="number">-1</span>]</span><br><span class="line">print(imDst)</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[[4. 6. 6. 6. 6. 6. 6. 2.]</span><br><span class="line"> [6. 9. 9. 9. 9. 9. 9. 3.]</span><br><span class="line"> [6. 9. 9. 9. 9. 9. 9. 3.]</span><br><span class="line"> [6. 9. 9. 9. 9. 9. 9. 3.]</span><br><span class="line"> [6. 9. 9. 9. 9. 9. 9. 3.]</span><br><span class="line"> [6. 9. 9. 9. 9. 9. 9. 3.]</span><br><span class="line"> [6. 9. 9. 9. 9. 9. 9. 3.]</span><br><span class="line"> [4. 6. 6. 6. 6. 6. 6. 2.]]</span><br></pre></td></tr></table></figure>
+<p>示意图如下</p>
+<img src="/2022/05/25/DIP-boxfilter快速窗口求和/08.png">
+<p>最后将累加和第8列减去第6列，结果复制到imDst的第8列</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">imDst[:,w-r:] = np.matlib.repmat(I[:,w<span class="number">-1</span>].reshape(<span class="number">-1</span>,<span class="number">1</span>),<span class="number">1</span>,r)-I[:,w<span class="number">-2</span>*r<span class="number">-1</span>:w-r<span class="number">-1</span>]</span><br><span class="line">print(imDst)</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[[4. 6. 6. 6. 6. 6. 6. 4.]</span><br><span class="line"> [6. 9. 9. 9. 9. 9. 9. 6.]</span><br><span class="line"> [6. 9. 9. 9. 9. 9. 9. 6.]</span><br><span class="line"> [6. 9. 9. 9. 9. 9. 9. 6.]</span><br><span class="line"> [6. 9. 9. 9. 9. 9. 9. 6.]</span><br><span class="line"> [6. 9. 9. 9. 9. 9. 9. 6.]</span><br><span class="line"> [6. 9. 9. 9. 9. 9. 9. 6.]</span><br><span class="line"> [4. 6. 6. 6. 6. 6. 6. 4.]]</span><br></pre></td></tr></table></figure>
+<p>示意图如下</p>
+<img src="/2022/05/25/DIP-boxfilter快速窗口求和/09.png">
+<p>这个结果是否正确呢？可以选取几个局部窗口位置计算一下，可以看到，结果确实是正确的</p>
+<img src="/2022/05/25/DIP-boxfilter快速窗口求和/10.png">
+<p>整合之后的boxfilter函数如下</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">boxfilter</span><span class="params">(im, r)</span>:</span></span><br><span class="line">    I = im.copy()</span><br><span class="line">    imDst = np.zeros(I.shape)</span><br><span class="line">    h, w = I.shape</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># row process</span></span><br><span class="line">    I = np.cumsum(I, <span class="number">0</span>)</span><br><span class="line">    imDst[:r+<span class="number">1</span>, :] = I[r:<span class="number">2</span>*r+<span class="number">1</span>, :]</span><br><span class="line">    imDst[r+<span class="number">1</span>:h-r, :] = I[<span class="number">2</span>*r+<span class="number">1</span>:, :] - I[:h<span class="number">-2</span>*r<span class="number">-1</span>, :]</span><br><span class="line">    imDst[h-r:,:]=np.matlib.repmat(I[h<span class="number">-1</span>,:],r,<span class="number">1</span>)-I[h<span class="number">-2</span>*r<span class="number">-1</span>:h-r<span class="number">-1</span>,:]</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># col process</span></span><br><span class="line">    I = np.cumsum(imDst, <span class="number">1</span>)</span><br><span class="line">    imDst[:,:r+<span class="number">1</span>] = I[:,r:<span class="number">2</span>*r+<span class="number">1</span>]</span><br><span class="line">    imDst[:,r+<span class="number">1</span>:w-r] = I[:,<span class="number">2</span>*r+<span class="number">1</span>:]-I[:,:w<span class="number">-2</span>*r<span class="number">-1</span>]</span><br><span class="line">    imDst[:,w-r:] = np.matlib.repmat(I[:,w<span class="number">-1</span>].reshape(<span class="number">-1</span>,<span class="number">1</span>),<span class="number">1</span>,r)-I[:,w<span class="number">-2</span>*r<span class="number">-1</span>:w-r<span class="number">-1</span>]</span><br><span class="line">    <span class="keyword">return</span> imDst</span><br></pre></td></tr></table></figure>
+<h1 id="性能分析"><a href="#性能分析" class="headerlink" title="性能分析"></a>性能分析</h1><p>本节使用正常的卷积局部求和操作与boxfilter局部求和进行对比分析，看看boxfilter性能到底如何。这里使用的卷积操作与这篇文章中的代码一致</p>
+<p>利用卷积操作来进行局部求和，只需要将卷积核定义为如下形式即可</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kernel = np.array([[<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>], [<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>], [<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>]])</span><br></pre></td></tr></table></figure>
+<p>这样就定义了一个3x3的局部求和卷积核，验证一下卷积局部求和与boxfilter的输出结果是否一致</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">imSrc = np.ones((<span class="number">8</span>, <span class="number">8</span>))</span><br><span class="line">kernel = np.array([[<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>], [<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>], [<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>]])</span><br><span class="line">im_new = image_conv2d(imSrc, kernel)</span><br><span class="line">print(im_new)</span><br></pre></td></tr></table></figure>
+<p>输出结果为</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[[4. 6. 6. 6. 6. 6. 6. 4.]</span><br><span class="line"> [6. 9. 9. 9. 9. 9. 9. 6.]</span><br><span class="line"> [6. 9. 9. 9. 9. 9. 9. 6.]</span><br><span class="line"> [6. 9. 9. 9. 9. 9. 9. 6.]</span><br><span class="line"> [6. 9. 9. 9. 9. 9. 9. 6.]</span><br><span class="line"> [6. 9. 9. 9. 9. 9. 9. 6.]</span><br><span class="line"> [6. 9. 9. 9. 9. 9. 9. 6.]</span><br><span class="line"> [4. 6. 6. 6. 6. 6. 6. 4.]]</span><br></pre></td></tr></table></figure>
+<p>可以看出与boxfilter输出结果相同。接下来以3x3的窗口大小，分别以不同大小的单位矩阵来模拟不同分辨率的图像，对比两种运算随着分辨率的提升运算效率的变化情况</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># resolution define</span></span><br><span class="line">resList = []</span><br><span class="line">resList.append((<span class="number">32</span>,<span class="number">32</span>))</span><br><span class="line">resList.append((<span class="number">64</span>,<span class="number">64</span>))</span><br><span class="line">resList.append((<span class="number">128</span>,<span class="number">128</span>))</span><br><span class="line">resList.append((<span class="number">256</span>,<span class="number">256</span>))</span><br><span class="line">resList.append((<span class="number">512</span>,<span class="number">512</span>))</span><br><span class="line">resList.append((<span class="number">640</span>,<span class="number">480</span>))</span><br><span class="line">resList.append((<span class="number">800</span>,<span class="number">600</span>))</span><br><span class="line">resList.append((<span class="number">1024</span>,<span class="number">768</span>))</span><br><span class="line">resList.append((<span class="number">1280</span>,<span class="number">960</span>))</span><br><span class="line">resList.append((<span class="number">1600</span>,<span class="number">1200</span>))</span><br><span class="line">resList.append((<span class="number">2048</span>,<span class="number">1536</span>))</span><br><span class="line">resList.append((<span class="number">2272</span>,<span class="number">1704</span>))</span><br><span class="line">resList.append((<span class="number">2560</span>,<span class="number">1920</span>))</span><br><span class="line">resList.append((<span class="number">3000</span>,<span class="number">2000</span>))</span><br><span class="line">resList.append((<span class="number">3264</span>,<span class="number">2488</span>))</span><br><span class="line">resList.append((<span class="number">4080</span>,<span class="number">2720</span>))</span><br><span class="line">resList.append((<span class="number">4536</span>,<span class="number">3024</span>))</span><br><span class="line"></span><br><span class="line"><span class="comment"># convolution calculate</span></span><br><span class="line">conv_stats = []</span><br><span class="line"><span class="keyword">for</span> res <span class="keyword">in</span> resList:</span><br><span class="line">    imSrc = np.ones(res)</span><br><span class="line">    kernel = np.array([[<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>], [<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>], [<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>]])</span><br><span class="line">    start = time.time()</span><br><span class="line">    im_new = image_conv2d(imSrc, kernel)</span><br><span class="line">    runtimes = time.time()-start</span><br><span class="line">    conv_stats.append(runtimes)</span><br><span class="line"></span><br><span class="line"><span class="comment"># boxfilter calculate</span></span><br><span class="line">bxf_stats = []</span><br><span class="line"><span class="keyword">for</span> res <span class="keyword">in</span> resList:</span><br><span class="line">    imSrc = np.ones(res)</span><br><span class="line">    start = time.time()</span><br><span class="line">    im_new = boxfilter(imSrc, <span class="number">1</span>)</span><br><span class="line">    runtimes = time.time() - start</span><br><span class="line">    bxf_stats.append(runtimes)</span><br><span class="line"></span><br><span class="line"><span class="comment"># plot</span></span><br><span class="line">x = [<span class="string">'&#123;&#125;x&#123;&#125;'</span>.format(res[<span class="number">0</span>], res[<span class="number">1</span>]) <span class="keyword">for</span> res <span class="keyword">in</span> resList]</span><br><span class="line">plt.plot(x, conv_stats, label=<span class="string">'convolution'</span>)</span><br><span class="line">plt.plot(x, bxf_stats, label=<span class="string">'boxfilter'</span>)</span><br><span class="line">plt.title(<span class="string">'Comparison of convolution and boxfilter'</span>)</span><br><span class="line">plt.xlabel(<span class="string">'radius'</span>)</span><br><span class="line">plt.ylabel(<span class="string">'runtime(sec)'</span>)</span><br><span class="line">plt.xticks(np.arange(<span class="number">0</span>, <span class="number">20</span>, step=<span class="number">2</span>))</span><br><span class="line">plt.legend()</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+<p>测试结果如下</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>Resolution</th>
+<th>Convolution Runtimes(sec)</th>
+<th>Boxfilter Runtimes(sec)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>32x32</td>
+<td>0.015528</td>
+<td>0.008734</td>
+</tr>
+<tr>
+<td>64x64</td>
+<td>0.023325</td>
+<td>0.000000</td>
+</tr>
+<tr>
+<td>128x128</td>
+<td>0.088296</td>
+<td>0.000972</td>
+</tr>
+<tr>
+<td>256x256</td>
+<td>0.351377</td>
+<td>0.000971</td>
+</tr>
+<tr>
+<td>512x512</td>
+<td>1.396757</td>
+<td>0.006795</td>
+</tr>
+<tr>
+<td>640x480</td>
+<td>1.637542</td>
+<td>0.006794</td>
+</tr>
+<tr>
+<td>800x600</td>
+<td>2.556762</td>
+<td>0.010676</td>
+</tr>
+<tr>
+<td>1024x768</td>
+<td>4.169978</td>
+<td>0.019385</td>
+</tr>
+<tr>
+<td>1280x960</td>
+<td>6.543228</td>
+<td>0.032032</td>
+</tr>
+<tr>
+<td>1600x1200</td>
+<td>10.234725</td>
+<td>0.049505</td>
+</tr>
+<tr>
+<td>2048x1536</td>
+<td>16.729388</td>
+<td>0.109683</td>
+</tr>
+<tr>
+<td>2272x1704</td>
+<td>20.630525</td>
+<td>0.102891</td>
+</tr>
+<tr>
+<td>2560x1920</td>
+<td>26.146850</td>
+<td>0.133951</td>
+</tr>
+<tr>
+<td>3000x2000</td>
+<td>31.713583</td>
+<td>0.163045</td>
+</tr>
+<tr>
+<td>3264x2488</td>
+<td>43.213059</td>
+<td>0.231047</td>
+</tr>
+<tr>
+<td>4080x2720</td>
+<td>59.047499</td>
+<td>0.323232</td>
+</tr>
+<tr>
+<td>4536x3024</td>
+<td>72.816411</td>
+<td>0.392182</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>将测试结果绘制曲线如下</p>
+<img src="/2022/05/25/DIP-boxfilter快速窗口求和/11.png">
+<p>可以看出，在相同局部大小3x3情况下，boxfilter的性能提升是巨大的，随着分辨率的增大，普通的卷积运算耗时呈类似指数增长，而boxfilter的耗时虽然也有所增加，但是其增长程度远远小于分辨率的增长程度</p>
+<p>3x3大小的局部窗口下，boxfilter的运算效率确实很高，那么随着半径的增大，boxfilter的效果如何呢？下面对不同分辨率下不同半径的窗口大小对boxfilter进行了对比测试</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">radList = [<span class="number">1</span>,<span class="number">2</span>,<span class="number">5</span>,<span class="number">10</span>,<span class="number">15</span>,<span class="number">20</span>,<span class="number">25</span>,<span class="number">30</span>,<span class="number">35</span>,<span class="number">40</span>,<span class="number">45</span>,<span class="number">50</span>]</span><br><span class="line">bxf_stats = []</span><br><span class="line"><span class="keyword">for</span> res <span class="keyword">in</span> resList:</span><br><span class="line">    imSrc = np.ones(res)</span><br><span class="line">    stat = &#123;<span class="string">'res'</span>:res, <span class="string">'times'</span>:[]&#125;</span><br><span class="line">    <span class="keyword">for</span> rad <span class="keyword">in</span> radList:</span><br><span class="line">        <span class="keyword">if</span> (rad*<span class="number">2</span>+<span class="number">1</span>)&lt;res[<span class="number">0</span>] <span class="keyword">and</span> (rad*<span class="number">2</span>+<span class="number">1</span>)&lt;res[<span class="number">1</span>]:</span><br><span class="line">            start = time.time()</span><br><span class="line">            im_new = boxfilter(imSrc, rad)</span><br><span class="line">            runtimes = time.time() - start</span><br><span class="line">            stat[<span class="string">'times'</span>].append((runtimes, rad))</span><br><span class="line">    bxf_stats.append(stat)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(len(bxf_stats)):</span><br><span class="line">    x = [t[<span class="number">1</span>] <span class="keyword">for</span> t <span class="keyword">in</span> bxf_stats[i][<span class="string">'times'</span>]]</span><br><span class="line">    y = [t[<span class="number">0</span>] <span class="keyword">for</span> t <span class="keyword">in</span> bxf_stats[i][<span class="string">'times'</span>]]</span><br><span class="line">    plt.plot(x,y, label=<span class="string">'&#123;&#125;'</span>.format(bxf_stats[i][<span class="string">'res'</span>]))</span><br><span class="line"></span><br><span class="line">plt.title(<span class="string">'Compare boxfilters with different radius sizes'</span>)</span><br><span class="line">plt.xlabel(<span class="string">'radius'</span>)</span><br><span class="line">plt.ylabel(<span class="string">'runtime(sec)'</span>)</span><br><span class="line">plt.legend()</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+<p>测试结果如下</p>
+<img src="/2022/05/25/DIP-boxfilter快速窗口求和/12.png">
+<p>Amazing!!!</p>
+<p>图中每条曲线代表一种分辨率下随着半径增大的运行时间变化情况，可以看出，固定分辨率的情况下，boxfilter的运算时间与半径大小几乎完全无关，只有分辨率增大，其运算时间才稍有增加。从boxfilter的计算原理可以理解，由于其计算过程只涉及到两次矩阵行方向与纵方向的累积求和运算，以及行方向、列方向的减法运算，因此当分辨率增大时，累积求和与减法运算的运算量会有所增加，但是由于其运算过程与半径大小的关系仅在考虑边界处的处理时，而且也是单次计算，因此半径大小带来的运算量增加与分辨率增加带来的运算量增加是非常小的</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+        <div class="post-widgets">
+        
+
+        
+
+        
+          
+          <div id="needsharebutton-postbottom">
+            <span class="btn">
+              <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </span>
+          </div>
+        
+        </div>
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2022/05/24/VitisAI-03-Vivado-Flow/" rel="next" title="VitisAI-03-Vivado Flow">
+                <i class="fa fa-chevron-left"></i> VitisAI-03-Vivado Flow
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2022/05/31/Arm-Cortex-M-高效神经网络计算/" rel="prev" title="Arm Cortex-M 高效神经网络计算">
+                Arm Cortex-M 高效神经网络计算 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/../image/avatar.png" alt="awokezhou">
+            
+              <p class="site-author-name" itemprop="name">awokezhou</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">89</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">56</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">73</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/awokezhou" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="awokezhou@gmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                Links
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://www.ruanyifeng.com/blog/" title="阮一峰" target="_blank">阮一峰</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://dave.cheney.net/about/" title="Dave Cheney" target="_blank">Dave Cheney</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://codingsans.com/" title="codingsans" target="_blank">codingsans</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://www.openai.com/" title="openAI" target="_blank">openAI</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://www.wowotech.net/author/3/" title="linuxer - 蜗窝科技" target="_blank">linuxer - 蜗窝科技</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://www.iii.run/" title="mmmwhy" target="_blank">mmmwhy</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://www.jasongj.com/" title="技术世界" target="_blank">技术世界</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://machinelearningmastery.com/" title="Jason Brownlee" target="_blank">Jason Brownlee</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://www.jeremyjordan.me/" title="Jeremy Jordan" target="_blank">Jeremy Jordan</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://towardsdatascience.com/" title="Towards Data Science" target="_blank">Towards Data Science</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://colah.github.io/" title="colah" target="_blank">colah</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://www.cnblogs.com/popsuper1982/" title="网易云计算架构师刘超" target="_blank">网易云计算架构师刘超</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://biscuitos.github.io/" title="Biscuitos" target="_blank">Biscuitos</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#运算过程分析"><span class="nav-number">1.</span> <span class="nav-text">运算过程分析</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#性能分析"><span class="nav-number">2.</span> <span class="nav-text">性能分析</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">awokezhou</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+      <div id="needsharebutton-float">
+        <span class="btn">
+          <i class="fa fa-share-alt" aria-hidden="true"></i>
+        </span>
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+  
+  <script type="text/javascript">
+    var GUEST = ['nick','mail','link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item=>{
+      return GUEST.indexOf(item)>-1;
+    });
+    new Valine({
+        el: '#comments' ,
+        verify: false,
+        notify: false,
+        appId: 'fRviEm3V5t70yJuO2anF9b3q-gzGzoHsz',
+        appKey: 'hWNhMYbcRQVolyrvqSI7fVgz',
+        placeholder: '快来吐槽吧',
+        avatar:'mm',
+        guest_info:guest,
+        pageSize:'10' || 10,
+    });
+  </script>
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+  
+  <link rel="stylesheet" href="/lib/needsharebutton/needsharebutton.css">
+
+  
+  
+  <script src="/lib/needsharebutton/needsharebutton.js"></script>
+
+  <script>
+    
+      pbOptions = {};
+      
+          pbOptions.iconStyle = "box";
+      
+          pbOptions.boxForm = "horizontal";
+      
+          pbOptions.position = "bottomCenter";
+      
+          pbOptions.networks = "Weibo,Wechat,Douban,QQZone,Twitter,Facebook";
+      
+      new needShareButton('#needsharebutton-postbottom', pbOptions);
+    
+    
+      flOptions = {};
+      
+          flOptions.iconStyle = "box";
+      
+          flOptions.boxForm = "horizontal";
+      
+          flOptions.position = "middleRight";
+      
+          flOptions.networks = "Weibo,Wechat,Douban,QQZone,Twitter,Facebook";
+      
+      new needShareButton('#needsharebutton-float', flOptions);
+    
+  </script>
+
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>
