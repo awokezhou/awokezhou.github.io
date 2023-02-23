@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="Tensorflow,嵌入式,">
+  <meta name="keywords" content="嵌入式,Tensorflow,">
 
 
 
@@ -80,7 +80,7 @@
 
 
 <meta name="description" content="研究Tensorflow Lite Microcontroller(TFLite Micro)好一段时间了，终于是搞明白了如何按照自己的需求编译生成动态链接库”libtensorflow-microlite.so”了！目前能够编译输出的库大小为2.5M，支持”full-connected”、”softmax”和卷积算子，两层全连接网络运行时占用16k内存 TFLite Micro介绍自从2018年">
-<meta name="keywords" content="Tensorflow,嵌入式">
+<meta name="keywords" content="嵌入式,Tensorflow">
 <meta property="og:type" content="article">
 <meta property="og:title" content="TFLite Micro 编译生成动态链接库">
 <meta property="og:url" content="http://yoursite.com/2020/05/09/TFLite-Micro-编译生成动态链接库/index.html">
@@ -410,7 +410,7 @@
 <h2 id="TFLite-Micro的编译构建"><a href="#TFLite-Micro的编译构建" class="headerlink" title="TFLite Micro的编译构建"></a>TFLite Micro的编译构建</h2><p>TFLite Micro的源代码其实是非常独立的，并不太依赖很多其他文件。官方给出了一个预先定制化的<a href="%5Bhttps://drive.google.com/file/d/1cawEQAkqquK_SO4crReDYqf_v7yAwOY8/view%5D(https://drive.google.com/file/d/1cawEQAkqquK_SO4crReDYqf_v7yAwOY8/view">Tensorflow项目</a>，但是这个项目并不能拿来直接使用，因为它里面的很多源码并非基于2.1版本的Tensorflow，而是更早期的。因此，如果你想直接拿来用，必须找到对应版本的Tensorflow Python库并安装。我当然没有选择这种方式，因为2.1版本支持Keras模型转换，我比较喜欢用Keras来搭建模型</p>
 <p>下载解压这个项目文件，你会得到三个目录：mbed、keil、make，分别对应3种构建方式的源码。我做嵌入式软件一般都是用make，因此本文主要介绍make方式构建的方法。每种构建方式的文件夹下都有多个构建示例，对应不同需求的项目，例如只需要解释器的micro_interpreter，要做语音识别的micro_speech，全连接的full_connected，不同需求需要的源码有一些差异</p>
 <p>整体的构建方式是Makefile位于根目录，Tensorflow的源码按照固定的层级关系来放置，源码中的所有头文件引用已经做了相对路径处理，因此Makefile在处理include时，只需引用tensorflow这个路径就可以了。我选择全连接来做实验，根目录的情况如下</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> ls</span><br><span class="line">tensorflow third_party Makefile</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> ls</span></span><br><span class="line">tensorflow third_party Makefile</span><br></pre></td></tr></table></figure>
 <p>tensorflow路径下是Tensorflow源码，third_party路径下是一些第三方库，例如flatbuffer等，Makefile用于构建</p>
 <h3 id="需要的源文件"><a href="#需要的源文件" class="headerlink" title="需要的源文件"></a>需要的源文件</h3><p>几个核心的源文件：micro_error_reporter.cc、micro_interpreter.cc、micro_allocator.cc、all_ops_resolver.cc、full_connected.cc，可以直接从现有源码中拷贝过来，保证路径一致</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cp xxx/tensorflow/tensorflow/lite/micro/micro_interpreter.cc full_connected/tensorflow/lite/micro/</span><br><span class="line">......</span><br></pre></td></tr></table></figure>
@@ -435,9 +435,9 @@
       
         <div class="post-tags">
           
-            <a href="/tags/Tensorflow/" rel="tag"># Tensorflow</a>
-          
             <a href="/tags/嵌入式/" rel="tag"># 嵌入式</a>
+          
+            <a href="/tags/Tensorflow/" rel="tag"># Tensorflow</a>
           
         </div>
       
@@ -559,7 +559,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">89</span>
+                  <span class="site-state-item-count">90</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -570,7 +570,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">56</span>
+                  <span class="site-state-item-count">57</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -581,7 +581,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">73</span>
+                  <span class="site-state-item-count">75</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
